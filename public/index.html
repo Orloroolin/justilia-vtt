@@ -1,0 +1,3893 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTT Юстилия: Таверна Мастера</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=MedievalSharp&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap');
+
+        :root {
+            --wood-dark: #2b1d14;
+            --wood-light: #4a3320;
+            --parchment: #f4e8d3;
+            --parchment-dark: #e3d1b5;
+            --ink: #3b2b1a;
+            --gold: #cda85c;
+            --gold-hover: #e8c778;
+            --blood-red: #6b1d1d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--wood-dark);
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+            color: var(--ink);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Cinzel', serif; }
+
+        header {
+            height: 65px;
+            background-color: var(--wood-dark);
+            border-bottom: 3px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-shrink: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            gap: 12px;
+        }
+
+        .header-title {
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px black;
+            flex-shrink: 0;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-right button {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+
+        .mode-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(205, 168, 92, 0.15);
+            border: 1px solid var(--gold);
+            border-radius: 6px;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #mode-label { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+
+        .mode-switch-btn {
+            background: var(--wood-light);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            padding: 3px 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+            box-shadow: 0 2px 0 #1a0f07;
+            transition: all 0.2s;
+            font-family: 'Cinzel', serif;
+        }
+
+        .mode-switch-btn:hover {
+            background: var(--gold);
+            color: var(--wood-dark);
+            transform: none;
+            box-shadow: 0 2px 0 #1a0f07;
+        }
+
+        .btn-save { background-color: #2e4d2b; box-shadow: 0 3px 0 #1a2e18; }
+        .btn-save:hover { background-color: #3d6639; box-shadow: 0 2px 0 #1a2e18; }
+        .btn-load { background-color: #4a3b6b; box-shadow: 0 3px 0 #2e2342; }
+        .btn-load:hover { background-color: #60508a; box-shadow: 0 2px 0 #2e2342; }
+
+        .vtt-container {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100vh - 65px);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 340px;
+            flex-shrink: 0;
+            background-color: var(--parchment);
+            background-image: radial-gradient(var(--parchment-dark) 1px, transparent 1px);
+            background-size: 15px 15px;
+            border-right: 4px solid #3b2210;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2), 5px 0 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            overflow-y: auto;
+            z-index: 10;
+            transition: margin-left 0.3s ease, opacity 0.3s ease;
+        }
+
+        #sidebar-right {
+            border-right: none;
+            border-left: 4px solid #3b2210;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2), -5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        #sidebar-left.collapsed {
+            margin-left: -340px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #sidebar-toggle {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 72px;
+            padding: 0;
+            margin: 0;
+            background: rgba(43, 29, 20, 0.95);
+            border: 2px solid var(--gold);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            color: var(--gold);
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 500;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 2px black;
+            transition: background 0.2s, color 0.2s, width 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+        }
+
+        #sidebar-toggle:hover {
+            background: var(--wood-light);
+            color: var(--gold-hover);
+            width: 26px;
+            transform: translateY(-50%);
+        }
+
+        #board-container {
+            flex-grow: 1;
+            position: relative;
+            background-color: #1e140e;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(107, 29, 29, 0.4) 0%, transparent 60%),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        #initiative-tracker {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1400px;
+            height: 50px;
+            background-color: rgba(43, 29, 20, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            display: none; 
+            align-items: center;
+            padding: 0 15px;
+            gap: 15px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        #initiative-tracker.active { display: flex; }
+
+        .initiative-controls { display: flex; gap: 10px; flex-shrink: 0; }
+        .initiative-controls button { width: auto; padding: 5px 10px; font-size: 12px; margin: 0; }
+
+        .initiative-list {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+        
+        .initiative-list::-webkit-scrollbar { display: none; }
+        .initiative-list { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .init-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            height: 36px;
+            background: #3b2210;
+            border: 2px solid #5c3a21;
+            border-radius: 4px;
+            color: var(--gold);
+            font-size: 12px;
+            cursor: grab;
+            position: relative;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        body.player-mode .init-item { cursor: default; }
+        .init-item:active { cursor: grabbing; }
+        
+        .init-item.active-turn {
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+            background: #2a4d2a;
+            color: #fff;
+        }
+
+        .init-item.dragging {
+            opacity: 0.4;
+            transform: scale(0.9);
+        }
+
+        .init-item.drag-over {
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 14px rgba(255, 215, 0, 0.9) !important;
+            background: #5c3a21 !important;
+            color: #fff !important;
+        }
+
+        .init-item-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--blood-red);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid black;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .init-item:hover .init-item-remove { opacity: 1; }
+        body.player-mode .init-item-remove { display: none !important; }
+
+        #board {
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            max-height: 100%;
+            position: relative;
+            background-color: #ffffff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 3px solid var(--wood-light);
+            box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,0,0,0.5);
+            transition: background-image 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 25px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            user-select: none;
+            z-index: 20;
+        }
+
+        .nav-arrow:hover { background: rgba(0, 0, 0, 0.6); color: white; box-shadow: 0 0 15px rgba(205, 168, 92, 0.5); }
+        #nav-prev { left: 10px; }
+        #nav-next { right: 10px; }
+
+        #image-counter {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--gold);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            z-index: 20;
+            display: none;
+            pointer-events: none;
+            border: 1px solid var(--gold);
+        }
+
+        .btn-delete-image {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(107, 29, 29, 0.8);
+            color: white;
+            border: 1px solid #3a0f0f;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 25;
+            display: none;
+            transition: all 0.2s;
+        }
+        .btn-delete-image:hover { background: rgba(179, 34, 34, 1); transform: scale(1.1); }
+
+        #grid-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+
+        #grid-overlay.active {
+            display: block;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        #minimap-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            aspect-ratio: 16 / 9;
+            background-color: #111;
+            border: 3px solid var(--gold);
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            z-index: 150;
+            display: none;
+            overflow: hidden;
+            cursor: grab;
+            flex-direction: column;
+        }
+
+        #minimap-container.active { display: flex; }
+        #minimap-container:active { cursor: grabbing; }
+
+        .minimap-toolbar {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            height: 30px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 5px;
+            gap: 5px;
+            z-index: 160;
+            pointer-events: auto;
+        }
+
+        .btn-minimap {
+            background: var(--wood-light);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 3px;
+            padding: 2px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px black;
+        }
+        .btn-minimap:hover { background: var(--gold); color: #000; }
+        .btn-minimap.delete { background: var(--blood-red); border-color: #3a0f0f; color: white; }
+        .btn-minimap.delete:hover { background: #d33; }
+
+        #minimap-canvas {
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            background-size: cover;
+            background-position: center;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .panel-section {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid #c9b291;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .panel-section h3 { 
+            margin-bottom: 12px; 
+            font-size: 16px; 
+            color: var(--blood-red);
+            border-bottom: 2px solid #c9b291; 
+            padding-bottom: 5px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 5px;
+            background: #fffdf8;
+            border: 1px solid #a68b68;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        input[type="file"]::file-selector-button {
+            background-color: var(--wood-light);
+            color: var(--parchment);
+            border: 1px solid #22150c;
+            padding: 6px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+
+        input[type="file"]::file-selector-button:hover { background-color: #5c412b; }
+
+        button {
+            background-color: var(--wood-light);
+            color: var(--parchment);
+            border: 2px solid #22150c;
+            padding: 10px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px black;
+            box-shadow: 0 3px 0 #1a0f07;
+        }
+
+        button:hover { background-color: #5c412b; transform: translateY(1px); box-shadow: 0 2px 0 #1a0f07; }
+        button:active { transform: translateY(3px); box-shadow: none; }
+
+        .btn-add-img { background-color: #5c412b; font-size: 12px; padding: 6px; margin-top: -5px; }
+
+        .btn-edit-gold {
+            background-color: var(--gold) !important;
+            color: var(--wood-dark) !important;
+            text-shadow: none !important;
+            border-color: #8a6f47 !important;
+            box-shadow: 0 3px 0 #8a6f47 !important;
+            font-size: 15px !important;
+        }
+        .btn-edit-gold:hover { background-color: var(--gold-hover) !important; box-shadow: 0 2px 0 #8a6f47 !important; }
+        .btn-edit-gold:active { box-shadow: none !important; }
+
+        .btn-inventory-panel {
+            background-color: #4a90e2 !important;
+            color: white !important;
+            text-shadow: 1px 1px 2px black !important;
+            border-color: #2e5f9e !important;
+            box-shadow: 0 3px 0 #2e5f9e !important;
+            font-size: 14px !important;
+        }
+        .btn-inventory-panel:hover { background-color: #60a5fa !important; box-shadow: 0 2px 0 #2e5f9e !important; }
+        .btn-inventory-panel:active { box-shadow: none !important; }
+
+        .btn-spells-panel {
+            background-color: #7c5cc4 !important;
+            color: white !important;
+            text-shadow: 1px 1px 2px black !important;
+            border-color: #4e3a85 !important;
+            box-shadow: 0 3px 0 #4e3a85 !important;
+            font-size: 14px !important;
+        }
+        .btn-spells-panel:hover { background-color: #9678d8 !important; box-shadow: 0 2px 0 #4e3a85 !important; }
+        .btn-spells-panel:active { box-shadow: none !important; }
+        
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            background: #fffdf8;
+            border: 1px solid #a68b68;
+            color: var(--ink);
+            border-radius: 3px;
+            margin-bottom: 10px;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%233b2b1a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 10px auto;
+        }
+
+        .grid-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            background: #e8dfcc;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #c9b291;
+        }
+        .grid-toggle-container input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; transform: scale(1.2); }
+        .grid-toggle-container label { cursor: pointer; font-weight: bold; color: var(--wood-dark); font-size: 14px; user-select: none; }
+
+        .scene-list, .token-list { list-style: none; }
+        .scene-list li, .token-list li {
+            padding: 6px 10px;
+            background: #fdfbf7;
+            margin-bottom: 6px;
+            border: 1px solid #d4c2a6;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            transition: all 0.2s;
+            color: var(--ink);
+            font-weight: 500;
+            position: relative; 
+        }
+        .scene-list li:hover, .token-list li:hover { background: #fff; border-color: var(--gold); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .scene-list li.active { background: #e8dfcc; border-color: var(--wood-light); font-weight: bold; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1); }
+
+        .list-item-content {
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 70px; 
+        }
+        
+        .move-controls {
+            display: flex;
+            gap: 2px;
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #fdfbf7; 
+            padding-left: 5px;
+        }
+        .scene-list li:hover .move-controls, .token-list li:hover .move-controls {
+            background: #fff;
+        }
+        
+        .move-btn {
+            background: #e0d0b8;
+            border: 1px solid #c9b291;
+            color: var(--wood-dark);
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            box-shadow: none;
+            text-shadow: none;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.1s;
+        }
+        .move-btn:hover {
+            background: var(--gold);
+            color: var(--wood-dark);
+            transform: none;
+            box-shadow: none;
+        }
+        .move-btn:active { transform: scale(0.9); }
+
+        .btn-delete-scene, .btn-delete-token {
+            background: transparent;
+            color: var(--blood-red);
+            border: none;
+            font-size: 14px;
+            padding: 2px 5px;
+            width: auto;
+            margin: 0;
+            box-shadow: none;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+        .scene-list li:hover .btn-delete-scene, .token-list li:hover .btn-delete-token {
+            opacity: 1;
+        }
+        .btn-delete-scene:hover, .btn-delete-token:hover {
+            background: transparent;
+            color: red;
+            transform: scale(1.2);
+            box-shadow: none;
+        }
+
+        #player-list li {
+            background: #e6f0ff;
+            border-color: #a0b8d0;
+        }
+        #player-list li:hover {
+            background: #d4e6ff;
+            border-color: #6b9bd1;
+        }
+        .btn-summon {
+            background: #4a90e2;
+            border: 1px solid #2e5f9e;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            box-shadow: none;
+            text-shadow: none;
+            transition: all 0.1s;
+        }
+        .btn-summon:hover { background: #60a5fa; box-shadow: none; }
+
+        #token-menu {
+            display: none;
+            background: rgba(205, 168, 92, 0.15);
+            border: 2px solid var(--gold);
+            box-shadow: inset 0 0 15px rgba(205,168,92,0.3), 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        #token-menu h3 { color: #8a5a19; border-bottom-color: #cda85c; }
+        
+        .token-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            border-bottom: 1px dotted #c9b291;
+            padding-bottom: 5px;
+        }
+        .token-detail-row span:first-child { color: #6b5a45; font-weight: bold; }
+        .token-detail-row span:last-child { font-weight: bold; color: var(--wood-dark); text-align: right;}
+
+        .inline-edit {
+            width: 70px !important;
+            padding: 4px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            background: #fff !important;
+        }
+
+        .combat-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            padding: 8px;
+            background: #e8dfcc;
+            border-radius: 4px;
+            border: 1px solid #c9b291;
+        }
+        .combat-stat-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .combat-stat-cell .stat-label {
+            font-weight: bold;
+            color: var(--blood-red);
+            font-size: 10px;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .combat-stat-cell input {
+            width: 100% !important;
+            padding: 4px 2px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            background: #fff !important;
+        }
+
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 8px;
+            margin-top: 10px;
+            margin-bottom: 6px;
+            padding: 10px;
+            background: #e8dfcc;
+            border-radius: 4px;
+            border: 1px solid #c9b291;
+        }
+        .ability-cell {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+        .ability-cell .ability-label {
+            font-weight: bold;
+            color: var(--blood-red);
+            min-width: 32px;
+            font-size: 11px;
+            font-family: 'Cinzel', serif;
+            text-align: left;
+        }
+        .ability-cell input {
+            width: 42px !important;
+            min-width: 0 !important;
+            padding: 3px 4px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            background: #fff !important;
+            flex-shrink: 0;
+        }
+        .ability-cell .ability-mod {
+            font-weight: bold;
+            font-size: 12px;
+            min-width: 30px;
+            text-align: center;
+            background: #fffdf8;
+            border: 1px solid #a68b68;
+            border-radius: 3px;
+            padding: 3px 2px;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            color: #666;
+        }
+
+        .slots-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+        .slot-item {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 12px;
+            background: #fffdf8;
+            padding: 3px 5px;
+            border: 1px solid #a68b68;
+            border-radius: 3px;
+        }
+        .slot-item input {
+            width: 30px !important;
+            padding: 2px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .die-type-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .die-type-btn {
+            width: auto;
+            padding: 5px 9px;
+            margin: 0;
+            font-size: 12px;
+            background: #e0d0b8;
+            color: var(--wood-dark);
+            border: 1px solid #c9b291;
+            box-shadow: 0 2px 0 #b8a688;
+            text-shadow: none;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .die-type-btn:hover {
+            background: var(--gold);
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #b8a688;
+        }
+        .die-type-btn.active {
+            background: var(--blood-red);
+            color: white;
+            box-shadow: 0 2px 0 #4a1414;
+            border-color: #4a1414;
+        }
+        .die-type-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .die-mod-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .die-mod-label {
+            font-weight: bold;
+            color: #6b5a45;
+            font-size: 12px;
+            font-family: 'Cinzel', serif;
+        }
+
+        .die-mod-input {
+            width: 70px !important;
+            padding: 5px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            background: #fff !important;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .dice-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 10px;
+            background: linear-gradient(180deg, #2b1d14, #1a0f07);
+            border: 2px solid #1a0f07;
+            border-radius: 8px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 2px 5px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            user-select: none;
+            margin-bottom: 10px;
+        }
+
+        .dice-visual:hover {
+            border-color: var(--gold);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(205, 168, 92, 0.4);
+        }
+
+        .dice-face {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #fdf5e4, #e3d1b5);
+            border: 3px solid #8a6f47;
+            box-shadow: 
+                inset 0 -6px 12px rgba(0,0,0,0.15),
+                inset 0 6px 12px rgba(255,255,255,0.4),
+                0 6px 14px rgba(0,0,0,0.6),
+                0 2px 4px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .dice-face.shape-d4 { border-radius: 6px; }
+        .dice-face.shape-d6 { border-radius: 14px; }
+        .dice-face.shape-d8 { border-radius: 50%; }
+        .dice-face.shape-d10 { border-radius: 20px; }
+        .dice-face.shape-d12 { border-radius: 16px; }
+        .dice-face.shape-d20 { border-radius: 50%; }
+        .dice-face.shape-d100 { border-radius: 50%; }
+
+        .dice-number {
+            font-family: 'Cinzel', serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: var(--wood-dark);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+            line-height: 1;
+        }
+
+        .dice-number.preview {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 20px;
+            color: #8a6f47;
+            letter-spacing: 1px;
+        }
+
+        .dice-face.shape-d100 .dice-number:not(.preview) {
+            font-size: 32px;
+        }
+
+        .dice-dots {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 4px;
+            width: 72px;
+            height: 72px;
+            padding: 2px;
+        }
+
+        .dice-face.show-dots .dice-dots { display: grid; }
+        .dice-face.show-dots .dice-number { display: none; }
+        .dice-face:not(.show-dots) .dice-dots { display: none; }
+        .dice-face:not(.show-dots) .dice-number { display: block; }
+
+        .dice-dots .pip {
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #4a3320, #2b1d14);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        .dice-dots .pip.hidden {
+            visibility: hidden;
+        }
+
+        .dice-caption {
+            color: var(--gold);
+            font-size: 11px;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            letter-spacing: 0.5px;
+            min-height: 14px;
+        }
+
+        @keyframes dice-shake {
+            0% { transform: rotate(0deg) scale(1); }
+            15% { transform: rotate(-20deg) scale(1.08); }
+            30% { transform: rotate(18deg) scale(0.92); }
+            45% { transform: rotate(-12deg) scale(1.05); }
+            60% { transform: rotate(10deg) scale(0.96); }
+            75% { transform: rotate(-5deg) scale(1.02); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        .dice-face.rolling {
+            animation: dice-shake 0.6s ease-in-out;
+        }
+
+        @keyframes dice-appear {
+            0% { transform: scale(0.7) rotate(-20deg); opacity: 0.3; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .dice-face.appearing {
+            animation: dice-appear 0.35s ease-out;
+        }
+
+        #dice-log {
+            margin-top: 8px;
+            height: 110px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #6b5a45;
+            border-top: 1px dashed #c9b291;
+            padding-top: 8px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #dice-log .log-entry {
+            margin-bottom: 4px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(201, 178, 145, 0.4);
+            line-height: 1.4;
+        }
+
+        .token {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #8a6f47;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 0 10px rgba(0,0,0,0.5);
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 2px 2px 4px black, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            user-select: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            z-index: 10;
+        }
+        
+        .token:hover { border-color: #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5); }
+        .token:active { cursor: grabbing; z-index: 1000; }
+        .token.token-not-owned { cursor: default; }
+        .token.token-not-owned:hover { border-color: #8a6f47; box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 0 10px rgba(0,0,0,0.5); }
+        
+        .token.active-turn-token {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .token.is-player { border-color: #4a90e2; }
+        .token.is-player:hover { border-color: #87ceeb; }
+        .token.is-player.token-not-owned:hover { border-color: #4a90e2; }
+
+        .token-tooltip {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            color: var(--ink);
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 2px solid #5c3a21;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-size: 13px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            z-index: 2000;
+        }
+        .token-tooltip strong { font-family: 'Cinzel', serif; color: var(--blood-red); font-size: 15px;}
+        .token:hover .token-tooltip { opacity: 1; }
+        .token.token-not-owned:hover .token-tooltip { opacity: 0; }
+
+        #modal, #inventory-modal, #spells-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--parchment);
+            background-image: radial-gradient(var(--parchment-dark) 1px, transparent 1px);
+            background-size: 15px 15px;
+            padding: 30px;
+            border-radius: 8px;
+            width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom, #5c3a21, #3b2210) 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .modal-content h2 { margin-bottom: 20px; color: var(--blood-red); text-align: center; border-bottom: 2px solid #c9b291; padding-bottom: 10px;}
+        .modal-content label { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: block;}
+        
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        
+        .btn-delete { background-color: var(--blood-red); box-shadow: 0 3px 0 #3a0f0f;}
+        .btn-delete:hover { background-color: #8c2626; box-shadow: 0 2px 0 #3a0f0f;}
+        .btn-cancel { background-color: #6b5a45; box-shadow: 0 3px 0 #3d3226;}
+        .btn-cancel:hover { background-color: #7d6b54; box-shadow: 0 2px 0 #3d3226;}
+
+        .modal-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+            background: #e8dfcc;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #c9b291;
+        }
+        .modal-slot-col { display: flex; flex-direction: column; align-items: center; }
+        .modal-slot-col label { font-size: 12px; margin-bottom: 2px; color: #6b5a45; }
+        .modal-slot-col input { width: 100% !important; text-align: center; padding: 5px !important; margin: 0 !important; }
+
+        .inv-modal-content {
+            background-color: var(--parchment);
+            background-image: radial-gradient(var(--parchment-dark) 1px, transparent 1px);
+            background-size: 15px 15px;
+            padding: 30px;
+            border-radius: 8px;
+            width: 620px;
+            max-width: 92vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom, #5c3a21, #3b2210) 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .inv-modal-content h2 {
+            margin-bottom: 10px;
+            color: var(--blood-red);
+            text-align: center;
+            border-bottom: 2px solid #c9b291;
+            padding-bottom: 10px;
+        }
+        #inv-owner-name {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--wood-dark);
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        #inv-owner-name::before { content: "🎒 "; }
+        #inventory-text {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 320px;
+            padding: 12px;
+            background: #fffdf8;
+            border: 1px solid #a68b68;
+            border-radius: 3px;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--ink);
+            resize: vertical;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            outline: none;
+        }
+        #inventory-text:focus {
+            border-color: var(--gold);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 0 8px rgba(205,168,92,0.5);
+        }
+
+        .spells-modal-content {
+            background-color: var(--parchment);
+            background-image: radial-gradient(var(--parchment-dark) 1px, transparent 1px);
+            background-size: 15px 15px;
+            padding: 24px 30px;
+            border-radius: 8px;
+            width: 960px;
+            max-width: 95vw;
+            max-height: 94vh;
+            display: flex;
+            flex-direction: column;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom, #5c3a21, #3b2210) 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .spells-modal-content h2 {
+            margin-bottom: 8px;
+            color: var(--blood-red);
+            text-align: center;
+            border-bottom: 2px solid #c9b291;
+            padding-bottom: 8px;
+            font-size: 20px;
+        }
+        #spells-owner-name {
+            text-align: center;
+            margin-bottom: 12px;
+            color: var(--wood-dark);
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 17px;
+        }
+        #spells-owner-name::before { content: "✨ "; }
+        .spells-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 14px;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .spells-block {
+            display: flex;
+            flex-direction: column;
+        }
+        .spells-block label {
+            font-weight: bold;
+            font-size: 12px;
+            color: var(--blood-red);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Cinzel', serif;
+        }
+        .spells-block textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 8px 10px;
+            background: #fffdf8;
+            border: 1px solid #a68b68;
+            border-radius: 3px;
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--ink);
+            resize: vertical;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            outline: none;
+        }
+        .spells-block textarea:focus {
+            border-color: var(--gold);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 0 8px rgba(205,168,92,0.5);
+        }
+        .spells-block.combat label { color: #b03636; }
+        .spells-block.special label { color: #8a5a19; }
+        .spells-block.cantrips label { color: #4e7bb8; }
+
+        #music-player {
+            position: fixed;
+            bottom: 10px;
+            left: 350px;
+            background-color: var(--wood-dark);
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            transition: left 0.3s ease;
+        }
+
+        body.sidebar-collapsed #music-player { left: 10px; }
+
+        .music-controls { display: flex; gap: 10px; align-items: center; }
+        
+        .music-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.2s;
+            box-shadow: none;
+            margin: 0;
+            width: auto;
+        }
+        .music-btn:hover { color: var(--gold-hover); transform: scale(1.1); box-shadow: none; background: none; }
+        .music-btn.active { color: var(--blood-red); text-shadow: 0 0 10px red; }
+
+        #volume-slider {
+            width: 70px;
+            accent-color: var(--gold);
+            cursor: pointer;
+        }
+
+        .music-upload-label {
+            cursor: pointer;
+            font-size: 12px;
+            background: var(--wood-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #22150c;
+            transition: all 0.2s;
+        }
+        .music-upload-label:hover { background: #5c412b; }
+
+        #track-name {
+            font-size: 11px;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #c9b291;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .token-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            background: #e8dfcc;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #c9b291;
+        }
+        .token-type-selector label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+        .token-type-selector input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        body.player-mode #btn-add-npc,
+        body.player-mode .btn-save,
+        body.player-mode .btn-load,
+        body.player-mode .music-upload-label,
+        body.player-mode .move-controls {
+            display: none !important;
+        }
+
+        body.player-mode #modal .btn-delete {
+            display: none !important;
+        }
+
+        body.player-mode #sidebar-left,
+        body.player-mode #sidebar-toggle,
+        body.player-mode #nav-prev,
+        body.player-mode #nav-next,
+        body.player-mode #image-counter,
+        body.player-mode #btn-delete-image {
+            display: none !important;
+        }
+
+        body.player-mode #music-player {
+            left: 10px !important;
+        }
+
+        #mode-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+        }
+
+        .mode-modal-content {
+            background-color: var(--parchment);
+            background-image: radial-gradient(var(--parchment-dark) 1px, transparent 1px);
+            background-size: 15px 15px;
+            padding: 40px;
+            border-radius: 12px;
+            width: 600px;
+            max-width: 92vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom, #5c3a21, #3b2210) 1;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            text-align: center;
+        }
+
+        .mode-modal-content h1 {
+            color: var(--blood-red);
+            margin-bottom: 8px;
+            font-size: 28px;
+            letter-spacing: 2px;
+            padding-bottom: 15px;
+        }
+
+        .mode-modal-content .mode-subtitle {
+            color: #6b5a45;
+            font-size: 14px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #c9b291;
+            padding-bottom: 15px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 30px 20px;
+            font-size: 20px;
+            background: linear-gradient(180deg, #5c412b, #3b2210);
+            color: var(--gold);
+            border: 3px solid var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 5px 0 #1a0f07, 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .mode-btn:hover {
+            background: linear-gradient(180deg, #6d5033, #4a2b15);
+            color: var(--gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #1a0f07, 0 12px 25px rgba(0,0,0,0.6);
+        }
+
+        .mode-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1a0f07;
+        }
+
+        .mode-btn .mode-icon {
+            display: block;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .mode-btn .mode-desc {
+            display: block;
+            font-size: 12px;
+            color: #b8a082;
+            margin-top: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: normal;
+        }
+
+        #mode-player-list {
+            list-style: none;
+            margin: 20px 0;
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 0;
+            text-align: left;
+        }
+
+        #mode-player-list li {
+            padding: 15px 20px;
+            background: #fffdf8;
+            border: 2px solid #c9b291;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        #mode-player-list li:hover {
+            background: #fff;
+            border-color: var(--gold);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        #mode-player-list li strong {
+            color: var(--wood-dark);
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+        }
+
+        #mode-player-list li .player-meta {
+            color: #888;
+            font-size: 12px;
+            margin-left: 10px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: normal;
+        }
+
+        .mode-back-btn {
+            background: #6b5a45;
+            color: var(--parchment);
+            border: 2px solid #3d3226;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            box-shadow: 0 3px 0 #3d3226;
+            width: auto;
+            margin: 15px auto 0;
+            display: block;
+        }
+
+        .mode-back-btn:hover { background: #7d6b54; }
+
+        .mode-player-empty {
+            padding: 30px 20px;
+            color: #888;
+            font-style: italic;
+            text-align: center;
+            background: #f0e5d0;
+            border-radius: 6px;
+            border: 1px dashed #c9b291;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">ЮСТИЛИЯ</div>
+        <div class="header-right">
+            <div class="mode-indicator">
+                <span id="mode-label">👑 Мастер</span>
+                <button class="mode-switch-btn" onclick="switchMode()" title="Сменить режим">⇄</button>
+            </div>
+            <button class="btn-save" onclick="exportState()" title="Скачать файл со всеми настройками и музыкой">💾 Сохранить мир</button>
+            <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importState(event)">
+            <button class="btn-load" onclick="document.getElementById('import-file').click()" title="Загрузить сохраненный файл">📂 Загрузить мир</button>
+        </div>
+    </header>
+
+    <div class="vtt-container">
+        
+        <aside id="sidebar-left" class="sidebar">
+            <div class="panel-section">
+                <h3>Сцены</h3>
+                
+                <input type="file" id="scene-upload" accept="image/*" multiple title="Загрузить новую сцену">
+                
+                <input type="file" id="scene-add-images" accept="image/*" multiple style="display:none;" onchange="handleAddImages(event)">
+                <button class="btn-add-img" onclick="document.getElementById('scene-add-images').click()">+ Добавить картинки в сцену</button>
+                <button class="btn-add-img" style="background-color: #4a1a1a; margin-top: 5px;" onclick="deleteCurrentImage()">✖ Удалить текущую картинку</button>
+
+                <div class="grid-toggle-container">
+                    <input type="checkbox" id="grid-toggle" onchange="toggleGrid()">
+                    <label for="grid-toggle">Боевая сцена</label>
+                </div>
+
+                <div class="grid-toggle-container">
+                    <input type="checkbox" id="minimap-toggle" onchange="toggleMinimap()">
+                    <label for="minimap-toggle">Миникарта</label>
+                </div>
+
+                <ul class="scene-list" id="scene-list"></ul>
+            </div>
+            
+            <div class="panel-section" style="margin-top: auto;">
+                <h3>Отряд игроков</h3>
+                <ul class="token-list" id="player-list"></ul>
+            </div>
+        </aside>
+
+        <main id="board-container">
+
+            <button id="sidebar-toggle" onclick="toggleSidebar()" title="Скрыть панель сцен">◀</button>
+            
+            <div id="initiative-tracker">
+                <div class="initiative-controls">
+                    <button onclick="addSelectedToInitiative()" id="btn-add-init" title="Добавить выбранного героя в очередь">+ В бой</button>
+                    <button onclick="nextTurn()" title="Следующий ход (Стрелка вправо)">Следующий ход ▶</button>
+                </div>
+                <div class="initiative-list" id="initiative-list"></div>
+            </div>
+
+            <div id="board">
+                <div id="grid-overlay"></div>
+                
+                <div id="nav-prev" class="nav-arrow" onclick="prevImage()">❮</div>
+                <div id="nav-next" class="nav-arrow" onclick="nextImage()">❯</div>
+                
+                <div id="image-counter">1 / 1</div>
+                <div class="btn-delete-image" id="btn-delete-image" onclick="deleteCurrentImage()" title="Удалить текущую картинку">✖</div>
+            </div>
+
+            <div id="minimap-container" onmousedown="startMinimapDrag(event)">
+                <div class="minimap-toolbar">
+                    <button class="btn-minimap" onclick="event.stopPropagation(); document.getElementById('minimap-file-upload').click()">📂 Загрузить</button>
+                    <button class="btn-minimap delete" onclick="event.stopPropagation(); deleteMinimap()">✖ Удалить</button>
+                </div>
+                <input type="file" id="minimap-file-upload" accept="image/*" style="display:none;" onchange="handleMinimapUpload(event)">
+                <div id="minimap-canvas"></div>
+            </div>
+        </main>
+
+        <aside id="sidebar-right" class="sidebar">
+            <div class="panel-section">
+                <h3>Персонажи на сцене</h3>
+                <button id="btn-add-npc" onclick="openCreateModal('npc')">+ Добавить НПС</button>
+                <ul class="token-list" id="npc-list"></ul>
+            </div>
+
+            <div id="token-menu" class="panel-section">
+                <h3>Выбранный герой</h3>
+                <div class="token-detail-row"><span>Имя:</span> <span id="sel-name">-</span></div>
+                <div class="token-detail-row"><span>Раса:</span> <span id="sel-race">-</span></div>
+                <div class="token-detail-row"><span>Класс:</span> <span id="sel-class">-</span></div>
+                <div class="token-detail-row"><span>Уровень:</span> <span id="sel-level">-</span></div>
+                
+                <div class="token-detail-row">
+                    <span>Хиты (HP):</span> 
+                    <input type="text" class="inline-edit" id="sel-hp-input" onchange="updateHpDirectly()" placeholder="0/0">
+                </div>
+
+                <div class="combat-stats-grid">
+                    <div class="combat-stat-cell">
+                        <span class="stat-label">КБ</span>
+                        <input type="number" id="sel-ac" min="0" max="50" value="10" onchange="updateCombatStatDirectly('ac', this.value)">
+                    </div>
+                    <div class="combat-stat-cell">
+                        <span class="stat-label">ИНИЦ</span>
+                        <input type="number" id="sel-initiative" min="-10" max="30" value="0" onchange="updateCombatStatDirectly('initiative', this.value)">
+                    </div>
+                    <div class="combat-stat-cell">
+                        <span class="stat-label">СКОР</span>
+                        <input type="text" id="sel-speed" value="30" onchange="updateCombatStatDirectly('speed', this.value)">
+                    </div>
+                </div>
+
+                <div id="abilities-container" class="abilities-grid">
+                    <div class="ability-cell">
+                        <span class="ability-label">СИЛ</span>
+                        <input type="number" id="sel-abil-str" min="1" max="30" value="10" onchange="updateAbilityDirectly('str', this.value)">
+                        <span class="ability-mod" id="sel-mod-str">+0</span>
+                    </div>
+                    <div class="ability-cell">
+                        <span class="ability-label">ЛОВ</span>
+                        <input type="number" id="sel-abil-dex" min="1" max="30" value="10" onchange="updateAbilityDirectly('dex', this.value)">
+                        <span class="ability-mod" id="sel-mod-dex">+0</span>
+                    </div>
+                    <div class="ability-cell">
+                        <span class="ability-label">ТЕЛ</span>
+                        <input type="number" id="sel-abil-con" min="1" max="30" value="10" onchange="updateAbilityDirectly('con', this.value)">
+                        <span class="ability-mod" id="sel-mod-con">+0</span>
+                    </div>
+                    <div class="ability-cell">
+                        <span class="ability-label">ИНТ</span>
+                        <input type="number" id="sel-abil-int" min="1" max="30" value="10" onchange="updateAbilityDirectly('int', this.value)">
+                        <span class="ability-mod" id="sel-mod-int">+0</span>
+                    </div>
+                    <div class="ability-cell">
+                        <span class="ability-label">МУД</span>
+                        <input type="number" id="sel-abil-wis" min="1" max="30" value="10" onchange="updateAbilityDirectly('wis', this.value)">
+                        <span class="ability-mod" id="sel-mod-wis">+0</span>
+                    </div>
+                    <div class="ability-cell">
+                        <span class="ability-label">ХАР</span>
+                        <input type="number" id="sel-abil-cha" min="1" max="30" value="10" onchange="updateAbilityDirectly('cha', this.value)">
+                        <span class="ability-mod" id="sel-mod-cha">+0</span>
+                    </div>
+                </div>
+                
+                <div id="spell-slots-container" style="display: none; margin-top: 10px;">
+                    <div style="font-size: 12px; font-weight: bold; color: #6b5a45; margin-bottom: 5px;">Ячейки заклинаний:</div>
+                    <div class="slots-grid" id="slots-inputs"></div>
+                </div>
+
+                <button class="btn-edit-gold" onclick="editSelectedToken()" style="margin-top: 15px;">✎ РЕДАКТИРОВАТЬ</button>
+                <button class="btn-inventory-panel" id="btn-inventory-panel" onclick="openInventoryFromPanel()" style="margin-top: 8px; display: none;">🎒 ИНВЕНТАРЬ</button>
+                <button class="btn-spells-panel" id="btn-spells-panel" onclick="openSpellsFromPanel()" style="margin-top: 8px;">✨ ЗАКЛИНАНИЯ И УМЕНИЯ</button>
+            </div>
+
+            <div class="panel-section">
+                <h3>Кости Судьбы</h3>
+                <div class="die-type-selector">
+                    <button class="die-type-btn" data-die="4" onclick="selectDieType(4)">d4</button>
+                    <button class="die-type-btn" data-die="6" onclick="selectDieType(6)">d6</button>
+                    <button class="die-type-btn" data-die="8" onclick="selectDieType(8)">d8</button>
+                    <button class="die-type-btn" data-die="10" onclick="selectDieType(10)">d10</button>
+                    <button class="die-type-btn" data-die="12" onclick="selectDieType(12)">d12</button>
+                    <button class="die-type-btn active" data-die="20" onclick="selectDieType(20)">d20</button>
+                    <button class="die-type-btn" data-die="100" onclick="selectDieType(100)">d100</button>
+                </div>
+                <div class="die-mod-row">
+                    <span class="die-mod-label">Модификатор:</span>
+                    <input type="text" id="dice-mod" placeholder="+0" class="die-mod-input">
+                </div>
+                <div id="dice-visual" class="dice-visual" onclick="rollDice()" title="Нажмите, чтобы бросить">
+                    <div class="dice-face shape-d20" id="dice-face">
+                        <div class="dice-dots" id="dice-dots">
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div>
+                        </div>
+                        <span class="dice-number preview" id="dice-result">d20</span>
+                    </div>
+                    <div class="dice-caption" id="dice-caption">Нажмите на d20</div>
+                </div>
+                <div id="dice-log"></div>
+            </div>
+        </aside>
+    </div>
+
+    <div id="music-player">
+        <div class="music-controls">
+            <button class="music-btn" id="btn-play-pause" onclick="togglePlay()" title="Играть/Пауза">▶</button>
+            <button class="music-btn" id="btn-loop" onclick="toggleLoop()" title="Зациклить">🔁</button>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" oninput="changeVolume(this.value)" title="Громкость">
+            <div id="track-name">Нет трека</div>
+        </div>
+        
+        <input type="file" id="music-upload" accept="audio/*" style="display:none;" onchange="handleMusicUpload(event)">
+        <label for="music-upload" class="music-upload-label" title="Загрузить музыку для этой сцены">🎵 Загрузить</label>
+    </div>
+    
+    <audio id="bg-music" loop></audio>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Создать токен</h2>
+            <input type="hidden" id="edit-token-id">
+            
+            <div class="token-type-selector" id="type-selector">
+                <label>
+                    <input type="radio" name="token-type" value="npc" checked onchange="updateCreateTypeUI()"> НПС (на сцене)
+                </label>
+                <label>
+                    <input type="radio" name="token-type" value="player" onchange="updateCreateTypeUI()"> Игрок (в отряде)
+                </label>
+            </div>
+
+            <label>Имя персонажа</label>
+            <input type="text" id="edit-name" placeholder="Например: Леонард">
+            
+            <div style="display:flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Уровень</label>
+                    <input type="number" id="edit-level" value="1" min="1" max="20">
+                </div>
+                <div style="flex: 2;">
+                    <label>Хиты (HP)</label>
+                    <input type="text" id="edit-hp" placeholder="Например: 24/30">
+                </div>
+            </div>
+
+            <label>Раса</label>
+            <select id="edit-race">
+                <option value="">-- Выберите расу --</option>
+                <option value="Эохим">Эохим</option>
+                <option value="Ханохим">Ханохим</option>
+                <option value="Мириам">Мириам</option>
+                <option value="Человек">Человек</option>
+                <option value="Алир">Алир</option>
+                <option value="Гном">Гном</option>
+                <option value="Орк">Орк</option>
+                <option value="Аники">Аники</option>
+                <option value="Гоблин">Гоблин</option>
+                <option value="Саат'ши">Саат'ши</option>
+                <option value="Демон">Демон</option>
+                <option value="Вампир">Вампир</option>
+                <option value="Серафим">Серафим</option>
+                <option value="Кса'лаар">Кса'лаар</option>
+                <option value="Арахнид">Арахнид</option>
+                <option value="Гарпид">Гарпид</option>
+                <option value="Цилинь">Цилинь</option>
+                <option value="Ханао">Ханао</option>
+                <option value="Ширью">Ширью</option>
+            </select>
+            
+            <label>Класс</label>
+            <select id="edit-class">
+                <option value="">-- Выберите класс --</option>
+                <option value="Варвар">Варвар</option>
+                <option value="Бард">Бард</option>
+                <option value="Воин">Воин</option>
+                <option value="Волшебник">Волшебник</option>
+                <option value="Жрец">Жрец</option>
+                <option value="Колдун">Колдун</option>
+                <option value="Паладин">Паладин</option>
+                <option value="Следопыт">Следопыт</option>
+                <option value="Чародей">Чародей</option>
+                <option value="Плут">Плут</option>
+                <option value="Друид">Друид</option>
+            </select>
+
+            <div id="edit-slots-section">
+                <label style="margin-top: 10px; color: var(--blood-red);">Макс. ячейки заклинаний (вручную)</label>
+                <div class="modal-slots-grid">
+                    <div class="modal-slot-col"><label>1 круг</label><input type="number" id="edit-slot-max-1" value="0" min="0"></div>
+                    <div class="modal-slot-col"><label>2 круг</label><input type="number" id="edit-slot-max-2" value="0" min="0"></div>
+                    <div class="modal-slot-col"><label>3 круг</label><input type="number" id="edit-slot-max-3" value="0" min="0"></div>
+                    <div class="modal-slot-col"><label>4 круг</label><input type="number" id="edit-slot-max-4" value="0" min="0"></div>
+                    <div class="modal-slot-col"><label>5 круг</label><input type="number" id="edit-slot-max-5" value="0" min="0"></div>
+                </div>
+            </div>
+            
+            <label>Портрет (Опционально)</label>
+            <input type="file" id="edit-image" accept="image/*">
+
+            <div class="modal-actions">
+                <button onclick="saveToken()" style="flex: 2;">Сохранить</button>
+                <button class="btn-delete" onclick="deleteToken()">Удалить</button>
+                <button class="btn-cancel" onclick="closeModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="inventory-modal">
+        <div class="inv-modal-content">
+            <h2>Инвентарь</h2>
+            <div id="inv-owner-name">-</div>
+            <textarea id="inventory-text" placeholder="Одна строка — один предмет.&#10;Например:&#10;Меч длинный +1&#10;Зелье лечения x3&#10;Верёвка 15м&#10;Кольцо защиты&#10;Свиток «Огненный шар»"></textarea>
+            <div class="modal-actions">
+                <button onclick="saveInventory()" style="flex: 2;">Сохранить</button>
+                <button class="btn-cancel" onclick="closeInventory()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="spells-modal">
+        <div class="spells-modal-content">
+            <h2>Заклинания и умения</h2>
+            <div id="spells-owner-name">-</div>
+            <div class="spells-grid">
+                <div class="spells-block combat">
+                    <label>⚔ Боевые умения</label>
+                    <textarea id="spells-combat" placeholder="Одна строка — одно умение."></textarea>
+                </div>
+                <div class="spells-block special">
+                    <label>🌟 Особые умения</label>
+                    <textarea id="spells-special" placeholder="Одна строка — одно умение."></textarea>
+                </div>
+                <div class="spells-block cantrips">
+                    <label>✨ Заговоры</label>
+                    <textarea id="spells-cantrips" placeholder="Одна строка — один заговор."></textarea>
+                </div>
+                <div class="spells-block">
+                    <label>✨ Заклинания 1 круга</label>
+                    <textarea id="spells-circle1" placeholder="Одна строка — одно заклинание."></textarea>
+                </div>
+                <div class="spells-block">
+                    <label>✨ Заклинания 2 круга</label>
+                    <textarea id="spells-circle2"></textarea>
+                </div>
+                <div class="spells-block">
+                    <label>✨ Заклинания 3 круга</label>
+                    <textarea id="spells-circle3"></textarea>
+                </div>
+                <div class="spells-block">
+                    <label>✨ Заклинания 4 круга</label>
+                    <textarea id="spells-circle4"></textarea>
+                </div>
+                <div class="spells-block">
+                    <label>✨ Заклинания 5 круга</label>
+                    <textarea id="spells-circle5"></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveSpells()" style="flex: 2;">Сохранить</button>
+                <button class="btn-cancel" onclick="closeSpells()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mode-modal">
+        <div class="mode-modal-content">
+            <div id="mode-select-view">
+                <h1>Выбор режима</h1>
+                <div class="mode-subtitle">Выберите, как вы будете управлять этим миром</div>
+                <div class="mode-buttons">
+                    <button class="mode-btn" onclick="selectMasterMode()">
+                        <span class="mode-icon">👑</span>
+                        Мастер
+                        <span class="mode-desc">Полный доступ: сцены, НПС, все токены, сохранение мира</span>
+                    </button>
+                    <button class="mode-btn" onclick="showPlayerSelect()">
+                        <span class="mode-icon">🎭</span>
+                        Игрок
+                        <span class="mode-desc">Управление одним персонажем: статы, инвентарь, заклинания, движение</span>
+                    </button>
+                </div>
+            </div>
+            <div id="player-select-view" style="display:none;">
+                <h1>Выбор персонажа</h1>
+                <div class="mode-subtitle">Кем вы будете играть?</div>
+                <ul id="mode-player-list"></ul>
+                <button class="mode-back-btn" onclick="backToModeSelect()">← Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let state = {
+            players: [], 
+            scenes: [{ 
+                name: "Пустая сцена", 
+                images: [], 
+                currentImageIndex: 0, 
+                isCombat: false, 
+                showMinimap: false,
+                minimapImg: "", 
+                minimapPos: { x: 0, y: 0 },
+                audio: "", 
+                audioName: "",
+                tokens: [] 
+            }],
+            currentSceneIndex: 0,
+            nextTokenId: 1,
+            initiative: [], 
+            currentTurnIndex: 0 
+        };
+
+        let sessionMode = null;
+        let sessionPlayerTokenId = null;
+
+        let socket = null;
+        let isApplyingRemote = false;
+
+        let currentlySelectedId = null;
+        let currentInventoryTokenId = null;
+        let currentSpellsTokenId = null;
+        let clipboardToken = null;
+        let isDraggingMinimap = false;
+        let minimapStartX = 0, minimapStartY = 0;
+        let minimapInitialX = 0, minimapInitialY = 0;
+        let initDragSrcIndex = null;
+
+        let currentDieType = 20;
+
+        const EMPTY_SPELLS = { 
+            combat: "", special: "", cantrips: "",
+            circle1: "", circle2: "", circle3: "", circle4: "", circle5: "" 
+        };
+        const EMPTY_ABILITIES = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+        const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+        const DEFAULT_AC = 10;
+        const DEFAULT_INITIATIVE = 0;
+        const DEFAULT_SPEED = "30";
+
+        const audioEl = document.getElementById('bg-music');
+        const btnPlayPause = document.getElementById('btn-play-pause');
+        const btnLoop = document.getElementById('btn-loop');
+        const volumeSlider = document.getElementById('volume-slider');
+        const trackNameEl = document.getElementById('track-name');
+
+        function updateTokenEverywhere(id, patch) {
+            const player = state.players.find(p => p.id === id);
+            if (player) Object.assign(player, patch);
+
+            state.scenes.forEach(s => {
+                const st = s.tokens.find(t => t.id === id);
+                if (st) Object.assign(st, patch);
+            });
+        }
+
+        // === SOCKET ===
+        function connectSocket() {
+            if (typeof io === 'undefined') {
+                console.warn('Socket.IO не загружен — offline режим');
+                showConnectionStatus('offline');
+                return;
+            }
+
+            socket = io({
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: Infinity
+            });
+
+            socket.on('connect', () => {
+                console.log('✅ Соединение с сервером установлено');
+                showConnectionStatus('online');
+            });
+
+            socket.on('disconnect', () => {
+                console.log('❌ Потеряно соединение');
+                showConnectionStatus('offline');
+            });
+
+            socket.on('connect_error', () => {
+                showConnectionStatus('offline');
+            });
+
+            socket.on('state:init', (serverState) => {
+                if (serverState && serverState.scenes) {
+                    isApplyingRemote = true;
+                    state = serverState;
+                    try { localStorage.setItem('justilia_vtt_state', JSON.stringify(state)); } catch(e){}
+                    isApplyingRemote = false;
+                    rerenderAll();
+                } else {
+                    // Первый клиент — отправляет своё состояние
+                    if (socket.connected) socket.emit('state:update', state);
+                }
+            });
+
+            socket.on('state:apply', (newState) => {
+                if (!newState || !newState.scenes) return;
+                isApplyingRemote = true;
+                state = newState;
+                try { localStorage.setItem('justilia_vtt_state', JSON.stringify(state)); } catch(e){}
+                rerenderAll();
+                isApplyingRemote = false;
+            });
+        }
+
+        function rerenderAll() {
+            const savedSelectedId = currentlySelectedId;
+            
+            renderScenes();
+            renderPlayers();
+            renderTokens();
+            updateBoardBackground();
+            
+            if (savedSelectedId) {
+                const scene = state.scenes[state.currentSceneIndex];
+                const exists = scene && scene.tokens.find(t => t.id === savedSelectedId);
+                if (exists) {
+                    selectToken(savedSelectedId);
+                } else {
+                    currentlySelectedId = null;
+                    const menu = document.getElementById('token-menu');
+                    if (menu) menu.style.display = 'none';
+                }
+            }
+        }
+
+        function showConnectionStatus(status) {
+            let el = document.getElementById('conn-status');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'conn-status';
+                el.style.cssText = `
+                    position: fixed; bottom: 15px; right: 15px;
+                    padding: 6px 12px; border-radius: 6px;
+                    font-family: 'Cinzel', serif; font-size: 12px;
+                    font-weight: bold; z-index: 9999;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+                    transition: all 0.3s;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(el);
+            }
+            if (status === 'online') {
+                el.textContent = '🟢 Онлайн';
+                el.style.background = 'rgba(46, 125, 50, 0.9)';
+                el.style.color = '#fff';
+                el.style.border = '1px solid #4caf50';
+                el.style.opacity = '1';
+                setTimeout(() => { if (el.textContent === '🟢 Онлайн') el.style.opacity = '0'; }, 2000);
+            } else {
+                el.textContent = '🔴 Нет связи';
+                el.style.background = 'rgba(183, 28, 28, 0.9)';
+                el.style.color = '#fff';
+                el.style.border = '1px solid #e53935';
+                el.style.opacity = '1';
+            }
+        }
+
+        // === КОСТИ ===
+        function selectDieType(type) {
+            const face = document.getElementById('dice-face');
+            if (face.classList.contains('rolling')) return;
+            
+            currentDieType = parseInt(type);
+            
+            document.querySelectorAll('.die-type-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.dataset.die) === currentDieType);
+            });
+            
+            face.className = 'dice-face shape-d' + currentDieType;
+            
+            const numEl = document.getElementById('dice-result');
+            const capEl = document.getElementById('dice-caption');
+            
+            numEl.textContent = 'd' + currentDieType;
+            numEl.classList.add('preview');
+            capEl.textContent = 'Нажмите на d' + currentDieType;
+            
+            document.querySelectorAll('#dice-dots .pip').forEach(p => p.classList.add('hidden'));
+            
+            face.classList.add('appearing');
+            setTimeout(() => face.classList.remove('appearing'), 400);
+        }
+
+        function renderD6Pips(n) {
+            const positions = {
+                1: [4],
+                2: [0, 8],
+                3: [0, 4, 8],
+                4: [0, 2, 6, 8],
+                5: [0, 2, 4, 6, 8],
+                6: [0, 2, 3, 5, 6, 8]
+            };
+            const active = positions[n] || [];
+            const pips = document.querySelectorAll('#dice-dots .pip');
+            for (let i = 0; i < 9; i++) {
+                pips[i].classList.toggle('hidden', !active.includes(i));
+            }
+        }
+
+        function rollDice() {
+            const face = document.getElementById('dice-face');
+            if (face.classList.contains('rolling')) return;
+            
+            face.classList.remove('appearing');
+            face.classList.add('rolling');
+            
+            const modStr = document.getElementById('dice-mod').value.trim();
+            let mod = 0;
+            if (modStr) {
+                const cleaned = modStr.replace(/\s/g, '').replace(/^\+/, '');
+                mod = parseInt(cleaned) || 0;
+            }
+            
+            const numEl = document.getElementById('dice-result');
+            const capEl = document.getElementById('dice-caption');
+            
+            if (currentDieType === 6) {
+                face.classList.add('show-dots');
+            } else {
+                face.classList.remove('show-dots');
+                numEl.classList.remove('preview');
+            }
+            capEl.textContent = '...';
+            
+            let animCount = 0;
+            const animInterval = setInterval(() => {
+                animCount++;
+                if (animCount > 6) {
+                    clearInterval(animInterval);
+                    return;
+                }
+                const temp = Math.floor(Math.random() * currentDieType) + 1;
+                if (currentDieType === 6) {
+                    renderD6Pips(temp);
+                } else {
+                    numEl.textContent = temp;
+                }
+            }, 75);
+            
+            setTimeout(() => {
+                clearInterval(animInterval);
+                const roll = Math.floor(Math.random() * currentDieType) + 1;
+                const total = roll + mod;
+                
+                if (currentDieType === 6) {
+                    renderD6Pips(roll);
+                } else {
+                    numEl.textContent = roll;
+                    numEl.classList.remove('preview');
+                }
+                
+                let caption = `d${currentDieType}: ${roll}`;
+                if (mod !== 0) {
+                    caption += mod > 0 ? ` + ${mod} = ${total}` : ` − ${Math.abs(mod)} = ${total}`;
+                }
+                if (currentDieType === 20 && mod === 0) {
+                    if (roll === 20) caption = '🎉 КРИТ! 20';
+                    else if (roll === 1) caption = '💀 ПРОВАЛ! 1';
+                }
+                capEl.textContent = caption;
+                
+                face.classList.remove('rolling');
+                
+                addDiceLogEntry(roll, mod, total);
+            }, 600);
+        }
+
+        function addDiceLogEntry(roll, mod, total) {
+            const logEl = document.getElementById('dice-log');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            let actorName = "";
+            if (currentlySelectedId) {
+                const scene = state.scenes[state.currentSceneIndex];
+                let t = scene.tokens.find(x => x.id === currentlySelectedId);
+                if (!t) t = state.players.find(x => x.id === currentlySelectedId);
+                if (t) actorName = t.name;
+            }
+            
+            const prefix = actorName ? `<strong style="color:var(--blood-red);">[${actorName}]</strong> ` : '';
+            const modText = mod !== 0 ? (mod > 0 ? ` + ${mod}` : ` − ${Math.abs(mod)}`) : '';
+            const resultText = mod !== 0 ? ` = <strong>${total}</strong>` : '';
+            
+            logEntry.innerHTML = `${prefix}🎲 <strong>d${currentDieType}</strong>: ${roll}${modText}${resultText}`;
+            logEl.prepend(logEntry);
+        }
+
+        // === РЕЖИМЫ ===
+        function showModeSelect() {
+            document.getElementById('mode-modal').style.display = 'flex';
+            document.getElementById('mode-select-view').style.display = 'block';
+            document.getElementById('player-select-view').style.display = 'none';
+        }
+
+        function backToModeSelect() {
+            document.getElementById('player-select-view').style.display = 'none';
+            document.getElementById('mode-select-view').style.display = 'block';
+        }
+
+        function selectMasterMode() {
+            sessionMode = 'master';
+            sessionPlayerTokenId = null;
+            localStorage.setItem('justilia_mode', 'master');
+            localStorage.removeItem('justilia_playerTokenId');
+            document.getElementById('mode-modal').style.display = 'none';
+            currentlySelectedId = null;
+            applyModeToUI();
+            renderScenes();
+            renderPlayers();
+            renderTokens();
+            updateBoardBackground();
+        }
+
+        function showPlayerSelect() {
+            document.getElementById('mode-select-view').style.display = 'none';
+            document.getElementById('player-select-view').style.display = 'block';
+            const list = document.getElementById('mode-player-list');
+            list.innerHTML = '';
+            
+            if (!state.players || state.players.length === 0) {
+                list.innerHTML = '<li class="mode-player-empty">Нет созданных персонажей-игроков.<br>Попросите мастера создать их или выберите режим мастера.</li>';
+                return;
+            }
+            
+            state.players.forEach(p => {
+                const li = document.createElement('li');
+                const meta = [];
+                if (p.level) meta.push('Ур. ' + p.level);
+                if (p.race) meta.push(p.race);
+                if (p.class) meta.push(p.class);
+                li.innerHTML = `<strong>${p.name}</strong>${meta.length ? `<span class="player-meta">${meta.join(' • ')}</span>` : ''}`;
+                li.onclick = () => selectPlayerMode(p.id);
+                list.appendChild(li);
+            });
+        }
+
+        function selectPlayerMode(tokenId) {
+            if (socket && socket.connected) {
+                socket.emit('player:claim', tokenId, (response) => {
+                    if (response && response.ok) {
+                        applyPlayerMode(tokenId);
+                    } else {
+                        alert('Этот персонаж уже занят другим игроком. Выберите другого.');
+                    }
+                });
+            } else {
+                applyPlayerMode(tokenId);
+            }
+        }
+
+        function applyPlayerMode(tokenId) {
+            sessionMode = 'player';
+            sessionPlayerTokenId = tokenId;
+            localStorage.setItem('justilia_mode', 'player');
+            localStorage.setItem('justilia_playerTokenId', String(tokenId));
+            document.getElementById('mode-modal').style.display = 'none';
+            currentlySelectedId = null;
+            
+            ensurePlayerTokenOnScene();
+            
+            applyModeToUI();
+            renderScenes();
+            renderPlayers();
+            renderTokens();
+            updateBoardBackground();
+            selectToken(tokenId);
+        }
+
+        function switchMode() {
+            showModeSelect();
+        }
+
+        function applyModeToUI() {
+            const isPlayer = sessionMode === 'player';
+            document.body.classList.toggle('player-mode', isPlayer);
+            document.body.classList.toggle('master-mode', !isPlayer);
+            
+            if (isPlayer) {
+                document.body.classList.remove('sidebar-collapsed');
+            }
+            
+            const label = document.getElementById('mode-label');
+            if (!label) return;
+            
+            if (isPlayer) {
+                const p = state.players.find(x => x.id === sessionPlayerTokenId);
+                label.textContent = `🎭 ${p ? p.name : 'Игрок'}`;
+            } else {
+                label.textContent = '👑 Мастер';
+            }
+        }
+
+        function ensurePlayerTokenOnScene() {
+            if (sessionMode !== 'player' || !sessionPlayerTokenId) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            if (scene.tokens.find(t => t.id === sessionPlayerTokenId)) return;
+            
+            const player = state.players.find(p => p.id === sessionPlayerTokenId);
+            if (!player) return;
+            
+            scene.tokens.push({
+                id: player.id, name: player.name, race: player.race, class: player.class,
+                level: player.level, hp: player.hp, img: player.img,
+                slots: JSON.parse(JSON.stringify(player.slots)),
+                inventory: player.inventory || "",
+                spells: normalizeSpells(player.spells),
+                abilities: player.abilities ? JSON.parse(JSON.stringify(player.abilities)) : { ...EMPTY_ABILITIES },
+                ac: (player.ac !== undefined) ? player.ac : DEFAULT_AC,
+                initiative: (player.initiative !== undefined) ? player.initiative : DEFAULT_INITIATIVE,
+                speed: (player.speed !== undefined) ? player.speed : DEFAULT_SPEED,
+                x: 50, y: 50, isPlayer: true
+            });
+            saveState();
+        }
+
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        function init() {
+            loadState();
+            
+            connectSocket();
+            
+            const savedMode = localStorage.getItem('justilia_mode');
+            if (savedMode === 'master' || savedMode === 'player') {
+                sessionMode = savedMode;
+                if (savedMode === 'player') {
+                    const storedId = parseInt(localStorage.getItem('justilia_playerTokenId'));
+                    if (!isNaN(storedId) && state.players.find(p => p.id === storedId)) {
+                        sessionPlayerTokenId = storedId;
+                    } else {
+                        sessionMode = null;
+                        sessionPlayerTokenId = null;
+                        localStorage.removeItem('justilia_mode');
+                        localStorage.removeItem('justilia_playerTokenId');
+                    }
+                }
+            }
+            
+            renderScenes();
+            renderPlayers();
+            renderTokens();
+            updateBoardBackground();
+            
+            if (!sessionMode) {
+                showModeSelect();
+            } else {
+                applyModeToUI();
+                if (sessionMode === 'player' && sessionPlayerTokenId) {
+                    ensurePlayerTokenOnScene();
+                    renderTokens();
+                    selectToken(sessionPlayerTokenId);
+                }
+            }
+
+            if (localStorage.getItem('justilia_sidebar_collapsed') === 'true') {
+                document.getElementById('sidebar-left').classList.add('collapsed');
+                if (sessionMode !== 'player') {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+                const toggleBtn = document.getElementById('sidebar-toggle');
+                toggleBtn.innerHTML = '▶';
+                toggleBtn.title = 'Показать панель сцен';
+            }
+            
+            if (localStorage.getItem('justilia_volume')) {
+                let vol = parseFloat(localStorage.getItem('justilia_volume'));
+                volumeSlider.value = vol;
+                audioEl.volume = vol;
+            } else {
+                audioEl.volume = 0.5;
+            }
+
+            if (localStorage.getItem('justilia_loop') === 'true') {
+                audioEl.loop = true;
+                btnLoop.classList.add('active');
+            } else {
+                audioEl.loop = false;
+                btnLoop.classList.remove('active');
+            }
+            
+            selectDieType(20);
+            
+            window.addEventListener('keydown', (e) => {
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+                if (e.key === 'Delete' || e.key === 'Backspace') {
+                    if (currentlySelectedId && sessionMode === 'master') {
+                        e.preventDefault();
+                        const scene = state.scenes[state.currentSceneIndex];
+                        const token = scene.tokens.find(t => t.id === currentlySelectedId);
+                        if (token) deleteTokenFromScene(currentlySelectedId);
+                    }
+                }
+
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                    if (currentlySelectedId && sessionMode === 'master') {
+                        const scene = state.scenes[state.currentSceneIndex];
+                        const token = scene.tokens.find(t => t.id === currentlySelectedId);
+                        if (token) clipboardToken = JSON.parse(JSON.stringify(token));
+                    }
+                }
+
+                if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                    if (clipboardToken && sessionMode === 'master') {
+                        e.preventDefault();
+                        pasteToken();
+                    }
+                }
+
+                if (e.key === 'ArrowRight') {
+                    if (state.scenes[state.currentSceneIndex].isCombat) nextTurn();
+                    else if (sessionMode === 'master') nextImage();
+                }
+                else if (e.key === 'ArrowLeft') {
+                    if (sessionMode === 'master') prevImage();
+                }
+                else if (e.key === 'ArrowDown') {
+                    if (sessionMode === 'master') nextScene();
+                }
+                else if (e.key === 'ArrowUp') {
+                    if (sessionMode === 'master') prevScene();
+                }
+
+                if (e.key === 'Escape') {
+                    const inv = document.getElementById('inventory-modal');
+                    if (inv.style.display === 'flex') closeInventory();
+                    const sp = document.getElementById('spells-modal');
+                    if (sp.style.display === 'flex') closeSpells();
+                }
+            });
+        }
+
+        function renderCombatStats(token) {
+            const ac = (token && token.ac !== undefined && token.ac !== null) ? token.ac : DEFAULT_AC;
+            const init = (token && token.initiative !== undefined && token.initiative !== null) ? token.initiative : DEFAULT_INITIATIVE;
+            const speed = (token && token.speed !== undefined && token.speed !== null && token.speed !== '') ? token.speed : DEFAULT_SPEED;
+            
+            document.getElementById('sel-ac').value = ac;
+            document.getElementById('sel-initiative').value = init;
+            document.getElementById('sel-speed').value = speed;
+        }
+
+        function updateCombatStatDirectly(key, value) {
+            if (!currentlySelectedId) return;
+
+            let patch;
+            if (key === 'speed') {
+                patch = { speed: (value && value.toString().trim() !== '') ? value : DEFAULT_SPEED };
+                document.getElementById('sel-speed').value = patch.speed;
+            } else {
+                let val = parseInt(value);
+                if (isNaN(val)) val = key === 'ac' ? DEFAULT_AC : DEFAULT_INITIATIVE;
+                if (key === 'ac') { val = Math.max(0, Math.min(50, val)); }
+                if (key === 'initiative') { val = Math.max(-10, Math.min(30, val)); }
+                patch = { [key]: val };
+                document.getElementById(`sel-${key}`).value = val;
+            }
+
+            updateTokenEverywhere(currentlySelectedId, patch);
+            saveState();
+            renderTokens();
+        }
+
+        function calcModifier(score) {
+            return Math.floor((score - 10) / 2);
+        }
+
+        function updateAbilityDisplay(key, score) {
+            const modEl = document.getElementById(`sel-mod-${key}`);
+            if (!modEl) return;
+            const mod = calcModifier(score);
+            modEl.textContent = (mod >= 0 ? '+' : '') + mod;
+            modEl.style.color = mod > 0 ? '#2e7d32' : (mod < 0 ? '#b03636' : '#666');
+            modEl.style.borderColor = mod > 0 ? '#8fcba0' : (mod < 0 ? '#e0a8a8' : '#a68b68');
+            modEl.style.background = mod > 0 ? '#e8f5ec' : (mod < 0 ? '#fbe9e9' : '#fffdf8');
+        }
+
+        function renderAbilities(token) {
+            const abils = (token && token.abilities) || EMPTY_ABILITIES;
+            ABILITY_KEYS.forEach(k => {
+                const v = abils[k] !== undefined && abils[k] !== null ? abils[k] : 10;
+                const inputEl = document.getElementById(`sel-abil-${k}`);
+                if (inputEl) inputEl.value = v;
+                updateAbilityDisplay(k, v);
+            });
+        }
+
+        function updateAbilityDirectly(key, value) {
+            if (!currentlySelectedId) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
+            if (!token) return;
+
+            let val = parseInt(value);
+            if (isNaN(val)) val = 10;
+            if (val < 1) val = 1;
+            if (val > 30) val = 30;
+
+            const abilities = { ...(token.abilities || EMPTY_ABILITIES), [key]: val };
+            updateTokenEverywhere(currentlySelectedId, { abilities });
+
+            updateAbilityDisplay(key, val);
+            const inputEl = document.getElementById(`sel-abil-${key}`);
+            if (inputEl) inputEl.value = val;
+
+            saveState();
+        }
+
+        function toggleSidebar() {
+            if (sessionMode === 'player') return;
+            const sidebar = document.getElementById('sidebar-left');
+            const btn = document.getElementById('sidebar-toggle');
+            const collapsed = sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-collapsed', collapsed);
+            btn.innerHTML = collapsed ? '▶' : '◀';
+            btn.title = collapsed ? 'Показать панель сцен' : 'Скрыть панель сцен';
+            localStorage.setItem('justilia_sidebar_collapsed', collapsed ? 'true' : 'false');
+        }
+
+        function openInventoryFromPanel() {
+            if (!currentlySelectedId) return;
+            openInventory(currentlySelectedId);
+        }
+
+        function openInventory(id) {
+            const scene = state.scenes[state.currentSceneIndex];
+            const sceneToken = scene.tokens.find(t => t.id === id);
+            const player = state.players.find(t => t.id === id);
+
+            const isPlayerToken = (sceneToken && sceneToken.isPlayer) || (player && player.isPlayer);
+            if (!isPlayerToken) return;
+
+            currentInventoryTokenId = id;
+            const name = (sceneToken && sceneToken.name) || (player && player.name) || '?';
+            document.getElementById('inv-owner-name').textContent = name;
+            const inv = (player && player.inventory !== undefined)
+                ? player.inventory
+                : ((sceneToken && sceneToken.inventory) || '');
+            document.getElementById('inventory-text').value = inv;
+            document.getElementById('inventory-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('inventory-text').focus(), 50);
+        }
+
+        function closeInventory() {
+            document.getElementById('inventory-modal').style.display = 'none';
+            currentInventoryTokenId = null;
+        }
+
+        function saveInventory() {
+            if (!currentInventoryTokenId) { closeInventory(); return; }
+            const text = document.getElementById('inventory-text').value;
+            updateTokenEverywhere(currentInventoryTokenId, { inventory: text });
+            saveState();
+            closeInventory();
+        }
+
+        function openSpellsFromPanel() {
+            if (!currentlySelectedId) return;
+            openSpells(currentlySelectedId);
+        }
+
+        function openSpells(id) {
+            const scene = state.scenes[state.currentSceneIndex];
+            const sceneToken = scene.tokens.find(t => t.id === id);
+            const player = state.players.find(t => t.id === id);
+            if (!sceneToken && !player) return;
+
+            const isPlayerToken = (sceneToken && sceneToken.isPlayer) || (player && player.isPlayer);
+            if (!isPlayerToken) return;
+
+            currentSpellsTokenId = id;
+            const name = (sceneToken && sceneToken.name) || (player && player.name) || '?';
+            document.getElementById('spells-owner-name').textContent = name;
+
+            const spells = (player && player.spells) || (sceneToken && sceneToken.spells) || EMPTY_SPELLS;
+            document.getElementById('spells-combat').value = spells.combat || '';
+            document.getElementById('spells-special').value = spells.special || '';
+            document.getElementById('spells-cantrips').value = spells.cantrips || '';
+            document.getElementById('spells-circle1').value = spells.circle1 || '';
+            document.getElementById('spells-circle2').value = spells.circle2 || '';
+            document.getElementById('spells-circle3').value = spells.circle3 || '';
+            document.getElementById('spells-circle4').value = spells.circle4 || '';
+            document.getElementById('spells-circle5').value = spells.circle5 || '';
+
+            document.getElementById('spells-modal').style.display = 'flex';
+        }
+
+        function closeSpells() {
+            document.getElementById('spells-modal').style.display = 'none';
+            currentSpellsTokenId = null;
+        }
+
+        function saveSpells() {
+            if (!currentSpellsTokenId) { closeSpells(); return; }
+            const spells = {
+                combat: document.getElementById('spells-combat').value,
+                special: document.getElementById('spells-special').value,
+                cantrips: document.getElementById('spells-cantrips').value,
+                circle1: document.getElementById('spells-circle1').value,
+                circle2: document.getElementById('spells-circle2').value,
+                circle3: document.getElementById('spells-circle3').value,
+                circle4: document.getElementById('spells-circle4').value,
+                circle5: document.getElementById('spells-circle5').value
+            };
+            updateTokenEverywhere(currentSpellsTokenId, { spells });
+            saveState();
+            closeSpells();
+        }
+
+        async function handleMinimapUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const scene = state.scenes[state.currentSceneIndex];
+                scene.minimapImg = await readFileAsync(file);
+                scene.minimapPos = { x: 0, y: 0 };
+                saveState();
+                updateMinimapUI();
+            }
+            e.target.value = '';
+        }
+
+        function deleteMinimap() {
+            if (confirm("Удалить карту из миникарты?")) {
+                const scene = state.scenes[state.currentSceneIndex];
+                scene.minimapImg = "";
+                scene.minimapPos = { x: 0, y: 0 };
+                saveState();
+                updateMinimapUI();
+            }
+        }
+
+        function startMinimapDrag(e) {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene.showMinimap || !scene.minimapImg) return;
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+
+            isDraggingMinimap = true;
+            minimapStartX = e.clientX;
+            minimapStartY = e.clientY;
+            minimapInitialX = scene.minimapPos.x;
+            minimapInitialY = scene.minimapPos.y;
+            
+            document.addEventListener('mousemove', dragMinimap);
+            document.addEventListener('mouseup', endMinimapDrag);
+        }
+
+        function dragMinimap(e) {
+            if (!isDraggingMinimap) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            const dx = e.clientX - minimapStartX;
+            const dy = e.clientY - minimapStartY;
+            
+            const container = document.getElementById('minimap-container');
+            const cWidth = container.offsetWidth;
+            const cHeight = container.offsetHeight;
+            
+            const totalWidth = cWidth * 8;
+            const totalHeight = cHeight * 8;
+            
+            const maxX = 0;
+            const minX = -(totalWidth - cWidth);
+            const maxY = 0;
+            const minY = -(totalHeight - cHeight);
+            
+            let newX = minimapInitialX + dx;
+            let newY = minimapInitialY + dy;
+            
+            if (newX > maxX) newX = maxX;
+            if (newX < minX) newX = minX;
+            if (newY > maxY) newY = maxY;
+            if (newY < minY) newY = minY;
+            
+            scene.minimapPos.x = newX;
+            scene.minimapPos.y = newY;
+            
+            updateMinimapPosition();
+        }
+
+        function endMinimapDrag() {
+            isDraggingMinimap = false;
+            saveState();
+            document.removeEventListener('mousemove', dragMinimap);
+            document.removeEventListener('mouseup', endMinimapDrag);
+        }
+
+        function updateMinimapPosition() {
+            const scene = state.scenes[state.currentSceneIndex];
+            const canvas = document.getElementById('minimap-canvas');
+            if (!canvas) return;
+            canvas.style.left = `${scene.minimapPos.x}px`;
+            canvas.style.top = `${scene.minimapPos.y}px`;
+        }
+
+        function toggleMinimap() {
+            const isChecked = document.getElementById('minimap-toggle').checked;
+            state.scenes[state.currentSceneIndex].showMinimap = isChecked;
+            saveState();
+            updateBoardBackground();
+        }
+
+        function updateMinimapUI() {
+            const scene = state.scenes[state.currentSceneIndex];
+            const container = document.getElementById('minimap-container');
+            const canvas = document.getElementById('minimap-canvas');
+            const checkbox = document.getElementById('minimap-toggle');
+            
+            checkbox.checked = scene.showMinimap;
+
+            if (scene && scene.showMinimap) {
+                container.classList.add('active');
+                if (scene.minimapImg) {
+                    canvas.style.backgroundImage = `url(${scene.minimapImg})`;
+                    if (scene.minimapPos.x === undefined) scene.minimapPos = { x: 0, y: 0 };
+                    updateMinimapPosition();
+                } else {
+                    canvas.style.backgroundImage = 'none';
+                    canvas.style.backgroundColor = '#111';
+                }
+            } else {
+                container.classList.remove('active');
+            }
+        }
+
+        function pasteToken() {
+            if (!clipboardToken) return;
+            
+            const newToken = JSON.parse(JSON.stringify(clipboardToken));
+            newToken.id = state.nextTokenId++;
+            
+            newToken.x += 2;
+            newToken.y += 2;
+            if (newToken.x > 90) newToken.x = 50;
+            if (newToken.y > 90) newToken.y = 50;
+            
+            if (!newToken.abilities) newToken.abilities = { ...EMPTY_ABILITIES };
+            if (!newToken.spells) newToken.spells = { ...EMPTY_SPELLS };
+            if (newToken.inventory === undefined) newToken.inventory = "";
+            if (newToken.ac === undefined) newToken.ac = DEFAULT_AC;
+            if (newToken.initiative === undefined) newToken.initiative = DEFAULT_INITIATIVE;
+            if (newToken.speed === undefined) newToken.speed = DEFAULT_SPEED;
+            
+            if (newToken.isPlayer) {
+                state.players.push(newToken);
+                const sceneToken = JSON.parse(JSON.stringify(newToken));
+                state.scenes[state.currentSceneIndex].tokens.push(sceneToken);
+            } else {
+                state.scenes[state.currentSceneIndex].tokens.push(newToken);
+            }
+            
+            saveState();
+            renderPlayers();
+            renderTokens();
+            selectToken(newToken.id);
+        }
+
+        function readFileAsync(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = event => resolve(event.target.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('scene-upload').addEventListener('change', async function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                const images = [];
+                for (let i = 0; i < files.length; i++) images.push(await readFileAsync(files[i]));
+                
+                state.scenes.push({ 
+                    name: files[0].name.split('.')[0], 
+                    images: images,
+                    currentImageIndex: 0,
+                    isCombat: false,
+                    showMinimap: false,
+                    minimapImg: "",
+                    minimapPos: { x: 0, y: 0 },
+                    audio: "",
+                    audioName: "",
+                    tokens: []
+                });
+                state.currentSceneIndex = state.scenes.length - 1;
+                saveState();
+                renderScenes();
+                renderTokens(); 
+                updateBoardBackground();
+            }
+            this.value = '';
+        });
+
+        async function handleAddImages(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                const scene = state.scenes[state.currentSceneIndex];
+                if (!scene.images) scene.images = [];
+                for (let i = 0; i < files.length; i++) scene.images.push(await readFileAsync(files[i]));
+                saveState();
+                updateBoardBackground();
+            }
+            e.target.value = '';
+        }
+
+        function deleteCurrentImage() {
+            if (sessionMode !== 'master') return;
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene.images || scene.images.length === 0) return alert("На этой сцене нет картинок!");
+            
+            if (confirm("Удалить текущую картинку из этой сцены?")) {
+                scene.images.splice(scene.currentImageIndex, 1);
+                if (scene.currentImageIndex >= scene.images.length) {
+                    scene.currentImageIndex = Math.max(0, scene.images.length - 1);
+                }
+                saveState();
+                updateBoardBackground();
+            }
+        }
+
+        function renderScenes() {
+            const list = document.getElementById('scene-list');
+            list.innerHTML = '';
+            
+            state.scenes.forEach((scene, index) => {
+                const li = document.createElement('li');
+                
+                const content = document.createElement('div');
+                content.className = 'list-item-content';
+                content.textContent = scene.name;
+                content.title = sessionMode === 'master' ? "Двойной клик для переименования" : "";
+                if (index === state.currentSceneIndex) li.classList.add('active');
+                
+                const controls = document.createElement('div');
+                controls.className = 'move-controls';
+                
+                const btnUp = document.createElement('button');
+                btnUp.className = 'move-btn';
+                btnUp.innerHTML = '▲';
+                btnUp.onclick = (e) => { e.stopPropagation(); moveScene(index, -1); };
+                
+                const btnDown = document.createElement('button');
+                btnDown.className = 'move-btn';
+                btnDown.innerHTML = '▼';
+                btnDown.onclick = (e) => { e.stopPropagation(); moveScene(index, 1); };
+                
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-delete-scene';
+                btnDelete.innerHTML = '✖';
+                btnDelete.title = "Удалить сцену";
+                btnDelete.onclick = (e) => { e.stopPropagation(); deleteScene(index); };
+                
+                controls.appendChild(btnUp);
+                controls.appendChild(btnDown);
+                controls.appendChild(btnDelete);
+                
+                li.appendChild(content);
+                li.appendChild(controls);
+                
+                li.onclick = () => {
+                    if (sessionMode === 'player') return;
+                    state.currentSceneIndex = index;
+                    state.scenes[index].currentImageIndex = 0; 
+                    saveState();
+                    renderScenes();
+                    renderTokens();
+                    updateBoardBackground();
+                };
+
+                li.ondblclick = (e) => {
+                    if (sessionMode !== 'master') return;
+                    e.stopPropagation();
+                    const newName = prompt("Введите новое название сцены:", scene.name);
+                    if (newName && newName.trim() !== "") {
+                        state.scenes[index].name = newName.trim();
+                        saveState();
+                        renderScenes();
+                    }
+                };
+
+                list.appendChild(li);
+            });
+        }
+
+        function moveScene(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= state.scenes.length) return;
+            
+            const temp = state.scenes[index];
+            state.scenes[index] = state.scenes[targetIndex];
+            state.scenes[targetIndex] = temp;
+            
+            if (state.currentSceneIndex === index) state.currentSceneIndex = targetIndex;
+            else if (state.currentSceneIndex === targetIndex) state.currentSceneIndex = index;
+            
+            saveState();
+            renderScenes();
+            renderTokens();
+            updateBoardBackground();
+        }
+
+        function deleteScene(index) {
+            if (state.scenes.length <= 1) return alert("Нельзя удалить последнюю сцену!");
+            if (confirm(`Удалить сцену "${state.scenes[index].name}"?`)) {
+                state.scenes.splice(index, 1);
+                if (state.currentSceneIndex >= state.scenes.length) state.currentSceneIndex = state.scenes.length - 1;
+                saveState();
+                renderScenes();
+                renderTokens();
+                updateBoardBackground();
+            }
+        }
+
+        function updateBoardBackground() {
+            const board = document.getElementById('board');
+            const grid = document.getElementById('grid-overlay');
+            const scene = state.scenes[state.currentSceneIndex];
+            const gridCheckbox = document.getElementById('grid-toggle');
+            const initTracker = document.getElementById('initiative-tracker');
+            
+            const navPrev = document.getElementById('nav-prev');
+            const navNext = document.getElementById('nav-next');
+            const counter = document.getElementById('image-counter');
+            const btnDeleteImg = document.getElementById('btn-delete-image');
+
+            board.style.backgroundImage = 'none';
+            board.style.backgroundColor = '#ffffff';
+            
+            const isPlayerMode = sessionMode === 'player';
+            
+            if (scene && scene.images && scene.images.length > 0) {
+                const idx = scene.currentImageIndex || 0;
+                board.style.backgroundImage = `url(${scene.images[idx]})`;
+                board.style.backgroundColor = '#ffffff'; 
+                
+                if (scene.images.length > 1 && !isPlayerMode) {
+                    navPrev.style.display = 'flex';
+                    navNext.style.display = 'flex';
+                    counter.style.display = 'block';
+                    counter.textContent = `${idx + 1} / ${scene.images.length}`;
+                    btnDeleteImg.style.display = 'block';
+                } else {
+                    navPrev.style.display = 'none';
+                    navNext.style.display = 'none';
+                    counter.style.display = 'none';
+                    btnDeleteImg.style.display = 'none';
+                }
+            } else {
+                navPrev.style.display = 'none';
+                navNext.style.display = 'none';
+                counter.style.display = 'none';
+                btnDeleteImg.style.display = 'none';
+            }
+            
+            if (scene && scene.isCombat) {
+                grid.classList.add('active');
+                gridCheckbox.checked = true;
+                initTracker.classList.add('active');
+            } else {
+                grid.classList.remove('active');
+                gridCheckbox.checked = false;
+                initTracker.classList.remove('active');
+            }
+
+            updateMinimapUI();
+            renderInitiative(); 
+            loadSceneAudio(scene);
+        }
+
+        function loadSceneAudio(scene) {
+            const wasPlaying = !audioEl.paused;
+            if (scene && scene.audio) {
+                if (audioEl.src !== scene.audio) {
+                    audioEl.src = scene.audio;
+                    trackNameEl.textContent = scene.audioName || "Трек сцены";
+                }
+                if (wasPlaying || audioEl.src !== scene.audio) {
+                    audioEl.play().then(() => btnPlayPause.textContent = '⏸').catch(() => btnPlayPause.textContent = '▶');
+                }
+            } else {
+                audioEl.pause();
+                audioEl.src = "";
+                trackNameEl.textContent = "Нет трека";
+                btnPlayPause.textContent = '▶';
+            }
+        }
+
+        function nextScene() {
+            if (state.scenes.length > 1) {
+                state.currentSceneIndex = (state.currentSceneIndex + 1) % state.scenes.length;
+                state.scenes[state.currentSceneIndex].currentImageIndex = 0;
+                ensurePlayerTokenOnScene();
+                saveState();
+                renderScenes();
+                renderTokens();
+                updateBoardBackground();
+            }
+        }
+
+        function prevScene() {
+            if (state.scenes.length > 1) {
+                state.currentSceneIndex = (state.currentSceneIndex - 1 + state.scenes.length) % state.scenes.length;
+                state.scenes[state.currentSceneIndex].currentImageIndex = 0;
+                ensurePlayerTokenOnScene();
+                saveState();
+                renderScenes();
+                renderTokens();
+                updateBoardBackground();
+            }
+        }
+
+        function nextImage() {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (scene && scene.images && scene.images.length > 1) {
+                scene.currentImageIndex = (scene.currentImageIndex + 1) % scene.images.length;
+                saveState();
+                updateBoardBackground();
+            }
+        }
+
+        function prevImage() {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (scene && scene.images && scene.images.length > 1) {
+                scene.currentImageIndex = (scene.currentImageIndex - 1 + scene.images.length) % scene.images.length;
+                saveState();
+                updateBoardBackground();
+            }
+        }
+
+        function toggleGrid() {
+            const isChecked = document.getElementById('grid-toggle').checked;
+            state.scenes[state.currentSceneIndex].isCombat = isChecked;
+            saveState();
+            updateBoardBackground();
+        }
+
+        function addSelectedToInitiative() {
+            if (!currentlySelectedId) return alert("Сначала выберите токен на столе!");
+            if (state.initiative.includes(currentlySelectedId)) return alert("Этот герой уже в очереди!");
+            state.initiative.push(currentlySelectedId);
+            saveState();
+            renderInitiative();
+        }
+
+        function removeFromInitiative(id) {
+            if (sessionMode !== 'master') return;
+            state.initiative = state.initiative.filter(i => i !== id);
+            if (state.currentTurnIndex >= state.initiative.length) state.currentTurnIndex = 0;
+            saveState();
+            renderInitiative();
+        }
+
+        function nextTurn() {
+            if (state.initiative.length === 0) return;
+            state.currentTurnIndex = (state.currentTurnIndex + 1) % state.initiative.length;
+            saveState();
+            renderInitiative();
+        }
+
+        function reorderInitiative(from, to) {
+            if (from === to) return;
+            if (from < 0 || from >= state.initiative.length) return;
+            if (to < 0 || to >= state.initiative.length) return;
+
+            const activeId = state.initiative[state.currentTurnIndex];
+            const [moved] = state.initiative.splice(from, 1);
+            state.initiative.splice(to, 0, moved);
+            
+            const newActiveIndex = state.initiative.indexOf(activeId);
+            if (newActiveIndex !== -1) state.currentTurnIndex = newActiveIndex;
+
+            saveState();
+            renderInitiative();
+        }
+
+        function renderInitiative() {
+            const list = document.getElementById('initiative-list');
+            list.innerHTML = '';
+            if (!state.initiative) state.initiative = [];
+            
+            state.initiative.forEach((tokenId, index) => {
+                let token = state.players.find(t => t.id === tokenId);
+                if (!token) {
+                    const scene = state.scenes[state.currentSceneIndex];
+                    token = scene.tokens.find(t => t.id === tokenId);
+                }
+                if (!token) return;
+                
+                const div = document.createElement('div');
+                div.className = 'init-item';
+                if (index === state.currentTurnIndex) div.classList.add('active-turn');
+                
+                if (sessionMode === 'master') {
+                    div.draggable = true;
+                    div.title = "Перетащите, чтобы изменить порядок";
+                    div.ondragstart = (e) => {
+                        initDragSrcIndex = index;
+                        div.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                        try { e.dataTransfer.setData('text/plain', String(index)); } catch(err) {}
+                    };
+                    div.ondragend = () => {
+                        div.classList.remove('dragging');
+                        document.querySelectorAll('.init-item').forEach(el => el.classList.remove('drag-over'));
+                    };
+                    div.ondragover = (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        div.classList.add('drag-over');
+                    };
+                    div.ondragleave = () => {
+                        div.classList.remove('drag-over');
+                    };
+                    div.ondrop = (e) => {
+                        e.preventDefault();
+                        div.classList.remove('drag-over');
+                        if (initDragSrcIndex === null || initDragSrcIndex === index) return;
+                        const from = initDragSrcIndex;
+                        initDragSrcIndex = null;
+                        reorderInitiative(from, index);
+                    };
+                }
+                
+                div.innerHTML = `
+                    <span>${token.name}</span>
+                    <div class="init-item-remove" onclick="event.stopPropagation(); removeFromInitiative(${tokenId})">×</div>
+                `;
+
+                div.onclick = () => selectToken(tokenId);
+                list.appendChild(div);
+            });
+            
+            document.querySelectorAll('.token').forEach(el => el.classList.remove('active-turn-token'));
+            
+            if (state.initiative.length > 0) {
+                const currentId = state.initiative[state.currentTurnIndex];
+                const el = document.getElementById(`token-${currentId}`);
+                if (el) el.classList.add('active-turn-token');
+            }
+        }
+
+        async function handleMusicUpload(e) {
+            if (sessionMode !== 'master') { e.target.value = ''; return; }
+            const file = e.target.files[0];
+            if (file) {
+                trackNameEl.textContent = "Загрузка...";
+                const base64Audio = await readFileAsync(file);
+                const scene = state.scenes[state.currentSceneIndex];
+                scene.audio = base64Audio;
+                scene.audioName = file.name;
+                saveState();
+                updateBoardBackground();
+            }
+            e.target.value = '';
+        }
+
+        function togglePlay() {
+            if (!audioEl.src) return alert("На эту сцену не загружена музыка!");
+            if (audioEl.paused) {
+                audioEl.play();
+                btnPlayPause.textContent = '⏸';
+            } else {
+                audioEl.pause();
+                btnPlayPause.textContent = '▶';
+            }
+        }
+
+        function toggleLoop() {
+            audioEl.loop = !audioEl.loop;
+            localStorage.setItem('justilia_loop', audioEl.loop);
+            if (audioEl.loop) btnLoop.classList.add('active');
+            else btnLoop.classList.remove('active');
+        }
+
+        function changeVolume(val) {
+            audioEl.volume = val;
+            localStorage.setItem('justilia_volume', val);
+        }
+
+        function exportState() {
+            try {
+                const dataStr = JSON.stringify(state);
+                const blob = new Blob([dataStr], {type: "application/json"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `justilia_save_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch(e) {
+                alert("Ошибка при сохранении: " + e.message);
+            }
+        }
+
+        function importState(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const parsed = JSON.parse(event.target.result);
+                    if (parsed && parsed.scenes) {
+                        state = parsed;
+                        if (!state.players) state.players = [];
+                        
+                        state.players.forEach(p => {
+                            if (p.inventory === undefined) p.inventory = "";
+                            p.spells = normalizeSpells(p.spells);
+                            if (!p.abilities) p.abilities = { ...EMPTY_ABILITIES };
+                            if (p.ac === undefined) p.ac = DEFAULT_AC;
+                            if (p.initiative === undefined) p.initiative = DEFAULT_INITIATIVE;
+                            if (p.speed === undefined) p.speed = DEFAULT_SPEED;
+                            if (p.isPlayer === undefined) p.isPlayer = true;
+                        });
+
+                        state.scenes.forEach(s => {
+                            if (s.isCombat === undefined) s.isCombat = false;
+                            if (s.showMinimap === undefined) s.showMinimap = false;
+                            if (s.minimapImg === undefined) s.minimapImg = "";
+                            if (s.minimapPos === undefined) s.minimapPos = { x: 0, y: 0 };
+                            if (!s.images) s.images = [];
+                            if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
+                            if (s.audio === undefined) s.audio = "";
+                            if (s.audioName === undefined) s.audioName = "";
+                            if (!s.tokens) s.tokens = []; 
+                            
+                            s.tokens.forEach(t => {
+                                if (t.isPlayer === undefined) t.isPlayer = false;
+                                if (t.inventory === undefined) t.inventory = "";
+                                t.spells = normalizeSpells(t.spells);
+                                if (!t.abilities) t.abilities = { ...EMPTY_ABILITIES };
+                                if (t.ac === undefined) t.ac = DEFAULT_AC;
+                                if (t.initiative === undefined) t.initiative = DEFAULT_INITIATIVE;
+                                if (t.speed === undefined) t.speed = DEFAULT_SPEED;
+                                if (!t.slots) t.slots = { max: [0,0,0,0,0], current: [0,0,0,0,0] };
+                            });
+                        });
+
+                        if (!state.initiative) state.initiative = [];
+                        if (state.currentTurnIndex === undefined) state.currentTurnIndex = 0;
+
+                        state.currentSceneIndex = 0;
+                        saveState();
+                        renderScenes();
+                        renderPlayers();
+                        renderTokens();
+                        updateBoardBackground();
+                        alert("Мир успешно загружен!");
+                    } else {
+                        alert("Неверный формат файла!");
+                    }
+                } catch (err) {
+                    alert("Ошибка чтения файла: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        }
+
+        function normalizeSpells(spells) {
+            if (!spells) return { ...EMPTY_SPELLS };
+            return {
+                combat: spells.combat || "",
+                special: spells.special || "",
+                cantrips: spells.cantrips || "",
+                circle1: spells.circle1 || "",
+                circle2: spells.circle2 || "",
+                circle3: spells.circle3 || "",
+                circle4: spells.circle4 || "",
+                circle5: spells.circle5 || ""
+            };
+        }
+
+        function renderPlayers() {
+            const list = document.getElementById('player-list');
+            list.innerHTML = '';
+            if (!state.players) state.players = [];
+
+            state.players.forEach(player => {
+                const li = document.createElement('li');
+                const content = document.createElement('div');
+                content.className = 'list-item-content';
+                content.innerHTML = `<strong>${player.name}</strong> <br><span style="font-size:11px; color:#555;">Ур. ${player.level || 1} | ${player.race || '?'} ${player.class || '?'}</span>`;
+                
+                const controls = document.createElement('div');
+                controls.className = 'move-controls';
+                
+                const btnSummon = document.createElement('button');
+                btnSummon.className = 'btn-summon';
+                btnSummon.innerHTML = 'На сцену';
+                btnSummon.title = "Разместить токен этого игрока на текущей сцене";
+                btnSummon.onclick = (e) => { e.stopPropagation(); summonPlayerToScene(player.id); };
+                
+                const btnEdit = document.createElement('button');
+                btnEdit.className = 'move-btn';
+                btnEdit.innerHTML = '✎';
+                btnEdit.onclick = (e) => { e.stopPropagation(); openModal(player.id, 'player'); };
+                
+                controls.appendChild(btnSummon);
+                controls.appendChild(btnEdit);
+                li.appendChild(content);
+                li.appendChild(controls);
+                
+                li.onclick = () => {
+                    if (sessionMode === 'player' && player.id !== sessionPlayerTokenId) return;
+                    const scene = state.scenes[state.currentSceneIndex];
+                    const onScene = scene.tokens.find(t => t.id === player.id);
+                    if (onScene) selectToken(player.id);
+                    else if (sessionMode === 'master' && confirm(`Игрок "${player.name}" не на этой сцене. Разместить его?`)) summonPlayerToScene(player.id);
+                };
+                list.appendChild(li);
+            });
+        }
+
+        function summonPlayerToScene(playerId) {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (scene.tokens.find(t => t.id === playerId)) return alert("Этот игрок уже на сцене!");
+            
+            const player = state.players.find(p => p.id === playerId);
+            if (!player) return;
+            
+            const newToken = {
+                id: player.id, name: player.name, race: player.race, class: player.class,
+                level: player.level, hp: player.hp, img: player.img,
+                slots: JSON.parse(JSON.stringify(player.slots)),
+                inventory: player.inventory || "",
+                spells: normalizeSpells(player.spells),
+                abilities: player.abilities ? JSON.parse(JSON.stringify(player.abilities)) : { ...EMPTY_ABILITIES },
+                ac: (player.ac !== undefined) ? player.ac : DEFAULT_AC,
+                initiative: (player.initiative !== undefined) ? player.initiative : DEFAULT_INITIATIVE,
+                speed: (player.speed !== undefined) ? player.speed : DEFAULT_SPEED,
+                x: 50, y: 50, isPlayer: true
+            };
+            scene.tokens.push(newToken);
+            saveState();
+            renderTokens();
+            selectToken(newToken.id);
+        }
+
+        function renderTokens() {
+            const board = document.getElementById('board');
+            const list = document.getElementById('npc-list');
+            
+            document.querySelectorAll('.token').forEach(el => el.remove());
+            list.innerHTML = '';
+
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene || !scene.tokens) return;
+
+            scene.tokens.forEach((token, index) => {
+                const el = document.createElement('div');
+                el.className = 'token';
+                if (token.isPlayer) el.classList.add('is-player');
+                
+                if (sessionMode === 'player' && token.id !== sessionPlayerTokenId) {
+                    el.classList.add('token-not-owned');
+                }
+                
+                el.id = `token-${token.id}`;
+                el.style.left = `${token.x}%`;
+                el.style.top = `${token.y}%`;
+                
+                if (token.img) el.style.backgroundImage = `url(${token.img})`;
+                else {
+                    el.textContent = token.name.charAt(0).toUpperCase();
+                    el.style.backgroundColor = token.isPlayer ? '#2e5f9e' : '#4a3320';
+                }
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'token-tooltip';
+                let info = `<strong>${token.name}</strong>`;
+                info += `<br>Ур. ${token.level || 1}`;
+                if (token.hp) info += `<br><span style="color:#b22222; font-weight:bold;">HP: ${token.hp}</span>`;
+                tooltip.innerHTML = info;
+                el.appendChild(tooltip);
+
+                setupTokenInteraction(el, token);
+                board.appendChild(el);
+
+                if (!token.isPlayer) {
+                    const li = document.createElement('li');
+                    const content = document.createElement('div');
+                    content.className = 'list-item-content';
+                    content.innerHTML = `<span>${token.name}</span>`;
+                    
+                    const controls = document.createElement('div');
+                    controls.className = 'move-controls';
+                    
+                    const btnCopy = document.createElement('button');
+                    btnCopy.className = 'move-btn';
+                    btnCopy.innerHTML = '⧉';
+                    btnCopy.title = "Копировать НПС";
+                    btnCopy.onclick = (e) => { e.stopPropagation(); copyNpcFromList(token.id); };
+                    
+                    const btnUp = document.createElement('button');
+                    btnUp.className = 'move-btn'; btnUp.innerHTML = '▲';
+                    btnUp.onclick = (e) => { e.stopPropagation(); moveToken(index, -1); };
+                    
+                    const btnDown = document.createElement('button');
+                    btnDown.className = 'move-btn'; btnDown.innerHTML = '▼';
+                    btnDown.onclick = (e) => { e.stopPropagation(); moveToken(index, 1); };
+                    
+                    const btnDelete = document.createElement('button');
+                    btnDelete.className = 'btn-delete-token'; btnDelete.innerHTML = '✖';
+                    btnDelete.onclick = (e) => { e.stopPropagation(); deleteTokenFromScene(token.id); };
+                    
+                    controls.appendChild(btnCopy);
+                    controls.appendChild(btnUp);
+                    controls.appendChild(btnDown);
+                    controls.appendChild(btnDelete);
+                    
+                    li.appendChild(content);
+                    li.appendChild(controls);
+                    li.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        if (sessionMode === 'master') selectToken(token.id); 
+                    };
+                    list.appendChild(li);
+                }
+            });
+            renderInitiative();
+        }
+
+        function copyNpcFromList(id) {
+            const scene = state.scenes[state.currentSceneIndex];
+            const token = scene.tokens.find(t => t.id === id);
+            if (!token) return;
+            
+            const newToken = JSON.parse(JSON.stringify(token));
+            newToken.id = state.nextTokenId++;
+            newToken.x += 2; newToken.y += 2;
+            if (newToken.x > 90) newToken.x = 50;
+            if (newToken.y > 90) newToken.y = 50;
+            
+            scene.tokens.push(newToken);
+            saveState();
+            renderTokens();
+            selectToken(newToken.id);
+        }
+
+        function moveToken(index, direction) {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene || !scene.tokens) return;
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= scene.tokens.length) return;
+            const temp = scene.tokens[index];
+            scene.tokens[index] = scene.tokens[targetIndex];
+            scene.tokens[targetIndex] = temp;
+            saveState();
+            renderTokens();
+        }
+
+        function deleteTokenFromScene(id) {
+            if (confirm("Убрать этого персонажа со сцены?")) {
+                const scene = state.scenes[state.currentSceneIndex];
+                scene.tokens = scene.tokens.filter(t => t.id !== id);
+                state.initiative = state.initiative.filter(i => i !== id);
+                if (currentlySelectedId === id) {
+                    document.getElementById('token-menu').style.display = 'none';
+                    currentlySelectedId = null;
+                }
+                saveState();
+                renderTokens();
+            }
+        }
+
+        function setupTokenInteraction(el, tokenData) {
+            if (sessionMode === 'player' && tokenData.id !== sessionPlayerTokenId) {
+                return;
+            }
+            
+            let isDragging = false, startX, startY, initialX, initialY, hasMoved = false;
+            el.addEventListener('mousedown', dragStart);
+            
+            function dragStart(e) {
+                if (e.target !== el) return;
+                isDragging = true; hasMoved = false;
+                startX = e.clientX; startY = e.clientY;
+                initialX = el.offsetLeft; initialY = el.offsetTop;
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', dragEnd);
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+                const dx = e.clientX - startX, dy = e.clientY - startY;
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    hasMoved = true;
+                    el.style.cursor = 'grabbing';
+                    el.style.zIndex = 1000;
+                }
+                if (hasMoved) {
+                    el.style.left = `${initialX + dx}px`;
+                    el.style.top = `${initialY + dy}px`;
+                }
+            }
+
+            function dragEnd(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                el.style.cursor = 'pointer'; el.style.zIndex = 10;
+                
+                if (hasMoved) {
+                    const board = document.getElementById('board');
+                    tokenData.x = (el.offsetLeft / board.offsetWidth) * 100;
+                    tokenData.y = (el.offsetTop / board.offsetHeight) * 100;
+                    el.style.left = `${tokenData.x}%`; el.style.top = `${tokenData.y}%`;
+                    saveState();
+                } else {
+                    selectToken(tokenData.id);
+                }
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('mouseup', dragEnd);
+            }
+        }
+
+        function selectToken(id) {
+            if (sessionMode === 'player' && id !== sessionPlayerTokenId) return;
+            
+            currentlySelectedId = id;
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
+            if (!token) return;
+
+            const panel = document.getElementById('token-menu');
+            panel.style.display = 'block';
+            
+            document.getElementById('sel-name').textContent = token.name;
+            document.getElementById('sel-race').textContent = token.race || '-';
+            document.getElementById('sel-class').textContent = token.class || '-';
+            document.getElementById('sel-level').textContent = token.level || 1;
+            document.getElementById('sel-hp-input').value = token.hp || "";
+
+            const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
+
+            renderCombatStats(token);
+
+            const abilitiesContainer = document.getElementById('abilities-container');
+            if (isPlayerToken) {
+                abilitiesContainer.style.display = 'grid';
+                renderAbilities(token);
+            } else {
+                abilitiesContainer.style.display = 'none';
+            }
+
+            document.getElementById('btn-inventory-panel').style.display = isPlayerToken ? 'block' : 'none';
+            document.getElementById('btn-spells-panel').style.display = isPlayerToken ? 'block' : 'none';
+
+            const slotsContainer = document.getElementById('spell-slots-container');
+            const slotsInputs = document.getElementById('slots-inputs');
+            slotsInputs.innerHTML = '';
+            
+            let hasSlots = token.slots && token.slots.max && token.slots.max.some(m => m > 0);
+            
+            if (isPlayerToken && hasSlots) {
+                slotsContainer.style.display = 'block';
+                token.slots.max.forEach((max, index) => {
+                    if (max > 0) {
+                        const curr = token.slots.current[index] || 0;
+                        const div = document.createElement('div');
+                        div.className = 'slot-item';
+                        div.innerHTML = `
+                            <span style="color:#4a90e2; font-weight:bold;">${index+1} ур:</span>
+                            <input type="number" value="${curr}" min="0" max="${max}" onchange="updateSlotDirectly(${index}, this.value)">
+                            <span>/ ${max}</span>
+                        `;
+                        slotsInputs.appendChild(div);
+                    }
+                });
+            } else {
+                slotsContainer.style.display = 'none';
+            }
+        }
+
+        function updateHpDirectly() {
+            if (!currentlySelectedId) return;
+            const hp = document.getElementById('sel-hp-input').value;
+            updateTokenEverywhere(currentlySelectedId, { hp });
+            saveState();
+            renderTokens();
+            renderPlayers();
+        }
+
+        function updateSlotDirectly(levelIndex, value) {
+            if (!currentlySelectedId) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
+            if (!token || !token.slots || !token.slots.max) return;
+            
+            let val = parseInt(value) || 0;
+            const max = token.slots.max[levelIndex] || 0;
+            if (val > max) val = max;
+            if (val < 0) val = 0;
+            
+            const slots = JSON.parse(JSON.stringify(token.slots));
+            slots.current[levelIndex] = val;
+            updateTokenEverywhere(currentlySelectedId, { slots });
+            
+            saveState();
+            renderTokens();
+            
+            const inputEl = document.querySelector(`#slots-inputs input[onchange="updateSlotDirectly(${levelIndex}, this.value)"]`);
+            if (inputEl) inputEl.value = val;
+        }
+
+        function updateCreateTypeUI() {
+            const type = document.querySelector('input[name="token-type"]:checked').value;
+            document.getElementById('edit-slots-section').style.display = type === 'player' ? 'block' : 'none';
+        }
+
+        function openCreateModal(type = 'npc') {
+            document.getElementById('edit-token-id').value = '';
+            document.getElementById('edit-name').value = "";
+            document.getElementById('edit-race').value = "";
+            document.getElementById('edit-class').value = "";
+            document.getElementById('edit-level').value = 1;
+            document.getElementById('edit-hp').value = "";
+            document.getElementById('edit-image').value = '';
+            
+            for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
+            
+            document.getElementById('type-selector').style.display = 'flex';
+            document.querySelector(`input[name="token-type"][value="${type}"]`).checked = true;
+            
+            document.getElementById('modal-title').textContent = "Создать токен";
+            document.getElementById('modal').style.display = 'flex';
+
+            updateCreateTypeUI();
+        }
+
+        function openModal(id, forceType = null) {
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
+            if (!token) return;
+
+            if (sessionMode === 'player' && id !== sessionPlayerTokenId) return;
+
+            document.getElementById('edit-token-id').value = id;
+            document.getElementById('edit-name').value = token.name || "";
+            document.getElementById('edit-race').value = token.race || "";
+            document.getElementById('edit-class').value = token.class || "";
+            document.getElementById('edit-level').value = token.level || 1;
+            document.getElementById('edit-hp').value = token.hp || "";
+            document.getElementById('edit-image').value = '';
+            
+            if (token.slots && token.slots.max) {
+                for (let i = 0; i < 5; i++) document.getElementById(`edit-slot-max-${i+1}`).value = token.slots.max[i] || 0;
+            } else {
+                for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
+            }
+            
+            document.getElementById('type-selector').style.display = 'none';
+            document.getElementById('modal-title').textContent = "Редактировать токен";
+
+            const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
+            document.getElementById('edit-slots-section').style.display = isPlayerToken ? 'block' : 'none';
+
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function editSelectedToken() { if (currentlySelectedId) openModal(currentlySelectedId); }
+
+        function saveToken() {
+            const idStr = document.getElementById('edit-token-id').value;
+            const isEdit = idStr !== '';
+            const id = isEdit ? parseInt(idStr) : state.nextTokenId++;
+            
+            const name = document.getElementById('edit-name').value || "Безымянный";
+            const race = document.getElementById('edit-race').value;
+            const cls = document.getElementById('edit-class').value;
+            const level = parseInt(document.getElementById('edit-level').value) || 1;
+            const hp = document.getElementById('edit-hp').value;
+            
+            const fileInput = document.getElementById('edit-image');
+            
+            if (!isEdit) {
+                let newMaxSlots = [];
+                for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
+
+                const type = document.querySelector('input[name="token-type"]:checked').value;
+                const isPlayer = (type === 'player');
+                const newToken = { 
+                    id: id, name: name, race: race, class: cls, level: level, hp: hp, 
+                    ac: DEFAULT_AC, initiative: DEFAULT_INITIATIVE, speed: DEFAULT_SPEED,
+                    x: 50, y: 50, img: "", isPlayer: isPlayer,
+                    slots: { max: newMaxSlots, current: [...newMaxSlots] }
+                };
+
+                if (isPlayer) {
+                    newToken.inventory = "";
+                    newToken.spells = { ...EMPTY_SPELLS };
+                    newToken.abilities = { ...EMPTY_ABILITIES };
+                }
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { newToken.img = e.target.result; finalizeCreate(newToken, isPlayer); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    finalizeCreate(newToken, isPlayer);
+                }
+            } else {
+                const scene = state.scenes[state.currentSceneIndex];
+                let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
+                if (!token) return;
+
+                const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === id);
+                
+                const patch = {
+                    name: name,
+                    race: race,
+                    class: cls,
+                    level: level,
+                    hp: hp
+                };
+
+                if (isPlayerToken) {
+                    let newMaxSlots = [];
+                    for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
+                    
+                    const existingSlots = token.slots || { max: [0,0,0,0,0], current: [0,0,0,0,0] };
+                    const newCurrent = [...existingSlots.current];
+                    for (let i = 0; i < 5; i++) {
+                        if (newCurrent[i] > newMaxSlots[i]) newCurrent[i] = newMaxSlots[i];
+                    }
+                    patch.slots = { max: newMaxSlots, current: newCurrent };
+                }
+
+                const applyEdit = (imgData) => {
+                    if (imgData) patch.img = imgData;
+                    updateTokenEverywhere(id, patch);
+                    saveState();
+                    renderPlayers();
+                    renderTokens();
+                    closeModal();
+                    if (currentlySelectedId === id) selectToken(id);
+                };
+
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { applyEdit(e.target.result); };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    applyEdit(null);
+                }
+            }
+        }
+
+        function finalizeCreate(newToken, isPlayer) {
+            if (isPlayer) state.players.push(newToken);
+            else state.scenes[state.currentSceneIndex].tokens.push(newToken);
+            saveState();
+            renderPlayers();
+            renderTokens();
+            closeModal();
+            if (!isPlayer) selectToken(newToken.id);
+        }
+
+        function deleteToken() {
+            if (sessionMode === 'player') return;
+            const id = parseInt(document.getElementById('edit-token-id').value);
+            if (!id) { closeModal(); return; }
+            
+            if (confirm("Удалить этого героя навсегда?")) {
+                state.players = state.players.filter(t => t.id !== id);
+                state.scenes.forEach(s => { s.tokens = s.tokens.filter(t => t.id !== id); });
+                state.initiative = state.initiative.filter(i => i !== id);
+                if (currentlySelectedId === id) {
+                    document.getElementById('token-menu').style.display = 'none';
+                    currentlySelectedId = null;
+                }
+                saveState();
+                renderPlayers();
+                renderTokens();
+                closeModal();
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('justilia_vtt_state', JSON.stringify(state));
+            } catch (e) {
+                console.warn("Память браузера переполнена.");
+            }
+            if (!isApplyingRemote && socket && socket.connected) {
+                socket.emit('state:update', state);
+            }
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('justilia_vtt_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.scenes) {
+                        state = parsed;
+                        
+                        if (!state.players) state.players = [];
+
+                        state.players.forEach(p => {
+                            if (p.inventory === undefined) p.inventory = "";
+                            p.spells = normalizeSpells(p.spells);
+                            if (!p.abilities) p.abilities = { ...EMPTY_ABILITIES };
+                            if (p.ac === undefined) p.ac = DEFAULT_AC;
+                            if (p.initiative === undefined) p.initiative = DEFAULT_INITIATIVE;
+                            if (p.speed === undefined) p.speed = DEFAULT_SPEED;
+                            if (p.isPlayer === undefined) p.isPlayer = true;
+                        });
+                        
+                        state.scenes.forEach(s => {
+                            if (s.isCombat === undefined) s.isCombat = false;
+                            if (s.showMinimap === undefined) s.showMinimap = false;
+                            if (s.minimapImg === undefined) s.minimapImg = "";
+                            if (s.minimapPos === undefined) s.minimapPos = { x: 0, y: 0 };
+                            if (s.img && !s.images) { s.images = [s.img]; delete s.img; }
+                            if (!s.images) s.images = [];
+                            if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
+                            if (s.audio === undefined) s.audio = "";
+                            if (s.audioName === undefined) s.audioName = "";
+                            if (!s.tokens) s.tokens = []; 
+                            
+                            s.tokens.forEach(t => {
+                                if (t.isPlayer === undefined) t.isPlayer = false;
+                                if (t.inventory === undefined) t.inventory = "";
+                                t.spells = normalizeSpells(t.spells);
+                                if (!t.abilities) t.abilities = { ...EMPTY_ABILITIES };
+                                if (t.ac === undefined) t.ac = DEFAULT_AC;
+                                if (t.initiative === undefined) t.initiative = DEFAULT_INITIATIVE;
+                                if (t.speed === undefined) t.speed = DEFAULT_SPEED;
+                                if (!t.slots || Array.isArray(t.slots)) {
+                                    const oldCurrent = Array.isArray(t.slots) ? t.slots : [0,0,0,0,0];
+                                    t.slots = { 
+                                        max: [oldCurrent[0]||0, oldCurrent[1]||0, oldCurrent[2]||0, oldCurrent[3]||0, oldCurrent[4]||0], 
+                                        current: [oldCurrent[0]||0, oldCurrent[1]||0, oldCurrent[2]||0, oldCurrent[3]||0, oldCurrent[4]||0] 
+                                    };
+                                } else {
+                                    if (!t.slots.max) t.slots.max = [0,0,0,0,0];
+                                    if (!t.slots.current) t.slots.current = [0,0,0,0,0];
+                                }
+                            });
+                        });
+
+                        if (!state.initiative) state.initiative = [];
+                        if (state.currentTurnIndex === undefined) state.currentTurnIndex = 0;
+                    }
+                } catch (e) { console.error(e); }
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
