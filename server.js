@@ -184,7 +184,7 @@ function releaseClaims(roomCode, socketId) {
 
 app.get('/api/health', (req, res) => res.json({ ok: true, rooms: rooms.size }));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
 });
