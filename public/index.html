@@ -405,7 +405,6 @@
             background-size: 50px 50px;
         }
 
-        /* DRAWING LAYER */
         #drawing-canvas {
             position: absolute;
             top: 0; left: 0;
@@ -418,7 +417,6 @@
             cursor: crosshair;
         }
 
-        /* DRAW TOOLBAR */
         #draw-toolbar {
             position: absolute;
             top: 70px;
@@ -722,6 +720,23 @@
             font-size: 12px !important;
         }
         .btn-import-token:hover { background: var(--bg-accent) !important; border-color: var(--accent) !important; color: var(--accent-dark) !important; }
+
+        .btn-draw-mode {
+            background: var(--bg-subtle) !important;
+            color: var(--ink) !important;
+            border-color: var(--border-strong) !important;
+            font-size: 13px !important;
+        }
+        .btn-draw-mode:hover {
+            background: var(--bg-accent) !important;
+            border-color: var(--accent) !important;
+            color: var(--accent-dark) !important;
+        }
+        body.drawing-active .btn-draw-mode {
+            background: var(--accent) !important;
+            color: white !important;
+            border-color: var(--accent) !important;
+        }
 
         .btn-save {
             background: var(--accent) !important;
@@ -1377,6 +1392,7 @@
         body.player-mode .move-controls,
         body.player-mode .btn-import-token,
         body.player-mode .scene-drag-handle,
+        body.player-mode .btn-draw-mode,
         body.player-mode #draw-toolbar {
             display: none !important;
         }
@@ -1513,6 +1529,8 @@
                     <input type="checkbox" id="minimap-toggle" onchange="toggleMinimap()">
                     <label for="minimap-toggle">Миникарта</label>
                 </div>
+
+                <button class="btn-draw-mode" id="btn-draw-mode" onclick="toggleDrawingMode()">🖌️ Режим рисования</button>
 
                 <ul class="scene-list" id="scene-list"></ul>
             </div>
@@ -2041,10 +2059,8 @@
         function resizeDrawCanvas() {
             const board = document.getElementById('board');
             if (!board) return;
-            const oldData = drawCanvas.toDataURL();
             drawCanvas.width = board.offsetWidth;
             drawCanvas.height = board.offsetHeight;
-            // Перерисовываем сохранённые штрихи
             redrawAllDrawings();
         }
 
@@ -2106,9 +2122,18 @@
                 alert('Рисование доступно только на боевых сценах.\nВключите «Боевая сцена» в левой панели.');
                 return;
             }
+            
             const isActive = document.body.classList.toggle('drawing-active');
             document.getElementById('draw-toolbar').classList.toggle('active', isActive);
-            if (isActive) resizeDrawCanvas();
+            
+            const btn = document.getElementById('btn-draw-mode');
+            if (btn) btn.textContent = isActive ? '✅ Завершить рисование' : '🖌️ Режим рисования';
+            
+            if (isActive) {
+                resizeDrawCanvas();
+                currentlySelectedId = null;
+                document.getElementById('token-menu').style.display = 'none';
+            }
         }
 
         function selectDrawTool(tool) {
@@ -2152,7 +2177,6 @@
                 scene.drawings.push(shape);
                 drawShape(shape);
             } else {
-                // Для line/rect сохраняем snapshot для предпросмотра
                 drawSnapshot = drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
             }
         });
@@ -2166,7 +2190,6 @@
             if (currentTool === 'brush' || currentTool === 'eraser') {
                 if (shape && shape.points) {
                     shape.points.push({ x: coords.x, y: coords.y });
-                    // Перерисовка последнего штриха
                     drawCtx.save();
                     if (currentTool === 'eraser') {
                         drawCtx.globalCompositeOperation = 'destination-out';
@@ -2187,7 +2210,6 @@
                     drawCtx.restore();
                 }
             } else if (currentTool === 'line' || currentTool === 'rect') {
-                // Предпросмотр — восстановить snapshot и нарисовать
                 if (drawSnapshot) drawCtx.putImageData(drawSnapshot, 0, 0);
                 drawCtx.save();
                 drawCtx.strokeStyle = currentColor;
@@ -3022,10 +3044,11 @@
             } else {
                 grid.classList.remove('active'); gridCheckbox.checked = false;
                 initTracker.classList.remove('active');
-                // выключаем режим рисования вне боевой сцены
                 if (document.body.classList.contains('drawing-active')) {
                     document.body.classList.remove('drawing-active');
                     document.getElementById('draw-toolbar').classList.remove('active');
+                    const btn = document.getElementById('btn-draw-mode');
+                    if (btn) btn.textContent = '🖌️ Режим рисования';
                 }
             }
             updateMinimapUI(); renderInitiative(); loadSceneAudio(scene);

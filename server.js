@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { Server } = require('socket.io');
 
 const app = express();
@@ -15,22 +16,20 @@ const io = new Server(server, {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ==== ХРАНИЛИЩЕ КОМНАТ ====
-// rooms: { roomCode: { state, lastActivity } }
 const rooms = new Map();
-const SAVE_FILE = path.join(__dirname, 'world-state.json');
+// Исправлено: пишем во временную папку, чтобы не было EACCES
+const SAVE_FILE = path.join(os.tmpdir(), 'world-state.json');
 
 function loadPersisted() {
     try {
         if (fs.existsSync(SAVE_FILE)) {
             const data = JSON.parse(fs.readFileSync(SAVE_FILE, 'utf-8'));
-            // Поддержка как старого формата (один мир), так и нового (комнаты)
             if (data && data.rooms) {
                 Object.entries(data.rooms).forEach(([code, roomData]) => {
                     rooms.set(code, roomData);
                 });
                 console.log(`✅ Загружено комнат: ${rooms.size}`);
             } else if (data && data.scenes) {
-                // старый формат — превращаем в комнату MAIN
                 rooms.set('MAIN', { state: data, lastActivity: Date.now() });
                 console.log('✅ Загружен старый формат мира в комнату MAIN');
             }
@@ -77,8 +76,7 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 // ==== SOCKET.IO ====
-// В каждой комнате: claimedTokens: Map<tokenId, socketId>, playerClaims: Map<socketId, tokenId>
-const roomClaims = new Map(); // roomCode -> { claimedTokens, playerClaims }
+const roomClaims = new Map();
 
 function getRoomClaims(code) {
     if (!roomClaims.has(code)) {
@@ -184,7 +182,7 @@ function releaseClaims(roomCode, socketId) {
 
 app.get('/api/health', (req, res) => res.json({ ok: true, rooms: rooms.size }));
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
 });
