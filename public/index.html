@@ -44,7 +44,6 @@
 
         h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
 
-        /* --- ROOM SCREEN --- */
         #room-screen {
             display: flex;
             position: fixed;
@@ -106,7 +105,6 @@
             margin-bottom: 16px;
             color: var(--ink);
             outline: none;
-            transition: border-color 0.2s;
         }
 
         .room-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156,125,79,0.1); }
@@ -123,7 +121,6 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: background 0.2s;
             margin-bottom: 12px;
             font-family: 'Inter', sans-serif;
         }
@@ -140,9 +137,7 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
             margin-bottom: 12px;
-            font-family: 'Inter', sans-serif;
         }
 
         .room-card .btn-secondary:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
@@ -191,7 +186,6 @@
             line-height: 1.6;
         }
 
-        /* --- MAIN HEADER --- */
         header {
             height: 64px;
             background: var(--white);
@@ -227,7 +221,6 @@
             color: var(--accent-dark);
             letter-spacing: 2px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .room-badge:hover { background: var(--bg-subtle); }
 
@@ -397,6 +390,144 @@
             overflow: hidden;
         }
 
+        #grid-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+        #grid-overlay.active {
+            display: block;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* DRAWING LAYER */
+        #drawing-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 6;
+        }
+        body.drawing-active #drawing-canvas {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+
+        /* DRAW TOOLBAR */
+        #draw-toolbar {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 200;
+            box-shadow: var(--shadow-md);
+            min-width: 200px;
+        }
+        #draw-toolbar.active { display: flex; }
+
+        .draw-toolbar-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2px;
+        }
+
+        .draw-tools-row {
+            display: flex;
+            gap: 4px;
+            justify-content: space-between;
+        }
+
+        .draw-tool-btn {
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 4px !important;
+            font-size: 15px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--white);
+            border: 1px solid var(--border-strong);
+            color: var(--ink-soft);
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .draw-tool-btn:hover { background: var(--bg-subtle); border-color: var(--accent); }
+        .draw-tool-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .draw-setting-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--ink-muted);
+        }
+        .draw-setting-row label {
+            font-weight: 500;
+            min-width: 55px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 10px;
+        }
+        .draw-setting-row input[type="color"] {
+            width: 36px;
+            height: 28px;
+            padding: 2px;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            cursor: pointer;
+            background: var(--white);
+            margin: 0 !important;
+        }
+        .draw-setting-row input[type="range"] {
+            flex: 1;
+            accent-color: var(--accent);
+            cursor: pointer;
+            margin: 0 !important;
+        }
+        .draw-setting-row .size-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            min-width: 24px;
+            text-align: right;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .draw-clear-btn {
+            background: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+            font-size: 11px !important;
+            padding: 8px !important;
+            margin-top: 4px;
+            width: 100% !important;
+        }
+        .draw-clear-btn:hover { background: #a04545 !important; }
+
         .nav-arrow {
             position: absolute;
             top: 50%;
@@ -449,21 +580,6 @@
             display: none;
         }
         .btn-delete-image:hover { background: var(--danger); color: white; }
-
-        #grid-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 5;
-            display: none;
-        }
-        #grid-overlay.active {
-            display: block;
-            background-image: 
-                linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
 
         #minimap-container {
             position: absolute;
@@ -636,7 +752,6 @@
             font-family: 'Inter', sans-serif;
             font-size: 13px;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus, select:focus, textarea:focus {
             border-color: var(--accent);
@@ -684,15 +799,8 @@
         .scene-list li:hover, .token-list li:hover { background: var(--bg-subtle); border-color: var(--accent); }
         .scene-list li.active { background: var(--bg-accent); border-color: var(--accent); color: var(--accent-dark); font-weight: 500; }
 
-        .scene-list li.dragging-scene {
-            opacity: 0.4;
-            transform: scale(0.98);
-        }
-        .scene-list li.drag-over-scene {
-            border-color: var(--accent) !important;
-            background: var(--bg-accent) !important;
-            transform: translateX(4px);
-        }
+        .scene-list li.dragging-scene { opacity: 0.4; transform: scale(0.98); }
+        .scene-list li.drag-over-scene { border-color: var(--accent) !important; background: var(--bg-accent) !important; transform: translateX(4px); }
 
         .scene-drag-handle {
             color: var(--ink-muted);
@@ -702,7 +810,6 @@
             user-select: none;
             padding: 0 2px;
         }
-        .scene-drag-handle:active { cursor: grabbing; }
 
         .list-item-content {
             flex-grow: 1;
@@ -734,7 +841,6 @@
             cursor: pointer;
             width: auto;
             margin: 0;
-            font-family: 'Inter', sans-serif;
         }
         .move-btn:hover { background: var(--bg-accent); color: var(--accent-dark); border-color: var(--accent); }
 
@@ -785,7 +891,6 @@
         .token-detail-row span:first-child { color: var(--ink-muted); font-weight: 500; }
         .token-detail-row span:last-child { font-weight: 600; color: var(--ink); text-align: right;}
 
-        /* === HP CALCULATOR === */
         .hp-section {
             background: var(--white);
             border: 1px solid var(--border);
@@ -814,17 +919,8 @@
             color: var(--ink);
             line-height: 1;
         }
-        .hp-current-value .hp-max-part {
-            font-size: 13px;
-            color: var(--ink-muted);
-            font-weight: 400;
-        }
-        .hp-controls {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .hp-current-value .hp-max-part { font-size: 13px; color: var(--ink-muted); font-weight: 400; }
+        .hp-controls { display: flex; gap: 4px; align-items: center; margin-bottom: 8px; }
         .hp-btn {
             width: 32px !important;
             height: 32px !important;
@@ -837,7 +933,6 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-family: 'Inter', sans-serif !important;
         }
         .hp-btn.minus { color: var(--danger); }
         .hp-btn.minus:hover { background: var(--danger); color: white; border-color: var(--danger); }
@@ -864,8 +959,6 @@
             flex-shrink: 0;
             height: 32px;
         }
-        .hp-apply-btn:hover { background: var(--accent-hover) !important; }
-
         .temp-hp-row {
             display: flex;
             gap: 6px;
@@ -881,7 +974,6 @@
             align-items: center;
             gap: 4px;
             white-space: nowrap;
-            cursor: help;
         }
         .temp-hp-input {
             flex: 1;
@@ -896,14 +988,7 @@
             border-color: var(--info) !important;
             background: #f0f5fb !important;
         }
-
-        .hp-preview {
-            font-size: 11px;
-            color: var(--ink-muted);
-            text-align: center;
-            margin-top: 4px;
-            min-height: 14px;
-        }
+        .hp-preview { font-size: 11px; color: var(--ink-muted); text-align: center; margin-top: 4px; min-height: 14px; }
 
         .combat-stats-grid {
             display: grid;
@@ -916,17 +1001,11 @@
             border-radius: 4px;
             border: 1px solid var(--border);
         }
-        .combat-stat-cell {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
+        .combat-stat-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
         .combat-stat-cell .stat-label {
             font-weight: 600;
             color: var(--ink-muted);
             font-size: 9px;
-            text-align: center;
             letter-spacing: 1px;
         }
         .combat-stat-cell input {
@@ -957,7 +1036,6 @@
             color: var(--ink-muted);
             min-width: 32px;
             font-size: 10px;
-            letter-spacing: 0.5px;
         }
         .ability-cell input {
             width: 42px !important;
@@ -1001,7 +1079,6 @@
             font-weight: 600;
             border: none;
             background: transparent !important;
-            box-shadow: none !important;
         }
 
         .die-type-selector { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; justify-content: center; }
@@ -1141,6 +1218,10 @@
         .token.is-player:hover { border-color: #6ba3e0; }
         .token.is-player.token-not-owned:hover { border-color: #4a7ebb; }
 
+        body.drawing-active .token {
+            pointer-events: none !important;
+        }
+
         .temp-hp-badge {
             position: absolute;
             top: -4px;
@@ -1152,7 +1233,6 @@
             padding: 1px 5px;
             font-size: 10px;
             font-weight: 700;
-            font-family: 'Inter', sans-serif;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 15;
         }
@@ -1229,7 +1309,6 @@
         .inv-modal-content h2 { margin-bottom: 12px; color: var(--ink); text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; font-size: 22px; letter-spacing: 1px; }
         #inv-owner-name { text-align: center; margin-bottom: 16px; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 17px; }
         #inventory-text { width: 100%; flex-grow: 1; min-height: 320px; padding: 14px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: var(--ink); resize: vertical; outline: none; }
-        #inventory-text:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1); }
 
         .spells-modal-content {
             background: var(--white);
@@ -1249,7 +1328,6 @@
         .spells-block { display: flex; flex-direction: column; }
         .spells-block label { font-weight: 600; font-size: 11px; color: var(--ink-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .spells-block textarea { width: 100%; min-height: 110px; padding: 10px 12px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; color: var(--ink); resize: vertical; outline: none; }
-        .spells-block textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1); }
         .spells-block.combat label { color: var(--danger); }
         .spells-block.special label { color: var(--accent-dark); }
         .spells-block.cantrips label { color: #4a7ebb; }
@@ -1298,7 +1376,8 @@
         body.player-mode .music-upload-label,
         body.player-mode .move-controls,
         body.player-mode .btn-import-token,
-        body.player-mode .scene-drag-handle {
+        body.player-mode .scene-drag-handle,
+        body.player-mode #draw-toolbar {
             display: none !important;
         }
 
@@ -1374,7 +1453,6 @@
 </head>
 <body>
 
-    <!-- ROOM SCREEN -->
     <div id="room-screen">
         <div class="room-card">
             <h1>Юстилия</h1>
@@ -1382,9 +1460,7 @@
 
             <div id="room-menu">
                 <button class="btn-primary" onclick="createRoom()">Создать комнату</button>
-
                 <div class="divider">или</div>
-
                 <label>Код комнаты</label>
                 <input type="text" id="room-code-input" placeholder="ABC123" maxlength="6" oninput="this.value=this.value.toUpperCase()">
                 <button class="btn-secondary" onclick="joinRoom()">Войти</button>
@@ -1461,12 +1537,33 @@
 
             <div id="board">
                 <div id="grid-overlay"></div>
+                <canvas id="drawing-canvas"></canvas>
                 
                 <div id="nav-prev" class="nav-arrow" onclick="prevImage()">❮</div>
                 <div id="nav-next" class="nav-arrow" onclick="nextImage()">❯</div>
                 
                 <div id="image-counter">1 / 1</div>
                 <div class="btn-delete-image" id="btn-delete-image" onclick="deleteCurrentImage()">✖</div>
+            </div>
+
+            <div id="draw-toolbar">
+                <div class="draw-toolbar-title">Рисование</div>
+                <div class="draw-tools-row">
+                    <button class="draw-tool-btn active" data-tool="brush" onclick="selectDrawTool('brush')" title="Кисть">✏</button>
+                    <button class="draw-tool-btn" data-tool="line" onclick="selectDrawTool('line')" title="Линия">╱</button>
+                    <button class="draw-tool-btn" data-tool="rect" onclick="selectDrawTool('rect')" title="Прямоугольник">▭</button>
+                    <button class="draw-tool-btn" data-tool="eraser" onclick="selectDrawTool('eraser')" title="Ластик">⌫</button>
+                </div>
+                <div class="draw-setting-row">
+                    <label>Цвет</label>
+                    <input type="color" id="draw-color" value="#8b3a3a" onchange="updateDrawSettings()">
+                </div>
+                <div class="draw-setting-row">
+                    <label>Толщина</label>
+                    <input type="range" id="draw-size" min="1" max="40" value="4" onchange="updateDrawSettings()" oninput="document.getElementById('draw-size-value').textContent=this.value">
+                    <span class="size-value" id="draw-size-value">4</span>
+                </div>
+                <button class="draw-clear-btn" onclick="clearDrawings()">Очистить всё</button>
             </div>
 
             <div id="minimap-container" onmousedown="startMinimapDrag(event)">
@@ -1495,7 +1592,6 @@
                 <div class="token-detail-row"><span>Класс:</span> <span id="sel-class">-</span></div>
                 <div class="token-detail-row"><span>Уровень:</span> <span id="sel-level">-</span></div>
 
-                <!-- HP CALCULATOR -->
                 <div class="hp-section">
                     <div class="hp-header">
                         <span class="hp-header-label">Хиты</span>
@@ -1504,14 +1600,14 @@
                         </div>
                     </div>
                     <div class="hp-controls">
-                        <button class="hp-btn minus" onclick="adjustHp(-1)" title="Вычесть хиты">−</button>
-                        <input type="number" class="hp-amount-input" id="hp-amount" min="0" placeholder="0" value="">
-                        <button class="hp-btn plus" onclick="adjustHp(1)" title="Прибавить хиты">+</button>
-                        <button class="hp-apply-btn" onclick="applyHpDelta()" title="Применить">OK</button>
+                        <button class="hp-btn minus" onclick="adjustHp(-1)">−</button>
+                        <input type="number" class="hp-amount-input" id="hp-amount" min="0" placeholder="0">
+                        <button class="hp-btn plus" onclick="adjustHp(1)">+</button>
+                        <button class="hp-apply-btn" onclick="applyHpDelta()">OK</button>
                     </div>
                     <div class="hp-preview" id="hp-preview"></div>
                     <div class="temp-hp-row">
-                        <span class="temp-hp-label" title="Временные хиты — снимаются первыми при уроне">🛡 Врем.</span>
+                        <span class="temp-hp-label" title="Временные хиты">🛡 Врем.</span>
                         <input type="number" class="temp-hp-input" id="temp-hp-input" min="0" value="0" onchange="setTempHp(this.value)">
                     </div>
                 </div>
@@ -1532,36 +1628,12 @@
                 </div>
 
                 <div id="abilities-container" class="abilities-grid">
-                    <div class="ability-cell">
-                        <span class="ability-label">СИЛ</span>
-                        <input type="number" id="sel-abil-str" min="1" max="30" value="10" onchange="updateAbilityDirectly('str', this.value)">
-                        <span class="ability-mod" id="sel-mod-str">+0</span>
-                    </div>
-                    <div class="ability-cell">
-                        <span class="ability-label">ЛОВ</span>
-                        <input type="number" id="sel-abil-dex" min="1" max="30" value="10" onchange="updateAbilityDirectly('dex', this.value)">
-                        <span class="ability-mod" id="sel-mod-dex">+0</span>
-                    </div>
-                    <div class="ability-cell">
-                        <span class="ability-label">ТЕЛ</span>
-                        <input type="number" id="sel-abil-con" min="1" max="30" value="10" onchange="updateAbilityDirectly('con', this.value)">
-                        <span class="ability-mod" id="sel-mod-con">+0</span>
-                    </div>
-                    <div class="ability-cell">
-                        <span class="ability-label">ИНТ</span>
-                        <input type="number" id="sel-abil-int" min="1" max="30" value="10" onchange="updateAbilityDirectly('int', this.value)">
-                        <span class="ability-mod" id="sel-mod-int">+0</span>
-                    </div>
-                    <div class="ability-cell">
-                        <span class="ability-label">МУД</span>
-                        <input type="number" id="sel-abil-wis" min="1" max="30" value="10" onchange="updateAbilityDirectly('wis', this.value)">
-                        <span class="ability-mod" id="sel-mod-wis">+0</span>
-                    </div>
-                    <div class="ability-cell">
-                        <span class="ability-label">ХАР</span>
-                        <input type="number" id="sel-abil-cha" min="1" max="30" value="10" onchange="updateAbilityDirectly('cha', this.value)">
-                        <span class="ability-mod" id="sel-mod-cha">+0</span>
-                    </div>
+                    <div class="ability-cell"><span class="ability-label">СИЛ</span><input type="number" id="sel-abil-str" min="1" max="30" value="10" onchange="updateAbilityDirectly('str', this.value)"><span class="ability-mod" id="sel-mod-str">+0</span></div>
+                    <div class="ability-cell"><span class="ability-label">ЛОВ</span><input type="number" id="sel-abil-dex" min="1" max="30" value="10" onchange="updateAbilityDirectly('dex', this.value)"><span class="ability-mod" id="sel-mod-dex">+0</span></div>
+                    <div class="ability-cell"><span class="ability-label">ТЕЛ</span><input type="number" id="sel-abil-con" min="1" max="30" value="10" onchange="updateAbilityDirectly('con', this.value)"><span class="ability-mod" id="sel-mod-con">+0</span></div>
+                    <div class="ability-cell"><span class="ability-label">ИНТ</span><input type="number" id="sel-abil-int" min="1" max="30" value="10" onchange="updateAbilityDirectly('int', this.value)"><span class="ability-mod" id="sel-mod-int">+0</span></div>
+                    <div class="ability-cell"><span class="ability-label">МУД</span><input type="number" id="sel-abil-wis" min="1" max="30" value="10" onchange="updateAbilityDirectly('wis', this.value)"><span class="ability-mod" id="sel-mod-wis">+0</span></div>
+                    <div class="ability-cell"><span class="ability-label">ХАР</span><input type="number" id="sel-abil-cha" min="1" max="30" value="10" onchange="updateAbilityDirectly('cha', this.value)"><span class="ability-mod" id="sel-mod-cha">+0</span></div>
                 </div>
                 
                 <div id="spell-slots-container" style="display: none; margin-top: 10px;">
@@ -1624,15 +1696,12 @@
         <div class="modal-content">
             <h2 id="modal-title">Создать токен</h2>
             <input type="hidden" id="edit-token-id">
-            
             <div class="token-type-selector" id="type-selector">
                 <label><input type="radio" name="token-type" value="npc" checked onchange="updateCreateTypeUI()"> НПС</label>
                 <label><input type="radio" name="token-type" value="player" onchange="updateCreateTypeUI()"> Игрок</label>
             </div>
-
             <label>Имя персонажа</label>
             <input type="text" id="edit-name" placeholder="Например: Леонард">
-            
             <div style="display:flex; gap: 10px;">
                 <div style="flex: 1;">
                     <label>Уровень</label>
@@ -1640,10 +1709,9 @@
                 </div>
                 <div style="flex: 2;">
                     <label>Макс. хиты</label>
-                    <input type="number" id="edit-hp-max" value="10" min="1" placeholder="10">
+                    <input type="number" id="edit-hp-max" value="10" min="1">
                 </div>
             </div>
-
             <label>Раса</label>
             <select id="edit-race">
                 <option value="">— Выберите —</option>
@@ -1667,7 +1735,6 @@
                 <option value="Ханао">Ханао</option>
                 <option value="Ширью">Ширью</option>
             </select>
-            
             <label>Класс</label>
             <select id="edit-class">
                 <option value="">— Выберите —</option>
@@ -1683,7 +1750,6 @@
                 <option value="Плут">Плут</option>
                 <option value="Друид">Друид</option>
             </select>
-
             <div id="edit-slots-section">
                 <label style="margin-top: 10px;">Макс. ячейки заклинаний</label>
                 <div class="modal-slots-grid">
@@ -1694,10 +1760,8 @@
                     <div class="modal-slot-col"><label>5</label><input type="number" id="edit-slot-max-5" value="0" min="0"></div>
                 </div>
             </div>
-            
             <label>Портрет</label>
             <input type="file" id="edit-image" accept="image/*">
-
             <div class="modal-actions">
                 <button onclick="saveToken()" style="flex: 2;">Сохранить</button>
                 <button class="btn-delete" onclick="deleteToken()">Удалить</button>
@@ -1710,7 +1774,7 @@
         <div class="inv-modal-content">
             <h2>Инвентарь</h2>
             <div id="inv-owner-name">-</div>
-            <textarea id="inventory-text" placeholder="Одна строка — один предмет."></textarea>
+            <textarea id="inventory-text"></textarea>
             <div class="modal-actions">
                 <button onclick="saveInventory()" style="flex: 2;">Сохранить</button>
                 <button class="btn-cancel" onclick="closeInventory()">✕</button>
@@ -1746,14 +1810,12 @@
                 <div class="mode-subtitle">Выберите режим входа</div>
                 <div class="mode-buttons">
                     <button class="mode-btn" onclick="selectMasterMode()">
-                        <span class="mode-icon">👑</span>
-                        Мастер
-                        <span class="mode-desc">Полный доступ: сцены, НПС, все токены, сохранение мира</span>
+                        <span class="mode-icon">👑</span>Мастер
+                        <span class="mode-desc">Полный доступ</span>
                     </button>
                     <button class="mode-btn" onclick="showPlayerSelect()">
-                        <span class="mode-icon">🎭</span>
-                        Игрок
-                        <span class="mode-desc">Управление персонажем: статы, инвентарь, заклинания</span>
+                        <span class="mode-icon">🎭</span>Игрок
+                        <span class="mode-desc">Управление персонажем</span>
                     </button>
                 </div>
             </div>
@@ -1771,21 +1833,11 @@
         let state = {
             players: [], 
             scenes: [{ 
-                name: "Пустая сцена", 
-                images: [], 
-                currentImageIndex: 0, 
-                isCombat: false, 
-                showMinimap: false,
-                minimapImg: "", 
-                minimapPos: { x: 0, y: 0 },
-                audio: "", 
-                audioName: "",
-                tokens: [] 
+                name: "Пустая сцена", images: [], currentImageIndex: 0, isCombat: false, showMinimap: false,
+                minimapImg: "", minimapPos: { x: 0, y: 0 }, audio: "", audioName: "",
+                drawings: [], tokens: [] 
             }],
-            currentSceneIndex: 0,
-            nextTokenId: 1,
-            initiative: [], 
-            currentTurnIndex: 0 
+            currentSceneIndex: 0, nextTokenId: 1, initiative: [], currentTurnIndex: 0 
         };
 
         let sessionMode = null;
@@ -1803,11 +1855,18 @@
         let minimapStartX = 0, minimapStartY = 0;
         let minimapInitialX = 0, minimapInitialY = 0;
         let initDragSrcIndex = null;
-
         let sceneDragSrcIndex = null;
 
         let currentDieType = 20;
         let hpPendingDelta = 0;
+
+        // Drawing
+        let currentTool = 'brush';
+        let currentColor = '#8b3a3a';
+        let currentSize = 4;
+        let isDrawing = false;
+        let drawStartX = 0, drawStartY = 0;
+        let drawSnapshot = null;
 
         const EMPTY_SPELLS = { combat: "", special: "", cantrips: "", circle1: "", circle2: "", circle3: "", circle4: "", circle5: "" };
         const EMPTY_ABILITIES = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
@@ -1824,10 +1883,7 @@
 
         // === ROOMS ===
         function createRoom() {
-            if (!socket || !socket.connected) {
-                alert('Нет связи с сервером. Обновите страницу.');
-                return;
-            }
+            if (!socket || !socket.connected) return alert('Нет связи с сервером');
             socket.emit('room:create', (response) => {
                 if (response && response.ok) {
                     const code = response.code;
@@ -1838,9 +1894,7 @@
                     document.getElementById('room-menu').style.display = 'none';
                     document.getElementById('room-created-block').style.display = 'block';
                     currentRoomCode = code;
-                } else {
-                    alert('Не удалось создать комнату');
-                }
+                } else alert('Не удалось создать комнату');
             });
         }
 
@@ -1855,10 +1909,7 @@
         function joinRoom() {
             const input = document.getElementById('room-code-input');
             const code = (input.value || '').toUpperCase().trim();
-            if (!code || code.length < 4) {
-                alert('Введите код комнаты (минимум 4 символа)');
-                return;
-            }
+            if (!code || code.length < 4) return alert('Введите код (мин. 4 символа)');
             const url = new URL(window.location.href);
             url.searchParams.set('room', code);
             window.history.replaceState({}, '', url);
@@ -1866,10 +1917,7 @@
         }
 
         function proceedToRoom(code) {
-            if (!socket || !socket.connected) {
-                alert('Нет связи с сервером');
-                return;
-            }
+            if (!socket || !socket.connected) return alert('Нет связи с сервером');
             socket.emit('room:join', code, (response) => {
                 if (response && response.ok) {
                     currentRoomCode = response.code;
@@ -1877,7 +1925,7 @@
                     document.getElementById('room-badge').textContent = '🏠 ' + currentRoomCode;
                     continueInit();
                 } else {
-                    alert('Комната не найдена: ' + (response?.reason || 'неизвестная ошибка'));
+                    alert('Комната не найдена: ' + (response?.reason || 'ошибка'));
                     const url = new URL(window.location.href);
                     url.searchParams.delete('room');
                     window.history.replaceState({}, '', url);
@@ -1894,9 +1942,7 @@
                 const old = badge.textContent;
                 badge.textContent = '✓ Скопировано';
                 setTimeout(() => badge.textContent = old, 1500);
-            }).catch(() => {
-                prompt('Скопируйте ссылку:', url.toString());
-            });
+            }).catch(() => prompt('Скопируйте:', url.toString()));
         }
 
         // === HP CALCULATOR ===
@@ -1905,29 +1951,22 @@
             const str = String(hpStr).trim();
             if (str.includes('/')) {
                 const parts = str.split('/');
-                const cur = parseInt(parts[0]) || 0;
-                const max = parseInt(parts[1]) || 0;
-                return { current: cur, max };
+                return { current: parseInt(parts[0]) || 0, max: parseInt(parts[1]) || 0 };
             }
             const val = parseInt(str) || 0;
             return { current: val, max: val };
         }
 
-        function formatHp(current, max) {
-            return `${current}/${max}`;
-        }
+        function formatHp(current, max) { return `${current}/${max}`; }
 
         function renderHpCalculator(token) {
             if (!token) return;
             const hp = parseHp(token.hp);
             const temp = token.tempHp || 0;
-            
             document.getElementById('hp-current').textContent = hp.current;
             document.getElementById('hp-max').textContent = hp.max;
             document.getElementById('temp-hp-input').value = temp;
-            
-            const hpAmountInput = document.getElementById('hp-amount');
-            hpAmountInput.value = '';
+            document.getElementById('hp-amount').value = '';
             hpPendingDelta = 0;
             updateHpPreview();
         }
@@ -1937,100 +1976,54 @@
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
             if (!token) return;
-            
             const hp = parseHp(token.hp);
             const temp = token.tempHp || 0;
-            const delta = hpPendingDelta;
             const amountInput = document.getElementById('hp-amount');
             const typedAmount = parseInt(amountInput.value) || 0;
-            const effectiveDelta = typedAmount > 0 ? (delta < 0 ? -typedAmount : (delta > 0 ? typedAmount : 0)) : 0;
-            
+            const effectiveDelta = typedAmount > 0 ? (hpPendingDelta < 0 ? -typedAmount : (hpPendingDelta > 0 ? typedAmount : 0)) : 0;
             const previewEl = document.getElementById('hp-preview');
-            
-            if (effectiveDelta === 0) {
-                previewEl.textContent = temp > 0 ? `+${temp} временных` : '';
-                return;
-            }
-            
-            let newHp = hp.current;
-            let newTemp = temp;
-            
+            if (effectiveDelta === 0) { previewEl.textContent = temp > 0 ? `+${temp} временных` : ''; return; }
+            let newHp = hp.current, newTemp = temp;
             if (effectiveDelta < 0) {
                 let damage = Math.abs(effectiveDelta);
-                if (newTemp > 0) {
-                    const tempAbsorbed = Math.min(newTemp, damage);
-                    newTemp -= tempAbsorbed;
-                    damage -= tempAbsorbed;
-                }
+                if (newTemp > 0) { const absorbed = Math.min(newTemp, damage); newTemp -= absorbed; damage -= absorbed; }
                 newHp = Math.max(0, newHp - damage);
-            } else {
-                newHp = Math.min(hp.max, newHp + effectiveDelta);
-            }
-            
+            } else newHp = Math.min(hp.max, newHp + effectiveDelta);
             let preview = `${hp.current} → ${newHp}`;
-            if (newTemp !== temp) {
-                preview += ` (врем. ${temp} → ${newTemp})`;
-            }
+            if (newTemp !== temp) preview += ` (врем. ${temp} → ${newTemp})`;
             previewEl.textContent = preview;
         }
 
         function adjustHp(sign) {
             const amountInput = document.getElementById('hp-amount');
             const current = parseInt(amountInput.value) || 0;
-            if (current === 0) {
-                amountInput.value = 1;
-            } else {
-                const newVal = Math.max(0, current + sign);
-                amountInput.value = newVal === 0 ? '' : newVal;
-            }
+            if (current === 0) amountInput.value = 1;
+            else { const newVal = Math.max(0, current + sign); amountInput.value = newVal === 0 ? '' : newVal; }
             hpPendingDelta = sign;
             updateHpPreview();
         }
 
         function applyHpDelta() {
             if (!currentlySelectedId) return;
-            const amountInput = document.getElementById('hp-amount');
-            const amount = parseInt(amountInput.value) || 0;
-            if (amount <= 0) {
-                alert('Введите число больше нуля');
-                return;
-            }
-            
+            const amount = parseInt(document.getElementById('hp-amount').value) || 0;
+            if (amount <= 0) return alert('Введите число > 0');
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
             if (!token) return;
-            
             const hp = parseHp(token.hp);
             const temp = token.tempHp || 0;
             const sign = hpPendingDelta < 0 ? -1 : 1;
-            
-            let newHp = hp.current;
-            let newTemp = temp;
-            
+            let newHp = hp.current, newTemp = temp;
             if (sign < 0) {
                 let damage = amount;
-                if (newTemp > 0) {
-                    const absorbed = Math.min(newTemp, damage);
-                    newTemp -= absorbed;
-                    damage -= absorbed;
-                }
+                if (newTemp > 0) { const absorbed = Math.min(newTemp, damage); newTemp -= absorbed; damage -= absorbed; }
                 newHp = Math.max(0, newHp - damage);
-            } else {
-                newHp = Math.min(hp.max, newHp + amount);
-            }
-            
-            const patch = { 
-                hp: formatHp(newHp, hp.max),
-                tempHp: newTemp
-            };
+            } else newHp = Math.min(hp.max, newHp + amount);
+            const patch = { hp: formatHp(newHp, hp.max), tempHp: newTemp };
             updateTokenEverywhere(currentlySelectedId, patch);
-            
-            amountInput.value = '';
+            document.getElementById('hp-amount').value = '';
             hpPendingDelta = 0;
-            
-            saveState();
-            renderTokens();
-            renderPlayers();
+            saveState(); renderTokens(); renderPlayers();
             renderHpCalculator({ ...token, ...patch });
         }
 
@@ -2038,63 +2031,252 @@
             if (!currentlySelectedId) return;
             const temp = Math.max(0, parseInt(value) || 0);
             updateTokenEverywhere(currentlySelectedId, { tempHp: temp });
-            saveState();
-            renderTokens();
+            saveState(); renderTokens();
         }
 
-        // === SCENES DRAG & DROP ===
+        // === DRAWING ===
+        const drawCanvas = document.getElementById('drawing-canvas');
+        const drawCtx = drawCanvas.getContext('2d');
+
+        function resizeDrawCanvas() {
+            const board = document.getElementById('board');
+            if (!board) return;
+            const oldData = drawCanvas.toDataURL();
+            drawCanvas.width = board.offsetWidth;
+            drawCanvas.height = board.offsetHeight;
+            // Перерисовываем сохранённые штрихи
+            redrawAllDrawings();
+        }
+
+        function redrawAllDrawings() {
+            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene || !scene.drawings) return;
+            scene.drawings.forEach(shape => drawShape(shape));
+        }
+
+        function drawShape(shape) {
+            drawCtx.save();
+            drawCtx.lineCap = 'round';
+            drawCtx.lineJoin = 'round';
+            drawCtx.strokeStyle = shape.color || '#000';
+            drawCtx.fillStyle = shape.color || '#000';
+            drawCtx.lineWidth = shape.size || 4;
+
+            if (shape.type === 'brush' || shape.type === 'eraser') {
+                if (shape.type === 'eraser') {
+                    drawCtx.globalCompositeOperation = 'destination-out';
+                    drawCtx.lineWidth = shape.size || 20;
+                }
+                if (!shape.points || shape.points.length < 2) {
+                    if (shape.points && shape.points.length === 1) {
+                        const p = shape.points[0];
+                        drawCtx.beginPath();
+                        drawCtx.arc(p.x * drawCanvas.width, p.y * drawCanvas.height, (shape.size || 4) / 2, 0, Math.PI * 2);
+                        drawCtx.fill();
+                    }
+                    drawCtx.restore();
+                    return;
+                }
+                drawCtx.beginPath();
+                const pts = shape.points;
+                drawCtx.moveTo(pts[0].x * drawCanvas.width, pts[0].y * drawCanvas.height);
+                for (let i = 1; i < pts.length; i++) {
+                    drawCtx.lineTo(pts[i].x * drawCanvas.width, pts[i].y * drawCanvas.height);
+                }
+                drawCtx.stroke();
+            } else if (shape.type === 'line') {
+                drawCtx.beginPath();
+                drawCtx.moveTo(shape.x1 * drawCanvas.width, shape.y1 * drawCanvas.height);
+                drawCtx.lineTo(shape.x2 * drawCanvas.width, shape.y2 * drawCanvas.height);
+                drawCtx.stroke();
+            } else if (shape.type === 'rect') {
+                const x = Math.min(shape.x1, shape.x2) * drawCanvas.width;
+                const y = Math.min(shape.y1, shape.y2) * drawCanvas.height;
+                const w = Math.abs(shape.x2 - shape.x1) * drawCanvas.width;
+                const h = Math.abs(shape.y2 - shape.y1) * drawCanvas.height;
+                drawCtx.strokeRect(x, y, w, h);
+            }
+            drawCtx.restore();
+        }
+
+        function toggleDrawingMode() {
+            const scene = state.scenes[state.currentSceneIndex];
+            if (!scene || !scene.isCombat) {
+                alert('Рисование доступно только на боевых сценах.\nВключите «Боевая сцена» в левой панели.');
+                return;
+            }
+            const isActive = document.body.classList.toggle('drawing-active');
+            document.getElementById('draw-toolbar').classList.toggle('active', isActive);
+            if (isActive) resizeDrawCanvas();
+        }
+
+        function selectDrawTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.draw-tool-btn').forEach(b => b.classList.toggle('active', b.dataset.tool === tool));
+        }
+
+        function updateDrawSettings() {
+            currentColor = document.getElementById('draw-color').value;
+            currentSize = parseInt(document.getElementById('draw-size').value) || 4;
+            document.getElementById('draw-size-value').textContent = currentSize;
+        }
+
+        function getRelativeCoords(e) {
+            const rect = drawCanvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) / rect.width,
+                y: (e.clientY - rect.top) / rect.height
+            };
+        }
+
+        drawCanvas.addEventListener('mousedown', (e) => {
+            if (!document.body.classList.contains('drawing-active')) return;
+            if (!state.scenes[state.currentSceneIndex].isCombat) return;
+            e.preventDefault();
+            isDrawing = true;
+            const coords = getRelativeCoords(e);
+            drawStartX = coords.x;
+            drawStartY = coords.y;
+            
+            const scene = state.scenes[state.currentSceneIndex];
+            const shape = {
+                type: currentTool,
+                color: currentColor,
+                size: currentSize,
+                points: currentTool === 'brush' || currentTool === 'eraser' ? [{ x: coords.x, y: coords.y }] : undefined,
+                x1: coords.x, y1: coords.y, x2: coords.x, y2: coords.y
+            };
+            
+            if (currentTool === 'brush' || currentTool === 'eraser') {
+                scene.drawings.push(shape);
+                drawShape(shape);
+            } else {
+                // Для line/rect сохраняем snapshot для предпросмотра
+                drawSnapshot = drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
+            }
+        });
+
+        drawCanvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const coords = getRelativeCoords(e);
+            const scene = state.scenes[state.currentSceneIndex];
+            const shape = scene.drawings[scene.drawings.length - 1];
+            
+            if (currentTool === 'brush' || currentTool === 'eraser') {
+                if (shape && shape.points) {
+                    shape.points.push({ x: coords.x, y: coords.y });
+                    // Перерисовка последнего штриха
+                    drawCtx.save();
+                    if (currentTool === 'eraser') {
+                        drawCtx.globalCompositeOperation = 'destination-out';
+                        drawCtx.lineWidth = currentSize;
+                    } else {
+                        drawCtx.strokeStyle = currentColor;
+                        drawCtx.lineWidth = currentSize;
+                    }
+                    drawCtx.lineCap = 'round';
+                    drawCtx.lineJoin = 'round';
+                    const pts = shape.points;
+                    if (pts.length >= 2) {
+                        drawCtx.beginPath();
+                        drawCtx.moveTo(pts[pts.length - 2].x * drawCanvas.width, pts[pts.length - 2].y * drawCanvas.height);
+                        drawCtx.lineTo(pts[pts.length - 1].x * drawCanvas.width, pts[pts.length - 1].y * drawCanvas.height);
+                        drawCtx.stroke();
+                    }
+                    drawCtx.restore();
+                }
+            } else if (currentTool === 'line' || currentTool === 'rect') {
+                // Предпросмотр — восстановить snapshot и нарисовать
+                if (drawSnapshot) drawCtx.putImageData(drawSnapshot, 0, 0);
+                drawCtx.save();
+                drawCtx.strokeStyle = currentColor;
+                drawCtx.lineWidth = currentSize;
+                drawCtx.lineCap = 'round';
+                if (currentTool === 'line') {
+                    drawCtx.beginPath();
+                    drawCtx.moveTo(drawStartX * drawCanvas.width, drawStartY * drawCanvas.height);
+                    drawCtx.lineTo(coords.x * drawCanvas.width, coords.y * drawCanvas.height);
+                    drawCtx.stroke();
+                } else {
+                    const x = Math.min(drawStartX, coords.x) * drawCanvas.width;
+                    const y = Math.min(drawStartY, coords.y) * drawCanvas.height;
+                    const w = Math.abs(coords.x - drawStartX) * drawCanvas.width;
+                    const h = Math.abs(coords.y - drawStartY) * drawCanvas.height;
+                    drawCtx.strokeRect(x, y, w, h);
+                }
+                drawCtx.restore();
+            }
+        });
+
+        drawCanvas.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+            isDrawing = false;
+            const coords = getRelativeCoords(e);
+            const scene = state.scenes[state.currentSceneIndex];
+            
+            if (currentTool === 'line' || currentTool === 'rect') {
+                const shape = {
+                    type: currentTool,
+                    color: currentColor,
+                    size: currentSize,
+                    x1: drawStartX, y1: drawStartY, x2: coords.x, y2: coords.y
+                };
+                scene.drawings.push(shape);
+                redrawAllDrawings();
+            }
+            drawSnapshot = null;
+            saveState();
+        });
+
+        drawCanvas.addEventListener('mouseleave', () => {
+            if (isDrawing) {
+                isDrawing = false;
+                drawSnapshot = null;
+                saveState();
+            }
+        });
+
+        function clearDrawings() {
+            if (!confirm('Очистить все рисунки на этой сцене?')) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            scene.drawings = [];
+            redrawAllDrawings();
+            saveState();
+        }
+
+        // === SCENES DRAG ===
         function handleSceneDragStart(e, index) {
             sceneDragSrcIndex = index;
             e.currentTarget.classList.add('dragging-scene');
             e.dataTransfer.effectAllowed = 'move';
             try { e.dataTransfer.setData('text/plain', String(index)); } catch(err) {}
         }
-
-        function handleSceneDragOver(e, index) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            e.currentTarget.classList.add('drag-over-scene');
-        }
-
-        function handleSceneDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over-scene');
-        }
-
+        function handleSceneDragOver(e, index) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.classList.add('drag-over-scene'); }
+        function handleSceneDragLeave(e) { e.currentTarget.classList.remove('drag-over-scene'); }
         function handleSceneDrop(e, targetIndex) {
             e.preventDefault();
             e.currentTarget.classList.remove('drag-over-scene');
             if (sceneDragSrcIndex === null || sceneDragSrcIndex === targetIndex) return;
-            
             const currentActive = state.currentSceneIndex;
             const [movedScene] = state.scenes.splice(sceneDragSrcIndex, 1);
             state.scenes.splice(targetIndex, 0, movedScene);
-            
-            if (currentActive === sceneDragSrcIndex) {
-                state.currentSceneIndex = targetIndex;
-            } else if (sceneDragSrcIndex < currentActive && targetIndex >= currentActive) {
-                state.currentSceneIndex = currentActive - 1;
-            } else if (sceneDragSrcIndex > currentActive && targetIndex <= currentActive) {
-                state.currentSceneIndex = currentActive + 1;
-            }
-            
+            if (currentActive === sceneDragSrcIndex) state.currentSceneIndex = targetIndex;
+            else if (sceneDragSrcIndex < currentActive && targetIndex >= currentActive) state.currentSceneIndex = currentActive - 1;
+            else if (sceneDragSrcIndex > currentActive && targetIndex <= currentActive) state.currentSceneIndex = currentActive + 1;
             sceneDragSrcIndex = null;
-            saveState();
-            renderScenes();
-            renderTokens();
-            updateBoardBackground();
+            saveState(); renderScenes(); renderTokens(); updateBoardBackground();
         }
-
         function handleSceneDragEnd(e) {
             e.currentTarget.classList.remove('dragging-scene');
             document.querySelectorAll('.scene-list li').forEach(li => li.classList.remove('drag-over-scene'));
             sceneDragSrcIndex = null;
         }
 
-        // === REST OF CODE ===
+        // === REST ===
         function updateTokenEverywhere(id, patch) {
             const player = state.players.find(p => p.id === id);
             if (player) Object.assign(player, patch);
-
             state.scenes.forEach(s => {
                 const st = s.tokens.find(t => t.id === id);
                 if (st) Object.assign(st, patch);
@@ -2110,43 +2292,29 @@
             }
             const maxArr = Array.isArray(slots.max) ? slots.max : [0,0,0,0,0];
             const curArr = Array.isArray(slots.current) ? slots.current : maxArr;
-            return {
-                max: [0,1,2,3,4].map(i => parseInt(maxArr[i]) || 0),
-                current: [0,1,2,3,4].map(i => parseInt(curArr[i]) || 0)
-            };
+            return { max: [0,1,2,3,4].map(i => parseInt(maxArr[i]) || 0), current: [0,1,2,3,4].map(i => parseInt(curArr[i]) || 0) };
         }
 
         function normalizeImportedToken(raw) {
             return {
-                id: state.nextTokenId++,
-                name: raw.name || 'Безымянный',
-                race: raw.race || '',
-                class: raw.class || raw.cls || '',
-                level: parseInt(raw.level) || 1,
-                hp: raw.hp || '',
-                tempHp: parseInt(raw.tempHp) || 0,
-                img: raw.img || '',
+                id: state.nextTokenId++, name: raw.name || 'Безымянный', race: raw.race || '', class: raw.class || raw.cls || '',
+                level: parseInt(raw.level) || 1, hp: raw.hp || '', tempHp: parseInt(raw.tempHp) || 0, img: raw.img || '',
                 isPlayer: raw.isPlayer === true,
-                x: (raw.x !== undefined && raw.x !== null && !isNaN(parseFloat(raw.x))) ? parseFloat(raw.x) : 50,
-                y: (raw.y !== undefined && raw.y !== null && !isNaN(parseFloat(raw.y))) ? parseFloat(raw.y) : 50,
-                ac: (raw.ac !== undefined && raw.ac !== null && !isNaN(parseInt(raw.ac))) ? parseInt(raw.ac) : DEFAULT_AC,
-                initiative: (raw.initiative !== undefined && raw.initiative !== null && !isNaN(parseInt(raw.initiative))) ? parseInt(raw.initiative) : DEFAULT_INITIATIVE,
-                speed: (raw.speed !== undefined && raw.speed !== null && raw.speed !== '') ? raw.speed : DEFAULT_SPEED,
+                x: (raw.x !== undefined && !isNaN(parseFloat(raw.x))) ? parseFloat(raw.x) : 50,
+                y: (raw.y !== undefined && !isNaN(parseFloat(raw.y))) ? parseFloat(raw.y) : 50,
+                ac: (raw.ac !== undefined && !isNaN(parseInt(raw.ac))) ? parseInt(raw.ac) : DEFAULT_AC,
+                initiative: (raw.initiative !== undefined && !isNaN(parseInt(raw.initiative))) ? parseInt(raw.initiative) : DEFAULT_INITIATIVE,
+                speed: (raw.speed !== undefined && raw.speed !== '') ? raw.speed : DEFAULT_SPEED,
                 abilities: raw.abilities ? { ...EMPTY_ABILITIES, ...raw.abilities } : { ...EMPTY_ABILITIES },
-                inventory: raw.inventory || '',
-                spells: normalizeSpells(raw.spells),
-                slots: normalizeSlots(raw.slots)
+                inventory: raw.inventory || '', spells: normalizeSpells(raw.spells), slots: normalizeSlots(raw.slots)
             };
         }
 
         async function handleTokenImport(e) {
             const files = e.target.files;
             if (!files || files.length === 0) return;
-
-            let importedPlayers = 0;
-            let importedNPCs = 0;
+            let importedPlayers = 0, importedNPCs = 0;
             const errors = [];
-
             for (const file of files) {
                 try {
                     const text = await file.text();
@@ -2157,37 +2325,26 @@
                     else if (data && data.name) rawTokens = [data];
                     else if (data && Array.isArray(data.tokens)) rawTokens = data.tokens;
                     else if (data && Array.isArray(data.scenes)) data.scenes.forEach(s => { if (Array.isArray(s.tokens)) rawTokens.push(...s.tokens); });
-
                     if (rawTokens.length === 0) { errors.push(`${file.name}: нет токенов`); continue; }
-
                     for (const raw of rawTokens) {
                         if (!raw || !raw.name) continue;
                         const newToken = normalizeImportedToken(raw);
                         if (sessionMode === 'player' && newToken.isPlayer) newToken.isPlayer = false;
-                        
                         if (newToken.isPlayer) {
                             state.players.push(newToken);
                             state.scenes[state.currentSceneIndex].tokens.push(JSON.parse(JSON.stringify(newToken)));
                             importedPlayers++;
-                        } else {
-                            state.scenes[state.currentSceneIndex].tokens.push(newToken);
-                            importedNPCs++;
-                        }
+                        } else { state.scenes[state.currentSceneIndex].tokens.push(newToken); importedNPCs++; }
                     }
                 } catch (err) { errors.push(`${file.name}: ${err.message}`); }
             }
-
             if (importedPlayers > 0 || importedNPCs > 0) {
-                saveState();
-                renderPlayers();
-                renderTokens();
+                saveState(); renderPlayers(); renderTokens();
                 const parts = [];
                 if (importedPlayers > 0) parts.push(`игроков: ${importedPlayers}`);
                 if (importedNPCs > 0) parts.push(`НПС: ${importedNPCs}`);
                 alert(`✅ Импортировано (${parts.join(', ')})`);
-            } else {
-                alert(`❌ Ошибка: ${errors.join('\n') || 'нет данных'}`);
-            }
+            } else alert(`❌ Ошибка: ${errors.join('\n') || 'нет данных'}`);
             e.target.value = '';
         }
 
@@ -2197,7 +2354,6 @@
             socket.on('connect', () => showConnectionStatus('online'));
             socket.on('disconnect', () => showConnectionStatus('offline'));
             socket.on('connect_error', () => showConnectionStatus('offline'));
-
             socket.on('state:init', (serverState) => {
                 if (serverState && serverState.scenes) {
                     isApplyingRemote = true;
@@ -2205,11 +2361,8 @@
                     try { localStorage.setItem('justilia_vtt_state_' + currentRoomCode, JSON.stringify(state)); } catch(e){}
                     isApplyingRemote = false;
                     rerenderAll();
-                } else {
-                    if (socket.connected) socket.emit('state:update', state);
-                }
+                } else if (socket.connected) socket.emit('state:update', state);
             });
-
             socket.on('state:apply', (newState) => {
                 if (!newState || !newState.scenes) return;
                 isApplyingRemote = true;
@@ -2222,10 +2375,8 @@
 
         function rerenderAll() {
             const savedSelectedId = currentlySelectedId;
-            renderScenes();
-            renderPlayers();
-            renderTokens();
-            updateBoardBackground();
+            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+            setTimeout(resizeDrawCanvas, 50);
             if (savedSelectedId) {
                 const scene = state.scenes[state.currentSceneIndex];
                 const exists = scene && scene.tokens.find(t => t.id === savedSelectedId);
@@ -2343,14 +2494,12 @@
         }
 
         function selectMasterMode() {
-            sessionMode = 'master';
-            sessionPlayerTokenId = null;
+            sessionMode = 'master'; sessionPlayerTokenId = null;
             localStorage.setItem('justilia_mode_' + currentRoomCode, 'master');
             localStorage.removeItem('justilia_playerTokenId_' + currentRoomCode);
             document.getElementById('mode-modal').style.display = 'none';
             currentlySelectedId = null;
-            applyModeToUI();
-            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+            applyModeToUI(); renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
         }
 
         function showPlayerSelect() {
@@ -2384,15 +2533,13 @@
         }
 
         function applyPlayerMode(tokenId) {
-            sessionMode = 'player';
-            sessionPlayerTokenId = tokenId;
+            sessionMode = 'player'; sessionPlayerTokenId = tokenId;
             localStorage.setItem('justilia_mode_' + currentRoomCode, 'player');
             localStorage.setItem('justilia_playerTokenId_' + currentRoomCode, String(tokenId));
             document.getElementById('mode-modal').style.display = 'none';
             currentlySelectedId = null;
             ensurePlayerTokenOnScene();
-            applyModeToUI();
-            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+            applyModeToUI(); renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
             selectToken(tokenId);
         }
 
@@ -2420,8 +2567,7 @@
             scene.tokens.push({
                 id: player.id, name: player.name, race: player.race, class: player.class,
                 level: player.level, hp: player.hp, tempHp: player.tempHp || 0, img: player.img,
-                slots: JSON.parse(JSON.stringify(player.slots)),
-                inventory: player.inventory || "",
+                slots: JSON.parse(JSON.stringify(player.slots)), inventory: player.inventory || "",
                 spells: normalizeSpells(player.spells),
                 abilities: player.abilities ? JSON.parse(JSON.stringify(player.abilities)) : { ...EMPTY_ABILITIES },
                 ac: (player.ac !== undefined) ? player.ac : DEFAULT_AC,
@@ -2444,30 +2590,27 @@
                 }
             }
             renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+            setTimeout(resizeDrawCanvas, 100);
             if (!sessionMode) showModeSelect();
             else {
                 applyModeToUI();
-                if (sessionMode === 'player' && sessionPlayerTokenId) {
-                    ensurePlayerTokenOnScene();
-                    renderTokens();
-                    selectToken(sessionPlayerTokenId);
-                }
+                if (sessionMode === 'player' && sessionPlayerTokenId) { ensurePlayerTokenOnScene(); renderTokens(); selectToken(sessionPlayerTokenId); }
             }
             if (localStorage.getItem('justilia_sidebar_collapsed') === 'true') {
                 document.getElementById('sidebar-left').classList.add('collapsed');
                 if (sessionMode !== 'player') document.body.classList.add('sidebar-collapsed');
-                const toggleBtn = document.getElementById('sidebar-toggle');
-                toggleBtn.innerHTML = '▶';
+                document.getElementById('sidebar-toggle').innerHTML = '▶';
             }
             if (localStorage.getItem('justilia_volume')) {
                 let vol = parseFloat(localStorage.getItem('justilia_volume'));
                 volumeSlider.value = vol; audioEl.volume = vol;
             } else audioEl.volume = 0.5;
-            if (localStorage.getItem('justilia_loop') === 'true') {
-                audioEl.loop = true; btnLoop.classList.add('active');
-            } else { audioEl.loop = false; btnLoop.classList.remove('active'); }
+            if (localStorage.getItem('justilia_loop') === 'true') { audioEl.loop = true; btnLoop.classList.add('active'); }
+            else { audioEl.loop = false; btnLoop.classList.remove('active'); }
             selectDieType(20);
-
+            window.addEventListener('resize', () => {
+                resizeDrawCanvas();
+            });
             window.addEventListener('keydown', (e) => {
                 if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
                 if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -2502,9 +2645,9 @@
         }
 
         function renderCombatStats(token) {
-            const ac = (token && token.ac !== undefined && token.ac !== null) ? token.ac : DEFAULT_AC;
-            const init = (token && token.initiative !== undefined && token.initiative !== null) ? token.initiative : DEFAULT_INITIATIVE;
-            const speed = (token && token.speed !== undefined && token.speed !== null && token.speed !== '') ? token.speed : DEFAULT_SPEED;
+            const ac = (token && token.ac !== undefined) ? token.ac : DEFAULT_AC;
+            const init = (token && token.initiative !== undefined) ? token.initiative : DEFAULT_INITIATIVE;
+            const speed = (token && token.speed !== undefined && token.speed !== '') ? token.speed : DEFAULT_SPEED;
             document.getElementById('sel-ac').value = ac;
             document.getElementById('sel-initiative').value = init;
             document.getElementById('sel-speed').value = speed;
@@ -2541,7 +2684,7 @@
         function renderAbilities(token) {
             const abils = (token && token.abilities) || EMPTY_ABILITIES;
             ABILITY_KEYS.forEach(k => {
-                const v = abils[k] !== undefined && abils[k] !== null ? abils[k] : 10;
+                const v = abils[k] !== undefined ? abils[k] : 10;
                 const inputEl = document.getElementById(`sel-abil-${k}`);
                 if (inputEl) inputEl.value = v;
                 updateAbilityDisplay(k, v);
@@ -2560,8 +2703,7 @@
             const abilities = { ...(token.abilities || EMPTY_ABILITIES), [key]: val };
             updateTokenEverywhere(currentlySelectedId, { abilities });
             updateAbilityDisplay(key, val);
-            const inputEl = document.getElementById(`sel-abil-${key}`);
-            if (inputEl) inputEl.value = val;
+            document.getElementById(`sel-abil-${key}`).value = val;
             saveState();
         }
 
@@ -2573,12 +2715,10 @@
             document.body.classList.toggle('sidebar-collapsed', collapsed);
             btn.innerHTML = collapsed ? '▶' : '◀';
             localStorage.setItem('justilia_sidebar_collapsed', collapsed ? 'true' : 'false');
+            setTimeout(resizeDrawCanvas, 350);
         }
 
-        function openInventoryFromPanel() {
-            if (!currentlySelectedId) return;
-            openInventory(currentlySelectedId);
-        }
+        function openInventoryFromPanel() { if (currentlySelectedId) openInventory(currentlySelectedId); }
 
         function openInventory(id) {
             const scene = state.scenes[state.currentSceneIndex];
@@ -2595,10 +2735,7 @@
             setTimeout(() => document.getElementById('inventory-text').focus(), 50);
         }
 
-        function closeInventory() {
-            document.getElementById('inventory-modal').style.display = 'none';
-            currentInventoryTokenId = null;
-        }
+        function closeInventory() { document.getElementById('inventory-modal').style.display = 'none'; currentInventoryTokenId = null; }
 
         function saveInventory() {
             if (!currentInventoryTokenId) { closeInventory(); return; }
@@ -2606,10 +2743,7 @@
             saveState(); closeInventory();
         }
 
-        function openSpellsFromPanel() {
-            if (!currentlySelectedId) return;
-            openSpells(currentlySelectedId);
-        }
+        function openSpellsFromPanel() { if (currentlySelectedId) openSpells(currentlySelectedId); }
 
         function openSpells(id) {
             const scene = state.scenes[state.currentSceneIndex];
@@ -2628,10 +2762,7 @@
             document.getElementById('spells-modal').style.display = 'flex';
         }
 
-        function closeSpells() {
-            document.getElementById('spells-modal').style.display = 'none';
-            currentSpellsTokenId = null;
-        }
+        function closeSpells() { document.getElementById('spells-modal').style.display = 'none'; currentSpellsTokenId = null; }
 
         function saveSpells() {
             if (!currentSpellsTokenId) { closeSpells(); return; }
@@ -2655,7 +2786,7 @@
         }
 
         function deleteMinimap() {
-            if (confirm("Удалить карту из миникарты?")) {
+            if (confirm("Удалить карту?")) {
                 const scene = state.scenes[state.currentSceneIndex];
                 scene.minimapImg = ""; scene.minimapPos = { x: 0, y: 0 };
                 saveState(); updateMinimapUI();
@@ -2679,11 +2810,9 @@
             const dx = e.clientX - minimapStartX, dy = e.clientY - minimapStartY;
             const container = document.getElementById('minimap-container');
             const totalWidth = container.offsetWidth * 8, totalHeight = container.offsetHeight * 8;
-            const minX = -(totalWidth - container.offsetWidth);
-            const minY = -(totalHeight - container.offsetHeight);
-            let newX = Math.min(0, Math.max(minX, minimapInitialX + dx));
-            let newY = Math.min(0, Math.max(minY, minimapInitialY + dy));
-            scene.minimapPos.x = newX; scene.minimapPos.y = newY;
+            const minX = -(totalWidth - container.offsetWidth), minY = -(totalHeight - container.offsetHeight);
+            scene.minimapPos.x = Math.min(0, Math.max(minX, minimapInitialX + dx));
+            scene.minimapPos.y = Math.min(0, Math.max(minY, minimapInitialY + dy));
             updateMinimapPosition();
         }
 
@@ -2757,9 +2886,10 @@
             if (files.length > 0) {
                 const images = [];
                 for (let i = 0; i < files.length; i++) images.push(await readFileAsync(files[i]));
-                state.scenes.push({ name: files[0].name.split('.')[0], images, currentImageIndex: 0, isCombat: false, showMinimap: false, minimapImg: "", minimapPos: { x: 0, y: 0 }, audio: "", audioName: "", tokens: [] });
+                state.scenes.push({ name: files[0].name.split('.')[0], images, currentImageIndex: 0, isCombat: false, showMinimap: false, minimapImg: "", minimapPos: { x: 0, y: 0 }, audio: "", audioName: "", drawings: [], tokens: [] });
                 state.currentSceneIndex = state.scenes.length - 1;
                 saveState(); renderScenes(); renderTokens(); updateBoardBackground();
+                setTimeout(resizeDrawCanvas, 100);
             }
             this.value = '';
         });
@@ -2778,7 +2908,7 @@
         function deleteCurrentImage() {
             if (sessionMode !== 'master') return;
             const scene = state.scenes[state.currentSceneIndex];
-            if (!scene.images || scene.images.length === 0) return alert("На этой сцене нет картинок!");
+            if (!scene.images || scene.images.length === 0) return alert("Нет картинок!");
             if (confirm("Удалить текущую картинку?")) {
                 scene.images.splice(scene.currentImageIndex, 1);
                 if (scene.currentImageIndex >= scene.images.length) scene.currentImageIndex = Math.max(0, scene.images.length - 1);
@@ -2789,7 +2919,6 @@
         function renderScenes() {
             const list = document.getElementById('scene-list');
             list.innerHTML = '';
-            
             state.scenes.forEach((scene, index) => {
                 const li = document.createElement('li');
                 if (index === state.currentSceneIndex) li.classList.add('active');
@@ -2798,22 +2927,18 @@
                 const handle = document.createElement('span');
                 handle.className = 'scene-drag-handle';
                 handle.textContent = '⋮⋮';
-                handle.title = 'Перетащите для изменения порядка';
                 if (sessionMode === 'player') handle.style.display = 'none';
                 
                 const content = document.createElement('div');
                 content.className = 'list-item-content';
                 content.textContent = scene.name;
-                content.title = sessionMode === 'master' ? "Двойной клик для переименования" : "";
                 
                 const controls = document.createElement('div');
                 controls.className = 'move-controls';
-                
                 const btnDelete = document.createElement('button');
                 btnDelete.className = 'btn-delete-scene';
                 btnDelete.innerHTML = '✕';
                 btnDelete.onclick = (e) => { e.stopPropagation(); deleteScene(index); };
-                
                 controls.appendChild(btnDelete);
                 
                 li.appendChild(handle);
@@ -2833,12 +2958,13 @@
                     state.currentSceneIndex = index;
                     state.scenes[index].currentImageIndex = 0;
                     saveState(); renderScenes(); renderTokens(); updateBoardBackground();
+                    setTimeout(resizeDrawCanvas, 100);
                 };
 
                 li.ondblclick = (e) => {
                     if (sessionMode !== 'master') return;
                     e.stopPropagation();
-                    const newName = prompt("Введите новое название сцены:", scene.name);
+                    const newName = prompt("Название сцены:", scene.name);
                     if (newName && newName.trim() !== "") {
                         state.scenes[index].name = newName.trim();
                         saveState(); renderScenes();
@@ -2849,23 +2975,13 @@
             });
         }
 
-        function moveScene(index, direction) {
-            const targetIndex = index + direction;
-            if (targetIndex < 0 || targetIndex >= state.scenes.length) return;
-            const temp = state.scenes[index];
-            state.scenes[index] = state.scenes[targetIndex];
-            state.scenes[targetIndex] = temp;
-            if (state.currentSceneIndex === index) state.currentSceneIndex = targetIndex;
-            else if (state.currentSceneIndex === targetIndex) state.currentSceneIndex = index;
-            saveState(); renderScenes(); renderTokens(); updateBoardBackground();
-        }
-
         function deleteScene(index) {
-            if (state.scenes.length <= 1) return alert("Нельзя удалить последнюю сцену!");
+            if (state.scenes.length <= 1) return alert("Нельзя удалить последнюю!");
             if (confirm(`Удалить сцену "${state.scenes[index].name}"?`)) {
                 state.scenes.splice(index, 1);
                 if (state.currentSceneIndex >= state.scenes.length) state.currentSceneIndex = state.scenes.length - 1;
                 saveState(); renderScenes(); renderTokens(); updateBoardBackground();
+                setTimeout(resizeDrawCanvas, 100);
             }
         }
 
@@ -2906,8 +3022,15 @@
             } else {
                 grid.classList.remove('active'); gridCheckbox.checked = false;
                 initTracker.classList.remove('active');
+                // выключаем режим рисования вне боевой сцены
+                if (document.body.classList.contains('drawing-active')) {
+                    document.body.classList.remove('drawing-active');
+                    document.getElementById('draw-toolbar').classList.remove('active');
+                }
             }
             updateMinimapUI(); renderInitiative(); loadSceneAudio(scene);
+            setTimeout(resizeDrawCanvas, 50);
+            redrawAllDrawings();
         }
 
         function loadSceneAudio(scene) {
@@ -2932,6 +3055,7 @@
                 state.currentSceneIndex = (state.currentSceneIndex + 1) % state.scenes.length;
                 state.scenes[state.currentSceneIndex].currentImageIndex = 0;
                 ensurePlayerTokenOnScene(); saveState(); renderScenes(); renderTokens(); updateBoardBackground();
+                setTimeout(resizeDrawCanvas, 100);
             }
         }
 
@@ -2940,6 +3064,7 @@
                 state.currentSceneIndex = (state.currentSceneIndex - 1 + state.scenes.length) % state.scenes.length;
                 state.scenes[state.currentSceneIndex].currentImageIndex = 0;
                 ensurePlayerTokenOnScene(); saveState(); renderScenes(); renderTokens(); updateBoardBackground();
+                setTimeout(resizeDrawCanvas, 100);
             }
         }
 
@@ -2965,7 +3090,7 @@
         }
 
         function addSelectedToInitiative() {
-            if (!currentlySelectedId) return alert("Сначала выберите токен!");
+            if (!currentlySelectedId) return alert("Выберите токен!");
             if (state.initiative.includes(currentlySelectedId)) return alert("Уже в очереди!");
             state.initiative.push(currentlySelectedId);
             saveState(); renderInitiative();
@@ -3050,10 +3175,7 @@
             else btnLoop.classList.remove('active');
         }
 
-        function changeVolume(val) {
-            audioEl.volume = val;
-            localStorage.setItem('justilia_volume', val);
-        }
+        function changeVolume(val) { audioEl.volume = val; localStorage.setItem('justilia_volume', val); }
 
         function exportState() {
             try {
@@ -3097,6 +3219,7 @@
                             if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
                             if (s.audio === undefined) s.audio = "";
                             if (s.audioName === undefined) s.audioName = "";
+                            if (!s.drawings) s.drawings = [];
                             if (!s.tokens) s.tokens = [];
                             s.tokens.forEach(t => {
                                 if (t.isPlayer === undefined) t.isPlayer = false;
@@ -3114,8 +3237,9 @@
                         if (state.currentTurnIndex === undefined) state.currentTurnIndex = 0;
                         state.currentSceneIndex = 0;
                         saveState(); renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+                        setTimeout(resizeDrawCanvas, 100);
                         alert("Мир загружен!");
-                    } else alert("Неверный формат файла!");
+                    } else alert("Неверный формат!");
                 } catch (err) { alert("Ошибка: " + err.message); }
             };
             reader.readAsText(file);
@@ -3143,12 +3267,11 @@
                 const controls = document.createElement('div');
                 controls.className = 'move-controls';
                 const btnSummon = document.createElement('button');
-                btnSummon.className = 'btn-summon';
-                btnSummon.innerHTML = 'На сцену';
+                btnSummon.className = 'btn-summon'; btnSummon.innerHTML = 'На сцену';
                 btnSummon.onclick = (e) => { e.stopPropagation(); summonPlayerToScene(player.id); };
                 const btnEdit = document.createElement('button');
                 btnEdit.className = 'move-btn'; btnEdit.innerHTML = '✎';
-                btnEdit.onclick = (e) => { e.stopPropagation(); openModal(player.id, 'player'); };
+                btnEdit.onclick = (e) => { e.stopPropagation(); openModal(player.id); };
                 controls.appendChild(btnSummon); controls.appendChild(btnEdit);
                 li.appendChild(content); li.appendChild(controls);
                 li.onclick = () => {
@@ -3170,8 +3293,7 @@
             scene.tokens.push({
                 id: player.id, name: player.name, race: player.race, class: player.class,
                 level: player.level, hp: player.hp, tempHp: player.tempHp || 0, img: player.img,
-                slots: JSON.parse(JSON.stringify(player.slots)),
-                inventory: player.inventory || "",
+                slots: JSON.parse(JSON.stringify(player.slots)), inventory: player.inventory || "",
                 spells: normalizeSpells(player.spells),
                 abilities: player.abilities ? JSON.parse(JSON.stringify(player.abilities)) : { ...EMPTY_ABILITIES },
                 ac: (player.ac !== undefined) ? player.ac : DEFAULT_AC,
@@ -3193,10 +3315,8 @@
 
             const boardW = board.offsetWidth || 800;
             const boardH = board.offsetHeight || 450;
-            const minX = (30 / boardW) * 100;
-            const maxX = 100 - minX;
-            const minY = (30 / boardH) * 100;
-            const maxY = 100 - minY;
+            const minX = (30 / boardW) * 100, maxX = 100 - minX;
+            const minY = (30 / boardH) * 100, maxY = 100 - minY;
 
             scene.tokens.forEach((token, index) => {
                 if (token.x < minX) token.x = minX;
@@ -3222,7 +3342,6 @@
                     const badge = document.createElement('div');
                     badge.className = 'temp-hp-badge';
                     badge.textContent = '+' + token.tempHp;
-                    badge.title = 'Временные хиты';
                     el.appendChild(badge);
                 }
 
@@ -3247,15 +3366,12 @@
                     content.innerHTML = `<span>${token.name}</span>`;
                     const controls = document.createElement('div');
                     controls.className = 'move-controls';
-                    
                     const btnCopy = document.createElement('button');
                     btnCopy.className = 'move-btn'; btnCopy.innerHTML = '⧉';
                     btnCopy.onclick = (e) => { e.stopPropagation(); copyNpcFromList(token.id); };
-                    
                     const btnDelete = document.createElement('button');
                     btnDelete.className = 'btn-delete-token'; btnDelete.innerHTML = '✕';
                     btnDelete.onclick = (e) => { e.stopPropagation(); deleteTokenFromScene(token.id); };
-                    
                     controls.appendChild(btnCopy); controls.appendChild(btnDelete);
                     li.appendChild(content); li.appendChild(controls);
                     li.onclick = (e) => { e.stopPropagation(); if (sessionMode === 'master') selectToken(token.id); };
@@ -3279,7 +3395,7 @@
         }
 
         function deleteTokenFromScene(id) {
-            if (confirm("Убрать персонажа со сцены?")) {
+            if (confirm("Убрать со сцены?")) {
                 const scene = state.scenes[state.currentSceneIndex];
                 scene.tokens = scene.tokens.filter(t => t.id !== id);
                 state.initiative = state.initiative.filter(i => i !== id);
@@ -3295,30 +3411,25 @@
             
             function dragStart(e) {
                 if (e.target !== el) return;
+                if (document.body.classList.contains('drawing-active')) return;
                 isDragging = true; hasMoved = false;
                 startX = e.clientX; startY = e.clientY;
                 initialX = el.offsetLeft; initialY = el.offsetTop;
                 document.addEventListener('mousemove', drag);
                 document.addEventListener('mouseup', dragEnd);
             }
-
             function drag(e) {
                 if (!isDragging) return;
                 const dx = e.clientX - startX, dy = e.clientY - startY;
-                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-                    hasMoved = true; el.style.cursor = 'grabbing'; el.style.zIndex = 1000;
-                }
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) { hasMoved = true; el.style.cursor = 'grabbing'; el.style.zIndex = 1000; }
                 if (hasMoved) {
                     const board = document.getElementById('board');
                     const halfW = el.offsetWidth / 2, halfH = el.offsetHeight / 2;
                     const maxLeft = board.offsetWidth - halfW, maxTop = board.offsetHeight - halfH;
-                    let newLeft = Math.max(halfW, Math.min(maxLeft, initialX + dx));
-                    let newTop = Math.max(halfH, Math.min(maxTop, initialY + dy));
-                    el.style.left = `${newLeft}px`;
-                    el.style.top = `${newTop}px`;
+                    el.style.left = `${Math.max(halfW, Math.min(maxLeft, initialX + dx))}px`;
+                    el.style.top = `${Math.max(halfH, Math.min(maxTop, initialY + dy))}px`;
                 }
             }
-
             function dragEnd() {
                 if (!isDragging) return;
                 isDragging = false; el.style.cursor = 'pointer'; el.style.zIndex = 10;
@@ -3344,24 +3455,19 @@
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
             if (!token) return;
-
             document.getElementById('token-menu').style.display = 'block';
             document.getElementById('sel-name').textContent = token.name;
             document.getElementById('sel-race').textContent = token.race || '-';
             document.getElementById('sel-class').textContent = token.class || '-';
             document.getElementById('sel-level').textContent = token.level || 1;
-
             const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
             renderHpCalculator(token);
             renderCombatStats(token);
-
             const abilitiesContainer = document.getElementById('abilities-container');
             if (isPlayerToken) { abilitiesContainer.style.display = 'grid'; renderAbilities(token); }
             else abilitiesContainer.style.display = 'none';
-
             document.getElementById('btn-inventory-panel').style.display = isPlayerToken ? 'block' : 'none';
             document.getElementById('btn-spells-panel').style.display = isPlayerToken ? 'block' : 'none';
-
             const slotsContainer = document.getElementById('spell-slots-container');
             const slotsInputs = document.getElementById('slots-inputs');
             slotsInputs.innerHTML = '';
@@ -3432,7 +3538,7 @@
                 for (let i = 0; i < 5; i++) document.getElementById(`edit-slot-max-${i+1}`).value = token.slots.max[i] || 0;
             } else for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
             document.getElementById('type-selector').style.display = 'none';
-            document.getElementById('modal-title').textContent = "Редактировать токен";
+            document.getElementById('modal-title').textContent = "Редактировать";
             const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
             document.getElementById('edit-slots-section').style.display = isPlayerToken ? 'block' : 'none';
             document.getElementById('modal').style.display = 'flex';
@@ -3451,7 +3557,6 @@
             const level = parseInt(document.getElementById('edit-level').value) || 1;
             const hpMax = parseInt(document.getElementById('edit-hp-max').value) || 10;
             const fileInput = document.getElementById('edit-image');
-
             if (!isEdit) {
                 let newMaxSlots = [];
                 for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
@@ -3478,15 +3583,9 @@
                 let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
                 if (!token) return;
                 const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === id);
-                
                 const oldHp = parseHp(token.hp);
-                let newHpCurrent = oldHp.current;
-                if (oldHp.max !== hpMax) {
-                    newHpCurrent = Math.min(oldHp.current, hpMax);
-                }
-                
+                let newHpCurrent = oldHp.max !== hpMax ? Math.min(oldHp.current, hpMax) : oldHp.current;
                 const patch = { name, race, class: cls, level, hp: formatHp(newHpCurrent, hpMax) };
-                
                 if (isPlayerToken) {
                     let newMaxSlots = [];
                     for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
@@ -3533,9 +3632,7 @@
             try {
                 if (currentRoomCode) localStorage.setItem('justilia_vtt_state_' + currentRoomCode, JSON.stringify(state));
             } catch (e) { console.warn("Память переполнена"); }
-            if (!isApplyingRemote && socket && socket.connected) {
-                socket.emit('state:update', state);
-            }
+            if (!isApplyingRemote && socket && socket.connected) socket.emit('state:update', state);
         }
 
         function loadStateForRoom() {
@@ -3567,6 +3664,7 @@
                             if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
                             if (s.audio === undefined) s.audio = "";
                             if (s.audioName === undefined) s.audioName = "";
+                            if (!s.drawings) s.drawings = [];
                             if (!s.tokens) s.tokens = [];
                             s.tokens.forEach(t => {
                                 if (t.isPlayer === undefined) t.isPlayer = false;
@@ -3590,17 +3688,13 @@
             }
         }
 
-        // === START ===
         function startApp() {
             connectSocket();
             const url = new URL(window.location.href);
             const roomParam = url.searchParams.get('room');
-            
             if (roomParam) {
                 document.getElementById('room-code-input').value = roomParam.toUpperCase();
-                socket.on('connect', () => {
-                    proceedToRoom(roomParam);
-                });
+                socket.on('connect', () => proceedToRoom(roomParam));
                 if (socket.connected) proceedToRoom(roomParam);
             }
         }
