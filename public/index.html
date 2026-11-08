@@ -22,6 +22,7 @@
             --accent-dark: #7a5f38;
             --danger: #8b3a3a;
             --success: #2e7d32;
+            --info: #4a7ebb;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
             --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
@@ -43,7 +44,154 @@
 
         h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
 
-        /* --- HEADER --- */
+        /* --- ROOM SCREEN --- */
+        #room-screen {
+            display: flex;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .room-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 48px 40px;
+            width: 480px;
+            max-width: 92vw;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .room-card h1 {
+            font-size: 38px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--ink);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .room-card .subtitle {
+            color: var(--ink-muted);
+            font-size: 13px;
+            margin-bottom: 36px;
+            letter-spacing: 0.5px;
+        }
+
+        .room-card label {
+            display: block;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .room-card input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .room-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156,125,79,0.1); }
+
+        .room-card .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .room-card .btn-primary:hover { background: var(--accent-hover); }
+
+        .room-card .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: var(--white);
+            color: var(--ink);
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .room-card .btn-secondary:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
+
+        .room-card .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: var(--ink-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .room-card .divider::before,
+        .room-card .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        #room-created-block {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--bg-accent);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        #room-code-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: var(--accent-dark);
+            margin: 8px 0;
+        }
+
+        .room-share-hint {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        /* --- MAIN HEADER --- */
         header {
             height: 64px;
             background: var(--white);
@@ -66,11 +214,22 @@
             text-transform: uppercase;
         }
 
-        .header-right {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        .header-right { display: flex; gap: 10px; align-items: center; }
+
+        .room-badge {
+            padding: 6px 14px;
+            background: var(--bg-accent);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-dark);
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+        .room-badge:hover { background: var(--bg-subtle); }
 
         .mode-indicator {
             display: flex;
@@ -97,21 +256,12 @@
             width: auto;
             margin: 0;
             padding: 2px 6px;
-            transition: color 0.2s;
             box-shadow: none;
         }
-
         .mode-switch-btn:hover { color: var(--accent-dark); transform: none; box-shadow: none; }
 
-        /* --- CONTAINER --- */
-        .vtt-container {
-            display: flex;
-            flex-grow: 1;
-            height: calc(100vh - 64px);
-            overflow: hidden;
-        }
+        .vtt-container { display: flex; flex-grow: 1; height: calc(100vh - 64px); overflow: hidden; }
 
-        /* --- SIDEBARS --- */
         .sidebar {
             width: 340px;
             flex-shrink: 0;
@@ -126,16 +276,9 @@
             transition: margin-left 0.3s ease, opacity 0.3s ease;
         }
 
-        #sidebar-right {
-            border-right: none;
-            border-left: 1px solid var(--border);
-        }
+        #sidebar-right { border-right: none; border-left: 1px solid var(--border); }
 
-        #sidebar-left.collapsed {
-            margin-left: -340px;
-            opacity: 0;
-            pointer-events: none;
-        }
+        #sidebar-left.collapsed { margin-left: -340px; opacity: 0; pointer-events: none; }
 
         #sidebar-toggle {
             position: absolute;
@@ -152,24 +295,15 @@
             border-radius: 0 6px 6px 0;
             color: var(--ink-muted);
             font-size: 11px;
-            line-height: 1;
             cursor: pointer;
             z-index: 500;
-            transition: all 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Inter', sans-serif;
             box-shadow: var(--shadow-sm);
         }
+        #sidebar-toggle:hover { background: var(--bg-subtle); color: var(--accent); width: 22px; }
 
-        #sidebar-toggle:hover {
-            background: var(--bg-subtle);
-            color: var(--accent);
-            width: 22px;
-        }
-
-        /* --- BOARD --- */
         #board-container {
             flex-grow: 1;
             position: relative;
@@ -181,7 +315,6 @@
             padding: 20px;
         }
 
-        /* --- INITIATIVE TRACKER --- */
         #initiative-tracker {
             position: absolute;
             top: 12px;
@@ -202,18 +335,10 @@
         }
 
         #initiative-tracker.active { display: flex; }
-
         .initiative-controls { display: flex; gap: 6px; flex-shrink: 0; }
         .initiative-controls button { width: auto; padding: 5px 10px; font-size: 11px; margin: 0; }
 
-        .initiative-list {
-            display: flex;
-            gap: 8px;
-            flex-grow: 1;
-            overflow-x: auto;
-            padding: 4px 0;
-        }
-        
+        .initiative-list { display: flex; gap: 8px; flex-grow: 1; overflow-x: auto; padding: 4px 0; }
         .initiative-list::-webkit-scrollbar { display: none; }
         .initiative-list { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -231,29 +356,13 @@
             font-size: 11px;
             cursor: grab;
             position: relative;
-            transition: all 0.2s;
             user-select: none;
             padding: 0 10px;
         }
-
         body.player-mode .init-item { cursor: default; }
-        .init-item:active { cursor: grabbing; }
-        
-        .init-item.active-turn {
-            background: var(--bg-accent);
-            border-color: var(--accent);
-            color: var(--accent-dark);
-            font-weight: 600;
-        }
-
-        .init-item.dragging {
-            opacity: 0.4;
-        }
-
-        .init-item.drag-over {
-            border-color: var(--accent) !important;
-            background: var(--bg-accent) !important;
-        }
+        .init-item.active-turn { background: var(--bg-accent); border-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+        .init-item.dragging { opacity: 0.4; }
+        .init-item.drag-over { border-color: var(--accent) !important; background: var(--bg-accent) !important; }
 
         .init-item-remove {
             position: absolute;
@@ -271,13 +380,10 @@
             cursor: pointer;
             border: 1px solid white;
             opacity: 0;
-            transition: opacity 0.2s;
         }
-
         .init-item:hover .init-item-remove { opacity: 1; }
         body.player-mode .init-item-remove { display: none !important; }
 
-        /* --- BOARD TABLE --- */
         #board {
             aspect-ratio: 16 / 9;
             width: 100%;
@@ -286,11 +392,8 @@
             background-color: var(--white);
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
             border: 1px solid var(--border);
             box-shadow: var(--shadow-md);
-            transition: background-image 0.3s ease;
-            margin-top: 0;
             overflow: hidden;
         }
 
@@ -309,11 +412,8 @@
             cursor: pointer;
             border: 1px solid var(--border);
             border-radius: 4px;
-            transition: all 0.2s;
-            user-select: none;
             z-index: 20;
         }
-
         .nav-arrow:hover { background: var(--white); color: var(--accent); }
         #nav-prev { left: 10px; }
         #nav-next { right: 10px; }
@@ -347,7 +447,6 @@
             cursor: pointer;
             z-index: 25;
             display: none;
-            transition: all 0.2s;
         }
         .btn-delete-image:hover { background: var(--danger); color: white; }
 
@@ -358,7 +457,6 @@
             z-index: 5;
             display: none;
         }
-
         #grid-overlay.active {
             display: block;
             background-image: 
@@ -367,7 +465,6 @@
             background-size: 50px 50px;
         }
 
-        /* --- MINIMAP --- */
         #minimap-container {
             position: absolute;
             bottom: 20px;
@@ -382,11 +479,8 @@
             display: none;
             overflow: hidden;
             cursor: grab;
-            flex-direction: column;
         }
-
-        #minimap-container.active { display: flex; }
-        #minimap-container:active { cursor: grabbing; }
+        #minimap-container.active { display: block; }
 
         .minimap-toolbar {
             position: absolute;
@@ -400,7 +494,6 @@
             padding: 0 6px;
             gap: 6px;
             z-index: 160;
-            pointer-events: auto;
         }
 
         .btn-minimap {
@@ -411,11 +504,9 @@
             padding: 2px 8px;
             font-size: 10px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .btn-minimap:hover { background: var(--bg-subtle); color: var(--accent); }
         .btn-minimap.delete { color: var(--danger); }
-        .btn-minimap.delete:hover { background: var(--danger); color: white; }
 
         #minimap-canvas {
             position: absolute;
@@ -428,13 +519,11 @@
             pointer-events: none;
         }
 
-        /* --- PANEL SECTIONS --- */
         .panel-section {
             background: var(--white);
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 16px;
-            box-shadow: none;
         }
         
         .panel-section h3 { 
@@ -449,7 +538,6 @@
             font-weight: 600;
         }
 
-        /* --- INPUTS --- */
         input[type="file"] {
             width: 100%;
             padding: 6px;
@@ -460,7 +548,6 @@
             color: var(--ink-soft);
             cursor: pointer;
             font-size: 12px;
-            font-family: 'Inter', sans-serif;
         }
         
         input[type="file"]::file-selector-button {
@@ -474,12 +561,9 @@
             font-weight: 500;
             font-size: 12px;
             margin-right: 10px;
-            transition: all 0.2s;
         }
-
         input[type="file"]::file-selector-button:hover { background: var(--bg-accent); border-color: var(--accent); }
 
-        /* --- BUTTONS --- */
         button {
             background: var(--white);
             color: var(--ink);
@@ -493,11 +577,8 @@
             width: 100%;
             margin-bottom: 8px;
             font-size: 13px;
-            letter-spacing: 0.2px;
         }
-
         button:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
-        button:active { background: var(--bg-accent); }
 
         .btn-add-img { font-size: 12px; padding: 7px; margin-top: -3px; }
 
@@ -510,21 +591,13 @@
         }
         .btn-edit-gold:hover { background: var(--accent-hover) !important; border-color: var(--accent-hover) !important; color: white !important; }
 
-        .btn-inventory-panel {
+        .btn-inventory-panel, .btn-spells-panel {
             background: var(--white) !important;
             color: var(--ink) !important;
             border-color: var(--border-strong) !important;
             font-size: 13px !important;
         }
-        .btn-inventory-panel:hover { background: var(--bg-accent) !important; border-color: var(--accent) !important; color: var(--accent-dark) !important; }
-
-        .btn-spells-panel {
-            background: var(--white) !important;
-            color: var(--ink) !important;
-            border-color: var(--border-strong) !important;
-            font-size: 13px !important;
-        }
-        .btn-spells-panel:hover { background: var(--bg-accent) !important; border-color: var(--accent) !important; color: var(--accent-dark) !important; }
+        .btn-inventory-panel:hover, .btn-spells-panel:hover { background: var(--bg-accent) !important; border-color: var(--accent) !important; color: var(--accent-dark) !important; }
 
         .btn-import-token {
             background: var(--bg-subtle) !important;
@@ -562,12 +635,10 @@
             margin-bottom: 10px;
             font-family: 'Inter', sans-serif;
             font-size: 13px;
-            box-shadow: none;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-        input[type="number"]:focus, input[type="text"]:focus, select:focus, textarea:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1);
         }
@@ -594,7 +665,6 @@
         .grid-toggle-container input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; transform: scale(1.1); accent-color: var(--accent); }
         .grid-toggle-container label { cursor: pointer; font-weight: 500; color: var(--ink); font-size: 13px; user-select: none; }
 
-        /* --- LISTS --- */
         .scene-list, .token-list { list-style: none; }
         .scene-list li, .token-list li {
             padding: 8px 12px;
@@ -609,11 +679,30 @@
             font-size: 13px;
             transition: all 0.2s;
             color: var(--ink);
-            font-weight: 400;
             position: relative; 
         }
         .scene-list li:hover, .token-list li:hover { background: var(--bg-subtle); border-color: var(--accent); }
         .scene-list li.active { background: var(--bg-accent); border-color: var(--accent); color: var(--accent-dark); font-weight: 500; }
+
+        .scene-list li.dragging-scene {
+            opacity: 0.4;
+            transform: scale(0.98);
+        }
+        .scene-list li.drag-over-scene {
+            border-color: var(--accent) !important;
+            background: var(--bg-accent) !important;
+            transform: translateX(4px);
+        }
+
+        .scene-drag-handle {
+            color: var(--ink-muted);
+            font-size: 14px;
+            margin-right: 8px;
+            cursor: grab;
+            user-select: none;
+            padding: 0 2px;
+        }
+        .scene-drag-handle:active { cursor: grabbing; }
 
         .list-item-content {
             flex-grow: 1;
@@ -633,9 +722,7 @@
             background: var(--white); 
             padding-left: 6px;
         }
-        .scene-list li:hover .move-controls, .token-list li:hover .move-controls {
-            background: var(--bg-subtle);
-        }
+        .scene-list li:hover .move-controls, .token-list li:hover .move-controls { background: var(--bg-subtle); }
         
         .move-btn {
             background: var(--white);
@@ -648,15 +735,8 @@
             width: auto;
             margin: 0;
             font-family: 'Inter', sans-serif;
-            transition: all 0.15s;
         }
-        .move-btn:hover {
-            background: var(--bg-accent);
-            color: var(--accent-dark);
-            border-color: var(--accent);
-            transform: none;
-        }
-        .move-btn:active { transform: scale(0.95); }
+        .move-btn:hover { background: var(--bg-accent); color: var(--accent-dark); border-color: var(--accent); }
 
         .btn-delete-scene, .btn-delete-token {
             background: transparent;
@@ -667,26 +747,12 @@
             width: auto;
             margin: 0;
             opacity: 0;
-            transition: all 0.2s;
         }
-        .scene-list li:hover .btn-delete-scene, .token-list li:hover .btn-delete-token {
-            opacity: 1;
-        }
-        .btn-delete-scene:hover, .btn-delete-token:hover {
-            background: transparent;
-            color: #b91c1c;
-            transform: scale(1.15);
-        }
+        .scene-list li:hover .btn-delete-scene, .token-list li:hover .btn-delete-token { opacity: 1; }
+        .btn-delete-scene:hover, .btn-delete-token:hover { color: #b91c1c; transform: scale(1.15); background: transparent; }
 
-        /* --- PLAYERS --- */
-        #player-list li {
-            background: var(--white);
-            border-left: 3px solid var(--accent);
-        }
-        #player-list li:hover {
-            background: var(--bg-subtle);
-            border-left-color: var(--accent-dark);
-        }
+        #player-list li { background: var(--white); border-left: 3px solid var(--accent); }
+        #player-list li:hover { background: var(--bg-subtle); border-left-color: var(--accent-dark); }
         .btn-summon {
             background: var(--white);
             border: 1px solid var(--border);
@@ -697,18 +763,14 @@
             cursor: pointer;
             width: auto;
             margin: 0;
-            transition: all 0.15s;
-            font-family: 'Inter', sans-serif;
         }
         .btn-summon:hover { background: var(--bg-accent); border-color: var(--accent); color: var(--accent-dark); }
 
-        /* --- TOKEN MENU --- */
         #token-menu {
             display: none;
             background: var(--bg-subtle);
             border: 1px solid var(--border);
         }
-        
         #token-menu h3 { color: var(--ink); border-bottom-color: var(--border); }
         
         .token-detail-row {
@@ -723,18 +785,126 @@
         .token-detail-row span:first-child { color: var(--ink-muted); font-weight: 500; }
         .token-detail-row span:last-child { font-weight: 600; color: var(--ink); text-align: right;}
 
-        .inline-edit {
-            width: 70px !important;
+        /* === HP CALCULATOR === */
+        .hp-section {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+        .hp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .hp-header-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .hp-current-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+        }
+        .hp-current-value .hp-max-part {
+            font-size: 13px;
+            color: var(--ink-muted);
+            font-weight: 400;
+        }
+        .hp-controls {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .hp-btn {
+            width: 32px !important;
+            height: 32px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 4px !important;
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .hp-btn.minus { color: var(--danger); }
+        .hp-btn.minus:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        .hp-btn.plus { color: var(--success); }
+        .hp-btn.plus:hover { background: var(--success); color: white; border-color: var(--success); }
+        .hp-amount-input {
+            flex: 1;
+            min-width: 0;
+            padding: 6px 8px !important;
+            margin: 0 !important;
+            text-align: center;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            font-family: 'JetBrains Mono', monospace !important;
+        }
+        .hp-apply-btn {
+            padding: 6px 10px !important;
+            margin: 0 !important;
+            width: auto !important;
+            font-size: 11px !important;
+            background: var(--accent) !important;
+            color: white !important;
+            border-color: var(--accent) !important;
+            flex-shrink: 0;
+            height: 32px;
+        }
+        .hp-apply-btn:hover { background: var(--accent-hover) !important; }
+
+        .temp-hp-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+        }
+        .temp-hp-label {
+            font-size: 11px;
+            color: var(--info);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            cursor: help;
+        }
+        .temp-hp-input {
+            flex: 1;
+            min-width: 0;
             padding: 4px 6px !important;
             margin: 0 !important;
             text-align: center;
-            font-weight: 600;
-            font-size: 13px;
-            background: var(--white) !important;
-            border-color: var(--border-strong) !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            color: var(--info) !important;
+            border-color: var(--info) !important;
+            background: #f0f5fb !important;
         }
 
-        /* --- COMBAT STATS --- */
+        .hp-preview {
+            font-size: 11px;
+            color: var(--ink-muted);
+            text-align: center;
+            margin-top: 4px;
+            min-height: 14px;
+        }
+
         .combat-stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -770,7 +940,6 @@
             border-color: var(--border-strong) !important;
         }
 
-        /* --- ABILITIES --- */
         .abilities-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -782,23 +951,16 @@
             border-radius: 4px;
             border: 1px solid var(--border);
         }
-        .ability-cell {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-        }
+        .ability-cell { display: flex; align-items: center; gap: 5px; font-size: 11px; }
         .ability-cell .ability-label {
             font-weight: 600;
             color: var(--ink-muted);
             min-width: 32px;
             font-size: 10px;
-            text-align: left;
             letter-spacing: 0.5px;
         }
         .ability-cell input {
             width: 42px !important;
-            min-width: 0 !important;
             padding: 4px !important;
             margin: 0 !important;
             text-align: center;
@@ -806,7 +968,6 @@
             font-size: 12px;
             background: var(--white) !important;
             border-color: var(--border-strong) !important;
-            flex-shrink: 0;
         }
         .ability-cell .ability-mod {
             font-weight: 600;
@@ -843,15 +1004,7 @@
             box-shadow: none !important;
         }
 
-        /* --- DICE --- */
-        .die-type-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 10px;
-            justify-content: center;
-        }
-
+        .die-type-selector { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; justify-content: center; }
         .die-type-btn {
             width: auto;
             padding: 6px 10px;
@@ -863,34 +1016,13 @@
             font-family: 'JetBrains Mono', monospace;
             font-weight: 500;
             border-radius: 4px;
-            transition: all 0.15s;
             cursor: pointer;
         }
-        .die-type-btn:hover {
-            background: var(--bg-subtle);
-            border-color: var(--accent);
-            color: var(--accent-dark);
-        }
-        .die-type-btn.active {
-            background: var(--accent);
-            color: var(--white);
-            border-color: var(--accent);
-        }
+        .die-type-btn:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
+        .die-type-btn.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
 
-        .die-mod-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            justify-content: center;
-        }
-
-        .die-mod-label {
-            font-weight: 500;
-            color: var(--ink-muted);
-            font-size: 12px;
-        }
-
+        .die-mod-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; justify-content: center; }
+        .die-mod-label { font-weight: 500; color: var(--ink-muted); font-size: 12px; }
         .die-mod-input {
             width: 70px !important;
             padding: 6px !important;
@@ -912,28 +1044,22 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             cursor: pointer;
-            transition: border-color 0.2s;
             user-select: none;
             margin-bottom: 10px;
         }
-
-        .dice-visual:hover {
-            border-color: var(--accent);
-        }
+        .dice-visual:hover { border-color: var(--accent); }
 
         .dice-face {
             width: 90px;
             height: 90px;
             background: linear-gradient(180deg, var(--white), #f5f3ef);
             border: 1px solid var(--border-strong);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 -2px 0 rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            transition: transform 0.2s;
         }
-
         .dice-face.shape-d4 { border-radius: 6px; }
         .dice-face.shape-d6 { border-radius: 12px; }
         .dice-face.shape-d8 { border-radius: 50%; }
@@ -942,56 +1068,19 @@
         .dice-face.shape-d20 { border-radius: 50%; }
         .dice-face.shape-d100 { border-radius: 50%; }
 
-        .dice-number {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 38px;
-            font-weight: 700;
-            color: var(--ink);
-            line-height: 1;
-        }
+        .dice-number { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 700; color: var(--ink); line-height: 1; }
+        .dice-number.preview { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--ink-muted); letter-spacing: 1px; }
+        .dice-face.shape-d100 .dice-number:not(.preview) { font-size: 30px; }
 
-        .dice-number.preview {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            color: var(--ink-muted);
-            letter-spacing: 1px;
-        }
-
-        .dice-face.shape-d100 .dice-number:not(.preview) {
-            font-size: 30px;
-        }
-
-        .dice-dots {
-            display: none;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 4px;
-            width: 64px;
-            height: 64px;
-            padding: 2px;
-        }
-
+        .dice-dots { display: none; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; width: 64px; height: 64px; padding: 2px; }
         .dice-face.show-dots .dice-dots { display: grid; }
         .dice-face.show-dots .dice-number { display: none; }
         .dice-face:not(.show-dots) .dice-dots { display: none; }
         .dice-face:not(.show-dots) .dice-number { display: block; }
+        .dice-dots .pip { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a); }
+        .dice-dots .pip.hidden { visibility: hidden; }
 
-        .dice-dots .pip {
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
-        }
-
-        .dice-dots .pip.hidden {
-            visibility: hidden;
-        }
-
-        .dice-caption {
-            color: var(--ink-muted);
-            font-size: 11px;
-            text-align: center;
-            letter-spacing: 0.3px;
-            min-height: 14px;
-        }
+        .dice-caption { color: var(--ink-muted); font-size: 11px; text-align: center; min-height: 14px; }
 
         @keyframes dice-shake {
             0% { transform: rotate(0deg) scale(1); }
@@ -1002,17 +1091,13 @@
             75% { transform: rotate(-3deg) scale(1.01); }
             100% { transform: rotate(0deg) scale(1); }
         }
-        .dice-face.rolling {
-            animation: dice-shake 0.5s ease-in-out;
-        }
+        .dice-face.rolling { animation: dice-shake 0.5s ease-in-out; }
 
         @keyframes dice-appear {
             0% { transform: scale(0.8) rotate(-10deg); opacity: 0.5; }
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
-        .dice-face.appearing {
-            animation: dice-appear 0.3s ease-out;
-        }
+        .dice-face.appearing { animation: dice-appear 0.3s ease-out; }
 
         #dice-log {
             margin-top: 10px;
@@ -1022,17 +1107,9 @@
             color: var(--ink-muted);
             border-top: 1px solid var(--border);
             padding-top: 8px;
-            font-family: 'Inter', sans-serif;
         }
+        #dice-log .log-entry { margin-bottom: 5px; padding-bottom: 4px; border-bottom: 1px solid var(--bg-subtle); line-height: 1.4; }
 
-        #dice-log .log-entry {
-            margin-bottom: 5px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid var(--bg-subtle);
-            line-height: 1.4;
-        }
-
-        /* --- TOKENS --- */
         .token {
             position: absolute;
             width: 60px;
@@ -1051,28 +1128,34 @@
             font-size: 22px;
             font-weight: 700;
             color: var(--accent-dark);
-            text-shadow: none;
             user-select: none;
             transition: border-color 0.2s, box-shadow 0.2s;
             z-index: 10;
         }
-        
-        .token:hover { 
-            border-color: var(--accent); 
-            box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.15), 0 2px 8px rgba(0,0,0,0.12); 
-        }
+        .token:hover { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.15), 0 2px 8px rgba(0,0,0,0.12); }
         .token:active { cursor: grabbing; z-index: 1000; }
         .token.token-not-owned { cursor: default; }
         .token.token-not-owned:hover { border-color: var(--border-strong); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        
-        .token.active-turn-token {
-            border-color: var(--success);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2), 0 2px 8px rgba(0,0,0,0.12);
-        }
-        
+        .token.active-turn-token { border-color: var(--success); box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2), 0 2px 8px rgba(0,0,0,0.12); }
         .token.is-player { border-color: #4a7ebb; }
         .token.is-player:hover { border-color: #6ba3e0; }
         .token.is-player.token-not-owned:hover { border-color: #4a7ebb; }
+
+        .temp-hp-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--info);
+            color: white;
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 1px 5px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 15;
+        }
 
         .token-tooltip {
             position: absolute;
@@ -1091,14 +1174,12 @@
             opacity: 0;
             transition: opacity 0.2s;
             text-align: center;
-            font-family: 'Inter', sans-serif;
             z-index: 2000;
         }
         .token-tooltip strong { font-family: 'Cormorant Garamond', serif; color: var(--ink); font-size: 15px; font-weight: 700;}
         .token:hover .token-tooltip { opacity: 1; }
         .token.token-not-owned:hover .token-tooltip { opacity: 0; }
 
-        /* --- MODALS --- */
         #modal, #inventory-modal, #spells-modal {
             display: none;
             position: fixed;
@@ -1120,34 +1201,15 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
         }
-        .modal-content h2 { 
-            margin-bottom: 22px; 
-            color: var(--ink); 
-            text-align: center; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 14px;
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
+        .modal-content h2 { margin-bottom: 22px; color: var(--ink); text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 14px; font-size: 22px; letter-spacing: 1px; }
         .modal-content label { font-weight: 500; font-size: 12px; margin-bottom: 5px; display: block; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.5px;}
-        
         .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
-        
         .btn-delete { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
         .btn-delete:hover { background: #a04545 !important; border-color: #a04545 !important; color: white !important; }
         .btn-cancel { background: var(--white) !important; color: var(--ink) !important; border-color: var(--border-strong) !important; }
         .btn-cancel:hover { background: var(--bg-subtle) !important; }
 
-        .modal-slots-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            margin-bottom: 14px;
-            background: var(--bg-subtle);
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid var(--border);
-        }
+        .modal-slots-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; background: var(--bg-subtle); padding: 10px; border-radius: 4px; border: 1px solid var(--border); }
         .modal-slot-col { display: flex; flex-direction: column; align-items: center; }
         .modal-slot-col label { font-size: 10px; margin-bottom: 3px; color: var(--ink-muted); }
         .modal-slot-col input { width: 100% !important; text-align: center; padding: 5px !important; margin: 0 !important; }
@@ -1164,42 +1226,10 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
         }
-        .inv-modal-content h2 {
-            margin-bottom: 12px;
-            color: var(--ink);
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
-        #inv-owner-name {
-            text-align: center;
-            margin-bottom: 16px;
-            color: var(--ink);
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            font-size: 17px;
-        }
-        #inventory-text {
-            width: 100%;
-            flex-grow: 1;
-            min-height: 320px;
-            padding: 14px;
-            background: var(--bg-subtle);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--ink);
-            resize: vertical;
-            outline: none;
-        }
-        #inventory-text:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1);
-        }
+        .inv-modal-content h2 { margin-bottom: 12px; color: var(--ink); text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; font-size: 22px; letter-spacing: 1px; }
+        #inv-owner-name { text-align: center; margin-bottom: 16px; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 17px; }
+        #inventory-text { width: 100%; flex-grow: 1; min-height: 320px; padding: 14px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: var(--ink); resize: vertical; outline: none; }
+        #inventory-text:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1); }
 
         .spells-modal-content {
             background: var(--white);
@@ -1213,66 +1243,17 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
         }
-        .spells-modal-content h2 {
-            margin-bottom: 10px;
-            color: var(--ink);
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
-        #spells-owner-name {
-            text-align: center;
-            margin-bottom: 16px;
-            color: var(--ink);
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 700;
-            font-size: 17px;
-        }
-        .spells-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-        .spells-block {
-            display: flex;
-            flex-direction: column;
-        }
-        .spells-block label {
-            font-weight: 600;
-            font-size: 11px;
-            color: var(--ink-muted);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .spells-block textarea {
-            width: 100%;
-            min-height: 110px;
-            padding: 10px 12px;
-            background: var(--bg-subtle);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            line-height: 1.6;
-            color: var(--ink);
-            resize: vertical;
-            outline: none;
-        }
-        .spells-block textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1);
-        }
+        .spells-modal-content h2 { margin-bottom: 10px; color: var(--ink); text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; font-size: 22px; letter-spacing: 1px; }
+        #spells-owner-name { text-align: center; margin-bottom: 16px; color: var(--ink); font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 17px; }
+        .spells-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex-grow: 1; overflow-y: auto; padding-right: 4px; }
+        .spells-block { display: flex; flex-direction: column; }
+        .spells-block label { font-weight: 600; font-size: 11px; color: var(--ink-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .spells-block textarea { width: 100%; min-height: 110px; padding: 10px 12px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; color: var(--ink); resize: vertical; outline: none; }
+        .spells-block textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(156, 125, 79, 0.1); }
         .spells-block.combat label { color: var(--danger); }
         .spells-block.special label { color: var(--accent-dark); }
         .spells-block.cantrips label { color: #4a7ebb; }
 
-        /* --- MUSIC --- */
         #music-player {
             position: fixed;
             bottom: 12px;
@@ -1287,57 +1268,18 @@
             z-index: 100;
             box-shadow: var(--shadow-md);
             color: var(--ink);
-            font-family: 'Inter', sans-serif;
             transition: left 0.3s ease;
         }
-
         body.sidebar-collapsed #music-player { left: 12px; }
-
         .music-controls { display: flex; gap: 8px; align-items: center; }
-        
-        .music-btn {
-            background: none;
-            border: none;
-            color: var(--ink-soft);
-            font-size: 16px;
-            cursor: pointer;
-            padding: 4px;
-            transition: color 0.2s;
-            margin: 0;
-            width: auto;
-        }
+        .music-btn { background: none; border: none; color: var(--ink-soft); font-size: 16px; cursor: pointer; padding: 4px; margin: 0; width: auto; }
         .music-btn:hover { color: var(--accent); transform: none; background: none; }
         .music-btn.active { color: var(--accent-dark); }
-
-        #volume-slider {
-            width: 80px;
-            accent-color: var(--accent);
-            cursor: pointer;
-        }
-
-        .music-upload-label {
-            cursor: pointer;
-            font-size: 11px;
-            background: var(--white);
-            color: var(--ink-soft);
-            padding: 5px 10px;
-            border-radius: 4px;
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-        }
+        #volume-slider { width: 80px; accent-color: var(--accent); cursor: pointer; }
+        .music-upload-label { cursor: pointer; font-size: 11px; background: var(--white); color: var(--ink-soft); padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border); }
         .music-upload-label:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
+        #track-name { font-size: 10px; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-muted); }
 
-        #track-name {
-            font-size: 10px;
-            max-width: 110px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--ink-muted);
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* --- TOKEN TYPE SELECTOR --- */
         .token-type-selector {
             display: flex;
             gap: 16px;
@@ -1347,52 +1289,28 @@
             border-radius: 4px;
             border: 1px solid var(--border);
         }
-        .token-type-selector label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            margin-bottom: 0;
-            font-size: 13px;
-            color: var(--ink);
-            text-transform: none;
-            letter-spacing: 0;
-        }
-        .token-type-selector input[type="radio"] {
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-            accent-color: var(--accent);
-        }
+        .token-type-selector label { display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 0; font-size: 13px; color: var(--ink); text-transform: none; letter-spacing: 0; }
+        .token-type-selector input[type="radio"] { width: auto; margin: 0; cursor: pointer; accent-color: var(--accent); }
 
-        /* --- PLAYER MODE --- */
         body.player-mode #btn-add-npc,
         body.player-mode .btn-save,
         body.player-mode .btn-load,
         body.player-mode .music-upload-label,
         body.player-mode .move-controls,
-        body.player-mode .btn-import-token {
+        body.player-mode .btn-import-token,
+        body.player-mode .scene-drag-handle {
             display: none !important;
         }
 
-        body.player-mode #modal .btn-delete {
-            display: none !important;
-        }
-
+        body.player-mode #modal .btn-delete { display: none !important; }
         body.player-mode #sidebar-left,
         body.player-mode #sidebar-toggle,
         body.player-mode #nav-prev,
         body.player-mode #nav-next,
         body.player-mode #image-counter,
-        body.player-mode #btn-delete-image {
-            display: none !important;
-        }
+        body.player-mode #btn-delete-image { display: none !important; }
+        body.player-mode #music-player { left: 12px !important; }
 
-        body.player-mode #music-player {
-            left: 12px !important;
-        }
-
-        /* --- MODE MODAL --- */
         #mode-modal {
             display: none;
             position: fixed;
@@ -1416,31 +1334,9 @@
             text-align: center;
         }
 
-        .mode-modal-content h1 {
-            color: var(--ink);
-            margin-bottom: 10px;
-            font-size: 32px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-
-        .mode-modal-content .mode-subtitle {
-            color: var(--ink-muted);
-            font-size: 13px;
-            margin-bottom: 36px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-            letter-spacing: 0.5px;
-        }
-
-        .mode-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+        .mode-modal-content h1 { color: var(--ink); margin-bottom: 10px; font-size: 32px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; }
+        .mode-modal-content .mode-subtitle { color: var(--ink-muted); font-size: 13px; margin-bottom: 36px; border-bottom: 1px solid var(--border); padding-bottom: 20px; letter-spacing: 0.5px; }
+        .mode-buttons { display: flex; gap: 16px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
 
         .mode-btn {
             flex: 1;
@@ -1452,113 +1348,24 @@
             border: 1px solid var(--border-strong);
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
             font-family: 'Cormorant Garamond', serif;
             font-weight: 600;
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
+        .mode-btn:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+        .mode-btn .mode-icon { display: block; font-size: 36px; margin-bottom: 12px; }
+        .mode-btn .mode-desc { display: block; font-size: 11px; color: var(--ink-muted); margin-top: 10px; font-family: 'Inter', sans-serif; font-weight: 400; text-transform: none; letter-spacing: 0; line-height: 1.5; }
 
-        .mode-btn:hover {
-            background: var(--bg-subtle);
-            border-color: var(--accent);
-            color: var(--accent-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
-
-        .mode-btn:active {
-            transform: translateY(0);
-        }
-
-        .mode-btn .mode-icon {
-            display: block;
-            font-size: 36px;
-            margin-bottom: 12px;
-            filter: grayscale(0.3);
-        }
-
-        .mode-btn .mode-desc {
-            display: block;
-            font-size: 11px;
-            color: var(--ink-muted);
-            margin-top: 10px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            text-transform: none;
-            letter-spacing: 0;
-            line-height: 1.5;
-        }
-
-        #mode-player-list {
-            list-style: none;
-            margin: 20px 0;
-            max-height: 340px;
-            overflow-y: auto;
-            padding: 0;
-            text-align: left;
-        }
-
-        #mode-player-list li {
-            padding: 16px 20px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            margin-bottom: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-
-        #mode-player-list li:hover {
-            background: var(--bg-subtle);
-            border-color: var(--accent);
-            transform: translateX(3px);
-        }
-
-        #mode-player-list li strong {
-            color: var(--ink);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        #mode-player-list li .player-meta {
-            color: var(--ink-muted);
-            font-size: 11px;
-            margin-left: 10px;
-            font-weight: 400;
-        }
-
-        .mode-back-btn {
-            background: var(--white);
-            color: var(--ink);
-            border: 1px solid var(--border-strong);
-            padding: 10px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            width: auto;
-            margin: 16px auto 0;
-            display: block;
-            font-weight: 500;
-        }
-
+        #mode-player-list { list-style: none; margin: 20px 0; max-height: 340px; overflow-y: auto; padding: 0; text-align: left; }
+        #mode-player-list li { padding: 16px 20px; background: var(--white); border: 1px solid var(--border); margin-bottom: 8px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        #mode-player-list li:hover { background: var(--bg-subtle); border-color: var(--accent); transform: translateX(3px); }
+        #mode-player-list li strong { color: var(--ink); font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; }
+        #mode-player-list li .player-meta { color: var(--ink-muted); font-size: 11px; margin-left: 10px; font-weight: 400; }
+        .mode-back-btn { background: var(--white); color: var(--ink); border: 1px solid var(--border-strong); padding: 10px 24px; border-radius: 4px; cursor: pointer; font-size: 13px; width: auto; margin: 16px auto 0; display: block; font-weight: 500; }
         .mode-back-btn:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent-dark); }
+        .mode-player-empty { padding: 32px 24px; color: var(--ink-muted); font-style: italic; text-align: center; background: var(--bg-subtle); border-radius: 6px; border: 1px dashed var(--border-strong); font-size: 13px; }
 
-        .mode-player-empty {
-            padding: 32px 24px;
-            color: var(--ink-muted);
-            font-style: italic;
-            text-align: center;
-            background: var(--bg-subtle);
-            border-radius: 6px;
-            border: 1px dashed var(--border-strong);
-            font-size: 13px;
-        }
-
-        /* --- SCROLLBARS --- */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-subtle); }
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
@@ -1567,16 +1374,45 @@
 </head>
 <body>
 
+    <!-- ROOM SCREEN -->
+    <div id="room-screen">
+        <div class="room-card">
+            <h1>Юстилия</h1>
+            <div class="subtitle">Виртуальный стол для настольных игр</div>
+
+            <div id="room-menu">
+                <button class="btn-primary" onclick="createRoom()">Создать комнату</button>
+
+                <div class="divider">или</div>
+
+                <label>Код комнаты</label>
+                <input type="text" id="room-code-input" placeholder="ABC123" maxlength="6" oninput="this.value=this.value.toUpperCase()">
+                <button class="btn-secondary" onclick="joinRoom()">Войти</button>
+            </div>
+
+            <div id="room-created-block">
+                <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1px;">Комната создана</div>
+                <div id="room-code-display">------</div>
+                <div class="room-share-hint">
+                    Отправьте этот код друзьям или ссылку:<br>
+                    <span id="room-share-link" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-dark); word-break: break-all;"></span>
+                </div>
+                <button class="btn-primary" onclick="enterCreatedRoom()">Войти в комнату</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="header-title">Юстилия</div>
         <div class="header-right">
+            <div class="room-badge" id="room-badge" onclick="copyRoomLink()" title="Скопировать ссылку на комнату">— — —</div>
             <div class="mode-indicator">
                 <span id="mode-label">👑 Мастер</span>
                 <button class="mode-switch-btn" onclick="switchMode()" title="Сменить режим">⇄</button>
             </div>
-            <button class="btn-save" onclick="exportState()" title="Скачать файл со всеми настройками и музыкой">💾 Сохранить мир</button>
+            <button class="btn-save" onclick="exportState()" title="Скачать файл">💾 Сохранить мир</button>
             <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importState(event)">
-            <button class="btn-load" onclick="document.getElementById('import-file').click()" title="Загрузить сохраненный файл">📂 Загрузить мир</button>
+            <button class="btn-load" onclick="document.getElementById('import-file').click()" title="Загрузить файл">📂 Загрузить мир</button>
         </div>
     </header>
 
@@ -1617,8 +1453,8 @@
             
             <div id="initiative-tracker">
                 <div class="initiative-controls">
-                    <button onclick="addSelectedToInitiative()" id="btn-add-init" title="Добавить выбранного героя в очередь">+ В бой</button>
-                    <button onclick="nextTurn()" title="Следующий ход">Следующий ▶</button>
+                    <button onclick="addSelectedToInitiative()" id="btn-add-init">+ В бой</button>
+                    <button onclick="nextTurn()">Следующий ▶</button>
                 </div>
                 <div class="initiative-list" id="initiative-list"></div>
             </div>
@@ -1630,7 +1466,7 @@
                 <div id="nav-next" class="nav-arrow" onclick="nextImage()">❯</div>
                 
                 <div id="image-counter">1 / 1</div>
-                <div class="btn-delete-image" id="btn-delete-image" onclick="deleteCurrentImage()" title="Удалить текущую картинку">✖</div>
+                <div class="btn-delete-image" id="btn-delete-image" onclick="deleteCurrentImage()">✖</div>
             </div>
 
             <div id="minimap-container" onmousedown="startMinimapDrag(event)">
@@ -1647,7 +1483,7 @@
             <div class="panel-section">
                 <h3>Персонажи на сцене</h3>
                 <button id="btn-add-npc" onclick="openCreateModal('npc')">+ Добавить НПС</button>
-                <button class="btn-import-token" onclick="document.getElementById('token-import-file').click()" title="Импорт токенов из JSON-файла">📥 Импорт токена</button>
+                <button class="btn-import-token" onclick="document.getElementById('token-import-file').click()">📥 Импорт токена</button>
                 <input type="file" id="token-import-file" accept=".json,application/json" style="display:none;" onchange="handleTokenImport(event)" multiple>
                 <ul class="token-list" id="npc-list"></ul>
             </div>
@@ -1658,10 +1494,26 @@
                 <div class="token-detail-row"><span>Раса:</span> <span id="sel-race">-</span></div>
                 <div class="token-detail-row"><span>Класс:</span> <span id="sel-class">-</span></div>
                 <div class="token-detail-row"><span>Уровень:</span> <span id="sel-level">-</span></div>
-                
-                <div class="token-detail-row">
-                    <span>Хиты:</span> 
-                    <input type="text" class="inline-edit" id="sel-hp-input" onchange="updateHpDirectly()" placeholder="0/0">
+
+                <!-- HP CALCULATOR -->
+                <div class="hp-section">
+                    <div class="hp-header">
+                        <span class="hp-header-label">Хиты</span>
+                        <div class="hp-current-value" id="hp-display">
+                            <span id="hp-current">-</span><span class="hp-max-part"> / <span id="hp-max">-</span></span>
+                        </div>
+                    </div>
+                    <div class="hp-controls">
+                        <button class="hp-btn minus" onclick="adjustHp(-1)" title="Вычесть хиты">−</button>
+                        <input type="number" class="hp-amount-input" id="hp-amount" min="0" placeholder="0" value="">
+                        <button class="hp-btn plus" onclick="adjustHp(1)" title="Прибавить хиты">+</button>
+                        <button class="hp-apply-btn" onclick="applyHpDelta()" title="Применить">OK</button>
+                    </div>
+                    <div class="hp-preview" id="hp-preview"></div>
+                    <div class="temp-hp-row">
+                        <span class="temp-hp-label" title="Временные хиты — снимаются первыми при уроне">🛡 Врем.</span>
+                        <input type="number" class="temp-hp-input" id="temp-hp-input" min="0" value="0" onchange="setTempHp(this.value)">
+                    </div>
                 </div>
 
                 <div class="combat-stats-grid">
@@ -1737,18 +1589,12 @@
                     <span class="die-mod-label">Модификатор:</span>
                     <input type="text" id="dice-mod" placeholder="+0" class="die-mod-input">
                 </div>
-                <div id="dice-visual" class="dice-visual" onclick="rollDice()" title="Нажмите, чтобы бросить">
+                <div id="dice-visual" class="dice-visual" onclick="rollDice()">
                     <div class="dice-face shape-d20" id="dice-face">
                         <div class="dice-dots" id="dice-dots">
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
-                            <div class="pip hidden"></div>
+                            <div class="pip hidden"></div><div class="pip hidden"></div><div class="pip hidden"></div>
+                            <div class="pip hidden"></div><div class="pip hidden"></div><div class="pip hidden"></div>
+                            <div class="pip hidden"></div><div class="pip hidden"></div><div class="pip hidden"></div>
                         </div>
                         <span class="dice-number preview" id="dice-result">d20</span>
                     </div>
@@ -1761,17 +1607,15 @@
 
     <div id="music-player">
         <div class="music-controls">
-            <button class="music-btn" id="btn-play-pause" onclick="togglePlay()" title="Играть/Пауза">▶</button>
-            <button class="music-btn" id="btn-loop" onclick="toggleLoop()" title="Зациклить">🔁</button>
+            <button class="music-btn" id="btn-play-pause" onclick="togglePlay()">▶</button>
+            <button class="music-btn" id="btn-loop" onclick="toggleLoop()">🔁</button>
         </div>
-        
         <div style="display: flex; flex-direction: column; gap: 3px;">
-            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" oninput="changeVolume(this.value)" title="Громкость">
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" oninput="changeVolume(this.value)">
             <div id="track-name">Нет трека</div>
         </div>
-        
         <input type="file" id="music-upload" accept="audio/*" style="display:none;" onchange="handleMusicUpload(event)">
-        <label for="music-upload" class="music-upload-label" title="Загрузить музыку для этой сцены">🎵 Загрузить</label>
+        <label for="music-upload" class="music-upload-label">🎵 Загрузить</label>
     </div>
     
     <audio id="bg-music" loop></audio>
@@ -1782,12 +1626,8 @@
             <input type="hidden" id="edit-token-id">
             
             <div class="token-type-selector" id="type-selector">
-                <label>
-                    <input type="radio" name="token-type" value="npc" checked onchange="updateCreateTypeUI()"> НПС
-                </label>
-                <label>
-                    <input type="radio" name="token-type" value="player" onchange="updateCreateTypeUI()"> Игрок
-                </label>
+                <label><input type="radio" name="token-type" value="npc" checked onchange="updateCreateTypeUI()"> НПС</label>
+                <label><input type="radio" name="token-type" value="player" onchange="updateCreateTypeUI()"> Игрок</label>
             </div>
 
             <label>Имя персонажа</label>
@@ -1799,8 +1639,8 @@
                     <input type="number" id="edit-level" value="1" min="1" max="20">
                 </div>
                 <div style="flex: 2;">
-                    <label>Хиты</label>
-                    <input type="text" id="edit-hp" placeholder="24/30">
+                    <label>Макс. хиты</label>
+                    <input type="number" id="edit-hp-max" value="10" min="1" placeholder="10">
                 </div>
             </div>
 
@@ -1870,7 +1710,7 @@
         <div class="inv-modal-content">
             <h2>Инвентарь</h2>
             <div id="inv-owner-name">-</div>
-            <textarea id="inventory-text" placeholder="Одна строка — один предмет.&#10;&#10;Меч длинный +1&#10;Зелье лечения x3&#10;Верёвка 15м&#10;Кольцо защиты"></textarea>
+            <textarea id="inventory-text" placeholder="Одна строка — один предмет."></textarea>
             <div class="modal-actions">
                 <button onclick="saveInventory()" style="flex: 2;">Сохранить</button>
                 <button class="btn-cancel" onclick="closeInventory()">✕</button>
@@ -1883,38 +1723,14 @@
             <h2>Заклинания и умения</h2>
             <div id="spells-owner-name">-</div>
             <div class="spells-grid">
-                <div class="spells-block combat">
-                    <label>⚔ Боевые умения</label>
-                    <textarea id="spells-combat" placeholder="Одна строка — одно умение"></textarea>
-                </div>
-                <div class="spells-block special">
-                    <label>🌟 Особые умения</label>
-                    <textarea id="spells-special" placeholder="Одна строка — одно умение"></textarea>
-                </div>
-                <div class="spells-block cantrips">
-                    <label>✨ Заговоры</label>
-                    <textarea id="spells-cantrips" placeholder="Одна строка — один заговор"></textarea>
-                </div>
-                <div class="spells-block">
-                    <label>Заклинания 1 круга</label>
-                    <textarea id="spells-circle1"></textarea>
-                </div>
-                <div class="spells-block">
-                    <label>Заклинания 2 круга</label>
-                    <textarea id="spells-circle2"></textarea>
-                </div>
-                <div class="spells-block">
-                    <label>Заклинания 3 круга</label>
-                    <textarea id="spells-circle3"></textarea>
-                </div>
-                <div class="spells-block">
-                    <label>Заклинания 4 круга</label>
-                    <textarea id="spells-circle4"></textarea>
-                </div>
-                <div class="spells-block">
-                    <label>Заклинания 5 круга</label>
-                    <textarea id="spells-circle5"></textarea>
-                </div>
+                <div class="spells-block combat"><label>⚔ Боевые умения</label><textarea id="spells-combat"></textarea></div>
+                <div class="spells-block special"><label>🌟 Особые умения</label><textarea id="spells-special"></textarea></div>
+                <div class="spells-block cantrips"><label>✨ Заговоры</label><textarea id="spells-cantrips"></textarea></div>
+                <div class="spells-block"><label>Заклинания 1 круга</label><textarea id="spells-circle1"></textarea></div>
+                <div class="spells-block"><label>Заклинания 2 круга</label><textarea id="spells-circle2"></textarea></div>
+                <div class="spells-block"><label>Заклинания 3 круга</label><textarea id="spells-circle3"></textarea></div>
+                <div class="spells-block"><label>Заклинания 4 круга</label><textarea id="spells-circle4"></textarea></div>
+                <div class="spells-block"><label>Заклинания 5 круга</label><textarea id="spells-circle5"></textarea></div>
             </div>
             <div class="modal-actions">
                 <button onclick="saveSpells()" style="flex: 2;">Сохранить</button>
@@ -1974,6 +1790,7 @@
 
         let sessionMode = null;
         let sessionPlayerTokenId = null;
+        let currentRoomCode = null;
 
         let socket = null;
         let isApplyingRemote = false;
@@ -1987,12 +1804,12 @@
         let minimapInitialX = 0, minimapInitialY = 0;
         let initDragSrcIndex = null;
 
-        let currentDieType = 20;
+        let sceneDragSrcIndex = null;
 
-        const EMPTY_SPELLS = { 
-            combat: "", special: "", cantrips: "",
-            circle1: "", circle2: "", circle3: "", circle4: "", circle5: "" 
-        };
+        let currentDieType = 20;
+        let hpPendingDelta = 0;
+
+        const EMPTY_SPELLS = { combat: "", special: "", cantrips: "", circle1: "", circle2: "", circle3: "", circle4: "", circle5: "" };
         const EMPTY_ABILITIES = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
         const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const DEFAULT_AC = 10;
@@ -2005,6 +1822,275 @@
         const volumeSlider = document.getElementById('volume-slider');
         const trackNameEl = document.getElementById('track-name');
 
+        // === ROOMS ===
+        function createRoom() {
+            if (!socket || !socket.connected) {
+                alert('Нет связи с сервером. Обновите страницу.');
+                return;
+            }
+            socket.emit('room:create', (response) => {
+                if (response && response.ok) {
+                    const code = response.code;
+                    document.getElementById('room-code-display').textContent = code;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('room', code);
+                    document.getElementById('room-share-link').textContent = url.toString();
+                    document.getElementById('room-menu').style.display = 'none';
+                    document.getElementById('room-created-block').style.display = 'block';
+                    currentRoomCode = code;
+                } else {
+                    alert('Не удалось создать комнату');
+                }
+            });
+        }
+
+        function enterCreatedRoom() {
+            if (!currentRoomCode) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set('room', currentRoomCode);
+            window.history.replaceState({}, '', url);
+            proceedToRoom(currentRoomCode);
+        }
+
+        function joinRoom() {
+            const input = document.getElementById('room-code-input');
+            const code = (input.value || '').toUpperCase().trim();
+            if (!code || code.length < 4) {
+                alert('Введите код комнаты (минимум 4 символа)');
+                return;
+            }
+            const url = new URL(window.location.href);
+            url.searchParams.set('room', code);
+            window.history.replaceState({}, '', url);
+            proceedToRoom(code);
+        }
+
+        function proceedToRoom(code) {
+            if (!socket || !socket.connected) {
+                alert('Нет связи с сервером');
+                return;
+            }
+            socket.emit('room:join', code, (response) => {
+                if (response && response.ok) {
+                    currentRoomCode = response.code;
+                    document.getElementById('room-screen').style.display = 'none';
+                    document.getElementById('room-badge').textContent = '🏠 ' + currentRoomCode;
+                    continueInit();
+                } else {
+                    alert('Комната не найдена: ' + (response?.reason || 'неизвестная ошибка'));
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('room');
+                    window.history.replaceState({}, '', url);
+                }
+            });
+        }
+
+        function copyRoomLink() {
+            if (!currentRoomCode) return;
+            const url = new URL(window.location.href);
+            url.searchParams.set('room', currentRoomCode);
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                const badge = document.getElementById('room-badge');
+                const old = badge.textContent;
+                badge.textContent = '✓ Скопировано';
+                setTimeout(() => badge.textContent = old, 1500);
+            }).catch(() => {
+                prompt('Скопируйте ссылку:', url.toString());
+            });
+        }
+
+        // === HP CALCULATOR ===
+        function parseHp(hpStr) {
+            if (!hpStr) return { current: 0, max: 0 };
+            const str = String(hpStr).trim();
+            if (str.includes('/')) {
+                const parts = str.split('/');
+                const cur = parseInt(parts[0]) || 0;
+                const max = parseInt(parts[1]) || 0;
+                return { current: cur, max };
+            }
+            const val = parseInt(str) || 0;
+            return { current: val, max: val };
+        }
+
+        function formatHp(current, max) {
+            return `${current}/${max}`;
+        }
+
+        function renderHpCalculator(token) {
+            if (!token) return;
+            const hp = parseHp(token.hp);
+            const temp = token.tempHp || 0;
+            
+            document.getElementById('hp-current').textContent = hp.current;
+            document.getElementById('hp-max').textContent = hp.max;
+            document.getElementById('temp-hp-input').value = temp;
+            
+            const hpAmountInput = document.getElementById('hp-amount');
+            hpAmountInput.value = '';
+            hpPendingDelta = 0;
+            updateHpPreview();
+        }
+
+        function updateHpPreview() {
+            if (!currentlySelectedId) return;
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
+            if (!token) return;
+            
+            const hp = parseHp(token.hp);
+            const temp = token.tempHp || 0;
+            const delta = hpPendingDelta;
+            const amountInput = document.getElementById('hp-amount');
+            const typedAmount = parseInt(amountInput.value) || 0;
+            const effectiveDelta = typedAmount > 0 ? (delta < 0 ? -typedAmount : (delta > 0 ? typedAmount : 0)) : 0;
+            
+            const previewEl = document.getElementById('hp-preview');
+            
+            if (effectiveDelta === 0) {
+                previewEl.textContent = temp > 0 ? `+${temp} временных` : '';
+                return;
+            }
+            
+            let newHp = hp.current;
+            let newTemp = temp;
+            
+            if (effectiveDelta < 0) {
+                let damage = Math.abs(effectiveDelta);
+                if (newTemp > 0) {
+                    const tempAbsorbed = Math.min(newTemp, damage);
+                    newTemp -= tempAbsorbed;
+                    damage -= tempAbsorbed;
+                }
+                newHp = Math.max(0, newHp - damage);
+            } else {
+                newHp = Math.min(hp.max, newHp + effectiveDelta);
+            }
+            
+            let preview = `${hp.current} → ${newHp}`;
+            if (newTemp !== temp) {
+                preview += ` (врем. ${temp} → ${newTemp})`;
+            }
+            previewEl.textContent = preview;
+        }
+
+        function adjustHp(sign) {
+            const amountInput = document.getElementById('hp-amount');
+            const current = parseInt(amountInput.value) || 0;
+            if (current === 0) {
+                amountInput.value = 1;
+            } else {
+                const newVal = Math.max(0, current + sign);
+                amountInput.value = newVal === 0 ? '' : newVal;
+            }
+            hpPendingDelta = sign;
+            updateHpPreview();
+        }
+
+        function applyHpDelta() {
+            if (!currentlySelectedId) return;
+            const amountInput = document.getElementById('hp-amount');
+            const amount = parseInt(amountInput.value) || 0;
+            if (amount <= 0) {
+                alert('Введите число больше нуля');
+                return;
+            }
+            
+            const scene = state.scenes[state.currentSceneIndex];
+            let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
+            if (!token) return;
+            
+            const hp = parseHp(token.hp);
+            const temp = token.tempHp || 0;
+            const sign = hpPendingDelta < 0 ? -1 : 1;
+            
+            let newHp = hp.current;
+            let newTemp = temp;
+            
+            if (sign < 0) {
+                let damage = amount;
+                if (newTemp > 0) {
+                    const absorbed = Math.min(newTemp, damage);
+                    newTemp -= absorbed;
+                    damage -= absorbed;
+                }
+                newHp = Math.max(0, newHp - damage);
+            } else {
+                newHp = Math.min(hp.max, newHp + amount);
+            }
+            
+            const patch = { 
+                hp: formatHp(newHp, hp.max),
+                tempHp: newTemp
+            };
+            updateTokenEverywhere(currentlySelectedId, patch);
+            
+            amountInput.value = '';
+            hpPendingDelta = 0;
+            
+            saveState();
+            renderTokens();
+            renderPlayers();
+            renderHpCalculator({ ...token, ...patch });
+        }
+
+        function setTempHp(value) {
+            if (!currentlySelectedId) return;
+            const temp = Math.max(0, parseInt(value) || 0);
+            updateTokenEverywhere(currentlySelectedId, { tempHp: temp });
+            saveState();
+            renderTokens();
+        }
+
+        // === SCENES DRAG & DROP ===
+        function handleSceneDragStart(e, index) {
+            sceneDragSrcIndex = index;
+            e.currentTarget.classList.add('dragging-scene');
+            e.dataTransfer.effectAllowed = 'move';
+            try { e.dataTransfer.setData('text/plain', String(index)); } catch(err) {}
+        }
+
+        function handleSceneDragOver(e, index) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.currentTarget.classList.add('drag-over-scene');
+        }
+
+        function handleSceneDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over-scene');
+        }
+
+        function handleSceneDrop(e, targetIndex) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over-scene');
+            if (sceneDragSrcIndex === null || sceneDragSrcIndex === targetIndex) return;
+            
+            const currentActive = state.currentSceneIndex;
+            const [movedScene] = state.scenes.splice(sceneDragSrcIndex, 1);
+            state.scenes.splice(targetIndex, 0, movedScene);
+            
+            if (currentActive === sceneDragSrcIndex) {
+                state.currentSceneIndex = targetIndex;
+            } else if (sceneDragSrcIndex < currentActive && targetIndex >= currentActive) {
+                state.currentSceneIndex = currentActive - 1;
+            } else if (sceneDragSrcIndex > currentActive && targetIndex <= currentActive) {
+                state.currentSceneIndex = currentActive + 1;
+            }
+            
+            sceneDragSrcIndex = null;
+            saveState();
+            renderScenes();
+            renderTokens();
+            updateBoardBackground();
+        }
+
+        function handleSceneDragEnd(e) {
+            e.currentTarget.classList.remove('dragging-scene');
+            document.querySelectorAll('.scene-list li').forEach(li => li.classList.remove('drag-over-scene'));
+            sceneDragSrcIndex = null;
+        }
+
+        // === REST OF CODE ===
         function updateTokenEverywhere(id, patch) {
             const player = state.players.find(p => p.id === id);
             if (player) Object.assign(player, patch);
@@ -2015,7 +2101,6 @@
             });
         }
 
-        // === ИМПОРТ ТОКЕНОВ ===
         function normalizeSlots(slots) {
             if (!slots) return { max: [0,0,0,0,0], current: [0,0,0,0,0] };
             if (Array.isArray(slots)) {
@@ -2039,6 +2124,7 @@
                 class: raw.class || raw.cls || '',
                 level: parseInt(raw.level) || 1,
                 hp: raw.hp || '',
+                tempHp: parseInt(raw.tempHp) || 0,
                 img: raw.img || '',
                 isPlayer: raw.isPlayer === true,
                 x: (raw.x !== undefined && raw.x !== null && !isNaN(parseFloat(raw.x))) ? parseFloat(raw.x) : 50,
@@ -2065,93 +2151,49 @@
                 try {
                     const text = await file.text();
                     const data = JSON.parse(text);
-
                     let rawTokens = [];
+                    if (data && Array.isArray(data.players) && data.players.length > 0) rawTokens = data.players;
+                    else if (Array.isArray(data)) rawTokens = data;
+                    else if (data && data.name) rawTokens = [data];
+                    else if (data && Array.isArray(data.tokens)) rawTokens = data.tokens;
+                    else if (data && Array.isArray(data.scenes)) data.scenes.forEach(s => { if (Array.isArray(s.tokens)) rawTokens.push(...s.tokens); });
 
-                    if (data && Array.isArray(data.players) && data.players.length > 0) {
-                        rawTokens = data.players;
-                    } else if (Array.isArray(data)) {
-                        rawTokens = data;
-                    } else if (data && data.name) {
-                        rawTokens = [data];
-                    } else if (data && Array.isArray(data.tokens)) {
-                        rawTokens = data.tokens;
-                    } else if (data && Array.isArray(data.scenes)) {
-                        data.scenes.forEach(s => {
-                            if (Array.isArray(s.tokens)) rawTokens.push(...s.tokens);
-                        });
-                    }
-
-                    if (rawTokens.length === 0) {
-                        errors.push(`${file.name}: нет токенов`);
-                        continue;
-                    }
+                    if (rawTokens.length === 0) { errors.push(`${file.name}: нет токенов`); continue; }
 
                     for (const raw of rawTokens) {
                         if (!raw || !raw.name) continue;
-
                         const newToken = normalizeImportedToken(raw);
-
-                        if (newToken.isPlayer && state.players.some(p => p.name === newToken.name)) {
-                            const overwrite = confirm(
-                                `Игрок с именем "${newToken.name}" уже есть в отряде.\n\n` +
-                                `OK — добавить как копию\nОтмена — пропустить этого персонажа`
-                            );
-                            if (!overwrite) continue;
-                        }
-
-                        if (sessionMode === 'player' && newToken.isPlayer) {
-                            newToken.isPlayer = false;
-                        }
-
+                        if (sessionMode === 'player' && newToken.isPlayer) newToken.isPlayer = false;
+                        
                         if (newToken.isPlayer) {
                             state.players.push(newToken);
-                            const scene = state.scenes[state.currentSceneIndex];
-                            const sceneCopy = JSON.parse(JSON.stringify(newToken));
-                            scene.tokens.push(sceneCopy);
+                            state.scenes[state.currentSceneIndex].tokens.push(JSON.parse(JSON.stringify(newToken)));
                             importedPlayers++;
                         } else {
                             state.scenes[state.currentSceneIndex].tokens.push(newToken);
                             importedNPCs++;
                         }
                     }
-                } catch (err) {
-                    errors.push(`${file.name}: ${err.message}`);
-                }
+                } catch (err) { errors.push(`${file.name}: ${err.message}`); }
             }
 
             if (importedPlayers > 0 || importedNPCs > 0) {
                 saveState();
                 renderPlayers();
                 renderTokens();
-
                 const parts = [];
                 if (importedPlayers > 0) parts.push(`игроков: ${importedPlayers}`);
                 if (importedNPCs > 0) parts.push(`НПС: ${importedNPCs}`);
-
-                let msg = `✅ Импортировано (${parts.join(', ')})`;
-                if (errors.length > 0) msg += `\n\n⚠️ Ошибки:\n${errors.join('\n')}`;
-                alert(msg);
+                alert(`✅ Импортировано (${parts.join(', ')})`);
             } else {
-                alert(`❌ Не удалось импортировать ни одного токена.\n\n${errors.join('\n') || 'Файлы не содержат корректных токенов'}`);
+                alert(`❌ Ошибка: ${errors.join('\n') || 'нет данных'}`);
             }
-
             e.target.value = '';
         }
 
-        // === SOCKET ===
         function connectSocket() {
-            if (typeof io === 'undefined') {
-                showConnectionStatus('offline');
-                return;
-            }
-
-            socket = io({
-                reconnection: true,
-                reconnectionDelay: 1000,
-                reconnectionAttempts: Infinity
-            });
-
+            if (typeof io === 'undefined') { showConnectionStatus('offline'); return; }
+            socket = io({ reconnection: true, reconnectionDelay: 1000, reconnectionAttempts: Infinity });
             socket.on('connect', () => showConnectionStatus('online'));
             socket.on('disconnect', () => showConnectionStatus('offline'));
             socket.on('connect_error', () => showConnectionStatus('offline'));
@@ -2160,7 +2202,7 @@
                 if (serverState && serverState.scenes) {
                     isApplyingRemote = true;
                     state = serverState;
-                    try { localStorage.setItem('justilia_vtt_state', JSON.stringify(state)); } catch(e){}
+                    try { localStorage.setItem('justilia_vtt_state_' + currentRoomCode, JSON.stringify(state)); } catch(e){}
                     isApplyingRemote = false;
                     rerenderAll();
                 } else {
@@ -2172,7 +2214,7 @@
                 if (!newState || !newState.scenes) return;
                 isApplyingRemote = true;
                 state = newState;
-                try { localStorage.setItem('justilia_vtt_state', JSON.stringify(state)); } catch(e){}
+                try { localStorage.setItem('justilia_vtt_state_' + currentRoomCode, JSON.stringify(state)); } catch(e){}
                 rerenderAll();
                 isApplyingRemote = false;
             });
@@ -2180,22 +2222,15 @@
 
         function rerenderAll() {
             const savedSelectedId = currentlySelectedId;
-            
             renderScenes();
             renderPlayers();
             renderTokens();
             updateBoardBackground();
-            
             if (savedSelectedId) {
                 const scene = state.scenes[state.currentSceneIndex];
                 const exists = scene && scene.tokens.find(t => t.id === savedSelectedId);
-                if (exists) {
-                    selectToken(savedSelectedId);
-                } else {
-                    currentlySelectedId = null;
-                    const menu = document.getElementById('token-menu');
-                    if (menu) menu.style.display = 'none';
-                }
+                if (exists) selectToken(savedSelectedId);
+                else { currentlySelectedId = null; document.getElementById('token-menu').style.display = 'none'; }
             }
         }
 
@@ -2204,111 +2239,68 @@
             if (!el) {
                 el = document.createElement('div');
                 el.id = 'conn-status';
-                el.style.cssText = `
-                    position: fixed; bottom: 15px; right: 15px;
-                    padding: 6px 14px; border-radius: 20px;
-                    font-family: 'Inter', sans-serif; font-size: 11px;
-                    font-weight: 500; z-index: 9999;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                    transition: all 0.3s;
-                    pointer-events: none;
-                    letter-spacing: 0.3px;
-                `;
+                el.style.cssText = `position: fixed; bottom: 15px; right: 15px; padding: 6px 14px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.1); pointer-events: none;`;
                 document.body.appendChild(el);
             }
             if (status === 'online') {
                 el.textContent = '● Онлайн';
-                el.style.background = 'white';
-                el.style.color = '#2e7d32';
-                el.style.border = '1px solid #e8e5df';
-                el.style.opacity = '1';
+                el.style.background = 'white'; el.style.color = '#2e7d32'; el.style.border = '1px solid #e8e5df'; el.style.opacity = '1';
                 setTimeout(() => { if (el.textContent === '● Онлайн') el.style.opacity = '0'; }, 2000);
             } else {
                 el.textContent = '● Нет связи';
-                el.style.background = 'white';
-                el.style.color = '#8b3a3a';
-                el.style.border = '1px solid #e8e5df';
-                el.style.opacity = '1';
+                el.style.background = 'white'; el.style.color = '#8b3a3a'; el.style.border = '1px solid #e8e5df'; el.style.opacity = '1';
             }
         }
 
-        // === КОСТИ ===
         function selectDieType(type) {
             const face = document.getElementById('dice-face');
             if (face.classList.contains('rolling')) return;
-            
             currentDieType = parseInt(type);
-            
-            document.querySelectorAll('.die-type-btn').forEach(b => {
-                b.classList.toggle('active', parseInt(b.dataset.die) === currentDieType);
-            });
-            
+            document.querySelectorAll('.die-type-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.die) === currentDieType));
             face.className = 'dice-face shape-d' + currentDieType;
-            
             const numEl = document.getElementById('dice-result');
             const capEl = document.getElementById('dice-caption');
-            
             numEl.textContent = 'd' + currentDieType;
             numEl.classList.add('preview');
             capEl.textContent = 'Нажмите на d' + currentDieType;
-            
             document.querySelectorAll('#dice-dots .pip').forEach(p => p.classList.add('hidden'));
-            
             face.classList.add('appearing');
             setTimeout(() => face.classList.remove('appearing'), 400);
         }
 
         function renderD6Pips(n) {
-            const positions = {
-                1: [4], 2: [0, 8], 3: [0, 4, 8],
-                4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8]
-            };
+            const positions = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
             const active = positions[n] || [];
             const pips = document.querySelectorAll('#dice-dots .pip');
-            for (let i = 0; i < 9; i++) {
-                pips[i].classList.toggle('hidden', !active.includes(i));
-            }
+            for (let i = 0; i < 9; i++) pips[i].classList.toggle('hidden', !active.includes(i));
         }
 
         function rollDice() {
             const face = document.getElementById('dice-face');
             if (face.classList.contains('rolling')) return;
-            
             face.classList.remove('appearing');
             face.classList.add('rolling');
-            
             const modStr = document.getElementById('dice-mod').value.trim();
             let mod = 0;
             if (modStr) mod = parseInt(modStr.replace(/\s/g, '').replace(/^\+/, '')) || 0;
-            
             const numEl = document.getElementById('dice-result');
             const capEl = document.getElementById('dice-caption');
-            
-            if (currentDieType === 6) {
-                face.classList.add('show-dots');
-            } else {
-                face.classList.remove('show-dots');
-                numEl.classList.remove('preview');
-            }
+            if (currentDieType === 6) face.classList.add('show-dots');
+            else { face.classList.remove('show-dots'); numEl.classList.remove('preview'); }
             capEl.textContent = '...';
-            
             let animCount = 0;
             const animInterval = setInterval(() => {
                 animCount++;
                 if (animCount > 6) { clearInterval(animInterval); return; }
                 const temp = Math.floor(Math.random() * currentDieType) + 1;
-                if (currentDieType === 6) renderD6Pips(temp);
-                else numEl.textContent = temp;
+                if (currentDieType === 6) renderD6Pips(temp); else numEl.textContent = temp;
             }, 70);
-            
             setTimeout(() => {
                 clearInterval(animInterval);
                 const roll = Math.floor(Math.random() * currentDieType) + 1;
                 const total = roll + mod;
-                
                 if (currentDieType === 6) renderD6Pips(roll);
                 else { numEl.textContent = roll; numEl.classList.remove('preview'); }
-                
                 let caption = `d${currentDieType}: ${roll}`;
                 if (mod !== 0) caption += mod > 0 ? ` + ${mod} = ${total}` : ` − ${Math.abs(mod)} = ${total}`;
                 if (currentDieType === 20 && mod === 0) {
@@ -2316,7 +2308,6 @@
                     else if (roll === 1) caption = '💀 ПРОВАЛ! 1';
                 }
                 capEl.textContent = caption;
-                
                 face.classList.remove('rolling');
                 addDiceLogEntry(roll, mod, total);
             }, 550);
@@ -2326,7 +2317,6 @@
             const logEl = document.getElementById('dice-log');
             const logEntry = document.createElement('div');
             logEntry.className = 'log-entry';
-            
             let actorName = "";
             if (currentlySelectedId) {
                 const scene = state.scenes[state.currentSceneIndex];
@@ -2334,16 +2324,13 @@
                 if (!t) t = state.players.find(x => x.id === currentlySelectedId);
                 if (t) actorName = t.name;
             }
-            
             const prefix = actorName ? `<strong style="color:var(--accent-dark);">[${actorName}]</strong> ` : '';
             const modText = mod !== 0 ? (mod > 0 ? ` + ${mod}` : ` − ${Math.abs(mod)}`) : '';
             const resultText = mod !== 0 ? ` = <strong>${total}</strong>` : '';
-            
             logEntry.innerHTML = `${prefix}🎲 d${currentDieType}: ${roll}${modText}${resultText}`;
             logEl.prepend(logEntry);
         }
 
-        // === РЕЖИМЫ ===
         function showModeSelect() {
             document.getElementById('mode-modal').style.display = 'flex';
             document.getElementById('mode-select-view').style.display = 'block';
@@ -2358,15 +2345,12 @@
         function selectMasterMode() {
             sessionMode = 'master';
             sessionPlayerTokenId = null;
-            localStorage.setItem('justilia_mode', 'master');
-            localStorage.removeItem('justilia_playerTokenId');
+            localStorage.setItem('justilia_mode_' + currentRoomCode, 'master');
+            localStorage.removeItem('justilia_playerTokenId_' + currentRoomCode);
             document.getElementById('mode-modal').style.display = 'none';
             currentlySelectedId = null;
             applyModeToUI();
-            renderScenes();
-            renderPlayers();
-            renderTokens();
-            updateBoardBackground();
+            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
         }
 
         function showPlayerSelect() {
@@ -2374,12 +2358,10 @@
             document.getElementById('player-select-view').style.display = 'block';
             const list = document.getElementById('mode-player-list');
             list.innerHTML = '';
-            
             if (!state.players || state.players.length === 0) {
                 list.innerHTML = '<li class="mode-player-empty">Нет персонажей. Попросите мастера создать их.</li>';
                 return;
             }
-            
             state.players.forEach(p => {
                 const li = document.createElement('li');
                 const meta = [];
@@ -2398,62 +2380,46 @@
                     if (response && response.ok) applyPlayerMode(tokenId);
                     else alert('Этот персонаж уже занят другим игроком.');
                 });
-            } else {
-                applyPlayerMode(tokenId);
-            }
+            } else applyPlayerMode(tokenId);
         }
 
         function applyPlayerMode(tokenId) {
             sessionMode = 'player';
             sessionPlayerTokenId = tokenId;
-            localStorage.setItem('justilia_mode', 'player');
-            localStorage.setItem('justilia_playerTokenId', String(tokenId));
+            localStorage.setItem('justilia_mode_' + currentRoomCode, 'player');
+            localStorage.setItem('justilia_playerTokenId_' + currentRoomCode, String(tokenId));
             document.getElementById('mode-modal').style.display = 'none';
             currentlySelectedId = null;
-            
             ensurePlayerTokenOnScene();
-            
             applyModeToUI();
-            renderScenes();
-            renderPlayers();
-            renderTokens();
-            updateBoardBackground();
+            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
             selectToken(tokenId);
         }
 
-        function switchMode() {
-            showModeSelect();
-        }
+        function switchMode() { showModeSelect(); }
 
         function applyModeToUI() {
             const isPlayer = sessionMode === 'player';
             document.body.classList.toggle('player-mode', isPlayer);
             document.body.classList.toggle('master-mode', !isPlayer);
-            
             if (isPlayer) document.body.classList.remove('sidebar-collapsed');
-            
             const label = document.getElementById('mode-label');
             if (!label) return;
-            
             if (isPlayer) {
                 const p = state.players.find(x => x.id === sessionPlayerTokenId);
                 label.textContent = `🎭 ${p ? p.name : 'Игрок'}`;
-            } else {
-                label.textContent = '👑 Мастер';
-            }
+            } else label.textContent = '👑 Мастер';
         }
 
         function ensurePlayerTokenOnScene() {
             if (sessionMode !== 'player' || !sessionPlayerTokenId) return;
             const scene = state.scenes[state.currentSceneIndex];
             if (scene.tokens.find(t => t.id === sessionPlayerTokenId)) return;
-            
             const player = state.players.find(p => p.id === sessionPlayerTokenId);
             if (!player) return;
-            
             scene.tokens.push({
                 id: player.id, name: player.name, race: player.race, class: player.class,
-                level: player.level, hp: player.hp, img: player.img,
+                level: player.level, hp: player.hp, tempHp: player.tempHp || 0, img: player.img,
                 slots: JSON.parse(JSON.stringify(player.slots)),
                 inventory: player.inventory || "",
                 spells: normalizeSpells(player.spells),
@@ -2466,34 +2432,20 @@
             saveState();
         }
 
-        function init() {
-            loadState();
-            connectSocket();
-            
-            const savedMode = localStorage.getItem('justilia_mode');
+        function continueInit() {
+            loadStateForRoom();
+            const savedMode = localStorage.getItem('justilia_mode_' + currentRoomCode);
             if (savedMode === 'master' || savedMode === 'player') {
                 sessionMode = savedMode;
                 if (savedMode === 'player') {
-                    const storedId = parseInt(localStorage.getItem('justilia_playerTokenId'));
-                    if (!isNaN(storedId) && state.players.find(p => p.id === storedId)) {
-                        sessionPlayerTokenId = storedId;
-                    } else {
-                        sessionMode = null;
-                        sessionPlayerTokenId = null;
-                        localStorage.removeItem('justilia_mode');
-                        localStorage.removeItem('justilia_playerTokenId');
-                    }
+                    const storedId = parseInt(localStorage.getItem('justilia_playerTokenId_' + currentRoomCode));
+                    if (!isNaN(storedId) && state.players.find(p => p.id === storedId)) sessionPlayerTokenId = storedId;
+                    else { sessionMode = null; sessionPlayerTokenId = null; }
                 }
             }
-            
-            renderScenes();
-            renderPlayers();
-            renderTokens();
-            updateBoardBackground();
-            
-            if (!sessionMode) {
-                showModeSelect();
-            } else {
+            renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+            if (!sessionMode) showModeSelect();
+            else {
                 applyModeToUI();
                 if (sessionMode === 'player' && sessionPlayerTokenId) {
                     ensurePlayerTokenOnScene();
@@ -2501,43 +2453,30 @@
                     selectToken(sessionPlayerTokenId);
                 }
             }
-
             if (localStorage.getItem('justilia_sidebar_collapsed') === 'true') {
                 document.getElementById('sidebar-left').classList.add('collapsed');
                 if (sessionMode !== 'player') document.body.classList.add('sidebar-collapsed');
                 const toggleBtn = document.getElementById('sidebar-toggle');
                 toggleBtn.innerHTML = '▶';
-                toggleBtn.title = 'Показать панель сцен';
             }
-            
             if (localStorage.getItem('justilia_volume')) {
                 let vol = parseFloat(localStorage.getItem('justilia_volume'));
-                volumeSlider.value = vol;
-                audioEl.volume = vol;
+                volumeSlider.value = vol; audioEl.volume = vol;
             } else audioEl.volume = 0.5;
-
             if (localStorage.getItem('justilia_loop') === 'true') {
-                audioEl.loop = true;
-                btnLoop.classList.add('active');
-            } else {
-                audioEl.loop = false;
-                btnLoop.classList.remove('active');
-            }
-            
+                audioEl.loop = true; btnLoop.classList.add('active');
+            } else { audioEl.loop = false; btnLoop.classList.remove('active'); }
             selectDieType(20);
-            
+
             window.addEventListener('keydown', (e) => {
                 if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-
                 if (e.key === 'Delete' || e.key === 'Backspace') {
                     if (currentlySelectedId && sessionMode === 'master') {
                         e.preventDefault();
                         const scene = state.scenes[state.currentSceneIndex];
-                        const token = scene.tokens.find(t => t.id === currentlySelectedId);
-                        if (token) deleteTokenFromScene(currentlySelectedId);
+                        if (scene.tokens.find(t => t.id === currentlySelectedId)) deleteTokenFromScene(currentlySelectedId);
                     }
                 }
-
                 if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
                     if (currentlySelectedId && sessionMode === 'master') {
                         const scene = state.scenes[state.currentSceneIndex];
@@ -2545,14 +2484,9 @@
                         if (token) clipboardToken = JSON.parse(JSON.stringify(token));
                     }
                 }
-
                 if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
-                    if (clipboardToken && sessionMode === 'master') {
-                        e.preventDefault();
-                        pasteToken();
-                    }
+                    if (clipboardToken && sessionMode === 'master') { e.preventDefault(); pasteToken(); }
                 }
-
                 if (e.key === 'ArrowRight') {
                     if (state.scenes[state.currentSceneIndex].isCombat) nextTurn();
                     else if (sessionMode === 'master') nextImage();
@@ -2560,7 +2494,6 @@
                 else if (e.key === 'ArrowLeft' && sessionMode === 'master') prevImage();
                 else if (e.key === 'ArrowDown' && sessionMode === 'master') nextScene();
                 else if (e.key === 'ArrowUp' && sessionMode === 'master') prevScene();
-
                 if (e.key === 'Escape') {
                     if (document.getElementById('inventory-modal').style.display === 'flex') closeInventory();
                     if (document.getElementById('spells-modal').style.display === 'flex') closeSpells();
@@ -2572,7 +2505,6 @@
             const ac = (token && token.ac !== undefined && token.ac !== null) ? token.ac : DEFAULT_AC;
             const init = (token && token.initiative !== undefined && token.initiative !== null) ? token.initiative : DEFAULT_INITIATIVE;
             const speed = (token && token.speed !== undefined && token.speed !== null && token.speed !== '') ? token.speed : DEFAULT_SPEED;
-            
             document.getElementById('sel-ac').value = ac;
             document.getElementById('sel-initiative').value = init;
             document.getElementById('sel-speed').value = speed;
@@ -2580,7 +2512,6 @@
 
         function updateCombatStatDirectly(key, value) {
             if (!currentlySelectedId) return;
-
             let patch;
             if (key === 'speed') {
                 patch = { speed: (value && value.toString().trim() !== '') ? value : DEFAULT_SPEED };
@@ -2593,15 +2524,11 @@
                 patch = { [key]: val };
                 document.getElementById(`sel-${key}`).value = val;
             }
-
             updateTokenEverywhere(currentlySelectedId, patch);
-            saveState();
-            renderTokens();
+            saveState(); renderTokens();
         }
 
-        function calcModifier(score) {
-            return Math.floor((score - 10) / 2);
-        }
+        function calcModifier(score) { return Math.floor((score - 10) / 2); }
 
         function updateAbilityDisplay(key, score) {
             const modEl = document.getElementById(`sel-mod-${key}`);
@@ -2626,19 +2553,15 @@
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
             if (!token) return;
-
             let val = parseInt(value);
             if (isNaN(val)) val = 10;
             if (val < 1) val = 1;
             if (val > 30) val = 30;
-
             const abilities = { ...(token.abilities || EMPTY_ABILITIES), [key]: val };
             updateTokenEverywhere(currentlySelectedId, { abilities });
-
             updateAbilityDisplay(key, val);
             const inputEl = document.getElementById(`sel-abil-${key}`);
             if (inputEl) inputEl.value = val;
-
             saveState();
         }
 
@@ -2649,7 +2572,6 @@
             const collapsed = sidebar.classList.toggle('collapsed');
             document.body.classList.toggle('sidebar-collapsed', collapsed);
             btn.innerHTML = collapsed ? '▶' : '◀';
-            btn.title = collapsed ? 'Показать панель сцен' : 'Скрыть панель сцен';
             localStorage.setItem('justilia_sidebar_collapsed', collapsed ? 'true' : 'false');
         }
 
@@ -2662,10 +2584,8 @@
             const scene = state.scenes[state.currentSceneIndex];
             const sceneToken = scene.tokens.find(t => t.id === id);
             const player = state.players.find(t => t.id === id);
-
             const isPlayerToken = (sceneToken && sceneToken.isPlayer) || (player && player.isPlayer);
             if (!isPlayerToken) return;
-
             currentInventoryTokenId = id;
             const name = (sceneToken && sceneToken.name) || (player && player.name) || '?';
             document.getElementById('inv-owner-name').textContent = name;
@@ -2682,10 +2602,8 @@
 
         function saveInventory() {
             if (!currentInventoryTokenId) { closeInventory(); return; }
-            const text = document.getElementById('inventory-text').value;
-            updateTokenEverywhere(currentInventoryTokenId, { inventory: text });
-            saveState();
-            closeInventory();
+            updateTokenEverywhere(currentInventoryTokenId, { inventory: document.getElementById('inventory-text').value });
+            saveState(); closeInventory();
         }
 
         function openSpellsFromPanel() {
@@ -2698,24 +2616,15 @@
             const sceneToken = scene.tokens.find(t => t.id === id);
             const player = state.players.find(t => t.id === id);
             if (!sceneToken && !player) return;
-
             const isPlayerToken = (sceneToken && sceneToken.isPlayer) || (player && player.isPlayer);
             if (!isPlayerToken) return;
-
             currentSpellsTokenId = id;
             const name = (sceneToken && sceneToken.name) || (player && player.name) || '?';
             document.getElementById('spells-owner-name').textContent = name;
-
             const spells = (player && player.spells) || (sceneToken && sceneToken.spells) || EMPTY_SPELLS;
-            document.getElementById('spells-combat').value = spells.combat || '';
-            document.getElementById('spells-special').value = spells.special || '';
-            document.getElementById('spells-cantrips').value = spells.cantrips || '';
-            document.getElementById('spells-circle1').value = spells.circle1 || '';
-            document.getElementById('spells-circle2').value = spells.circle2 || '';
-            document.getElementById('spells-circle3').value = spells.circle3 || '';
-            document.getElementById('spells-circle4').value = spells.circle4 || '';
-            document.getElementById('spells-circle5').value = spells.circle5 || '';
-
+            ['combat','special','cantrips','circle1','circle2','circle3','circle4','circle5'].forEach(k => {
+                document.getElementById('spells-' + k).value = spells[k] || '';
+            });
             document.getElementById('spells-modal').style.display = 'flex';
         }
 
@@ -2726,19 +2635,12 @@
 
         function saveSpells() {
             if (!currentSpellsTokenId) { closeSpells(); return; }
-            const spells = {
-                combat: document.getElementById('spells-combat').value,
-                special: document.getElementById('spells-special').value,
-                cantrips: document.getElementById('spells-cantrips').value,
-                circle1: document.getElementById('spells-circle1').value,
-                circle2: document.getElementById('spells-circle2').value,
-                circle3: document.getElementById('spells-circle3').value,
-                circle4: document.getElementById('spells-circle4').value,
-                circle5: document.getElementById('spells-circle5').value
-            };
+            const spells = {};
+            ['combat','special','cantrips','circle1','circle2','circle3','circle4','circle5'].forEach(k => {
+                spells[k] = document.getElementById('spells-' + k).value;
+            });
             updateTokenEverywhere(currentSpellsTokenId, { spells });
-            saveState();
-            closeSpells();
+            saveState(); closeSpells();
         }
 
         async function handleMinimapUpload(e) {
@@ -2747,8 +2649,7 @@
                 const scene = state.scenes[state.currentSceneIndex];
                 scene.minimapImg = await readFileAsync(file);
                 scene.minimapPos = { x: 0, y: 0 };
-                saveState();
-                updateMinimapUI();
+                saveState(); updateMinimapUI();
             }
             e.target.value = '';
         }
@@ -2756,10 +2657,8 @@
         function deleteMinimap() {
             if (confirm("Удалить карту из миникарты?")) {
                 const scene = state.scenes[state.currentSceneIndex];
-                scene.minimapImg = "";
-                scene.minimapPos = { x: 0, y: 0 };
-                saveState();
-                updateMinimapUI();
+                scene.minimapImg = ""; scene.minimapPos = { x: 0, y: 0 };
+                saveState(); updateMinimapUI();
             }
         }
 
@@ -2767,13 +2666,9 @@
             const scene = state.scenes[state.currentSceneIndex];
             if (!scene.showMinimap || !scene.minimapImg) return;
             if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-
             isDraggingMinimap = true;
-            minimapStartX = e.clientX;
-            minimapStartY = e.clientY;
-            minimapInitialX = scene.minimapPos.x;
-            minimapInitialY = scene.minimapPos.y;
-            
+            minimapStartX = e.clientX; minimapStartY = e.clientY;
+            minimapInitialX = scene.minimapPos.x; minimapInitialY = scene.minimapPos.y;
             document.addEventListener('mousemove', dragMinimap);
             document.addEventListener('mouseup', endMinimapDrag);
         }
@@ -2781,38 +2676,19 @@
         function dragMinimap(e) {
             if (!isDraggingMinimap) return;
             const scene = state.scenes[state.currentSceneIndex];
-            const dx = e.clientX - minimapStartX;
-            const dy = e.clientY - minimapStartY;
-            
+            const dx = e.clientX - minimapStartX, dy = e.clientY - minimapStartY;
             const container = document.getElementById('minimap-container');
-            const cWidth = container.offsetWidth;
-            const cHeight = container.offsetHeight;
-            
-            const totalWidth = cWidth * 8;
-            const totalHeight = cHeight * 8;
-            
-            const maxX = 0;
-            const minX = -(totalWidth - cWidth);
-            const maxY = 0;
-            const minY = -(totalHeight - cHeight);
-            
-            let newX = minimapInitialX + dx;
-            let newY = minimapInitialY + dy;
-            
-            if (newX > maxX) newX = maxX;
-            if (newX < minX) newX = minX;
-            if (newY > maxY) newY = maxY;
-            if (newY < minY) newY = minY;
-            
-            scene.minimapPos.x = newX;
-            scene.minimapPos.y = newY;
-            
+            const totalWidth = container.offsetWidth * 8, totalHeight = container.offsetHeight * 8;
+            const minX = -(totalWidth - container.offsetWidth);
+            const minY = -(totalHeight - container.offsetHeight);
+            let newX = Math.min(0, Math.max(minX, minimapInitialX + dx));
+            let newY = Math.min(0, Math.max(minY, minimapInitialY + dy));
+            scene.minimapPos.x = newX; scene.minimapPos.y = newY;
             updateMinimapPosition();
         }
 
         function endMinimapDrag() {
-            isDraggingMinimap = false;
-            saveState();
+            isDraggingMinimap = false; saveState();
             document.removeEventListener('mousemove', dragMinimap);
             document.removeEventListener('mouseup', endMinimapDrag);
         }
@@ -2826,10 +2702,8 @@
         }
 
         function toggleMinimap() {
-            const isChecked = document.getElementById('minimap-toggle').checked;
-            state.scenes[state.currentSceneIndex].showMinimap = isChecked;
-            saveState();
-            updateBoardBackground();
+            state.scenes[state.currentSceneIndex].showMinimap = document.getElementById('minimap-toggle').checked;
+            saveState(); updateBoardBackground();
         }
 
         function updateMinimapUI() {
@@ -2837,54 +2711,36 @@
             const container = document.getElementById('minimap-container');
             const canvas = document.getElementById('minimap-canvas');
             const checkbox = document.getElementById('minimap-toggle');
-            
             checkbox.checked = scene.showMinimap;
-
             if (scene && scene.showMinimap) {
                 container.classList.add('active');
                 if (scene.minimapImg) {
                     canvas.style.backgroundImage = `url(${scene.minimapImg})`;
                     if (scene.minimapPos.x === undefined) scene.minimapPos = { x: 0, y: 0 };
                     updateMinimapPosition();
-                } else {
-                    canvas.style.backgroundImage = 'none';
-                    canvas.style.backgroundColor = '#f2f0eb';
-                }
-            } else {
-                container.classList.remove('active');
-            }
+                } else { canvas.style.backgroundImage = 'none'; canvas.style.backgroundColor = '#f2f0eb'; }
+            } else container.classList.remove('active');
         }
 
         function pasteToken() {
             if (!clipboardToken) return;
-            
             const newToken = JSON.parse(JSON.stringify(clipboardToken));
             newToken.id = state.nextTokenId++;
-            
-            newToken.x += 2;
-            newToken.y += 2;
+            newToken.x += 2; newToken.y += 2;
             if (newToken.x > 90) newToken.x = 50;
             if (newToken.y > 90) newToken.y = 50;
-            
             if (!newToken.abilities) newToken.abilities = { ...EMPTY_ABILITIES };
             if (!newToken.spells) newToken.spells = { ...EMPTY_SPELLS };
             if (newToken.inventory === undefined) newToken.inventory = "";
             if (newToken.ac === undefined) newToken.ac = DEFAULT_AC;
             if (newToken.initiative === undefined) newToken.initiative = DEFAULT_INITIATIVE;
             if (newToken.speed === undefined) newToken.speed = DEFAULT_SPEED;
-            
+            if (newToken.tempHp === undefined) newToken.tempHp = 0;
             if (newToken.isPlayer) {
                 state.players.push(newToken);
-                const sceneToken = JSON.parse(JSON.stringify(newToken));
-                state.scenes[state.currentSceneIndex].tokens.push(sceneToken);
-            } else {
-                state.scenes[state.currentSceneIndex].tokens.push(newToken);
-            }
-            
-            saveState();
-            renderPlayers();
-            renderTokens();
-            selectToken(newToken.id);
+                state.scenes[state.currentSceneIndex].tokens.push(JSON.parse(JSON.stringify(newToken)));
+            } else state.scenes[state.currentSceneIndex].tokens.push(newToken);
+            saveState(); renderPlayers(); renderTokens(); selectToken(newToken.id);
         }
 
         function readFileAsync(file) {
@@ -2901,24 +2757,9 @@
             if (files.length > 0) {
                 const images = [];
                 for (let i = 0; i < files.length; i++) images.push(await readFileAsync(files[i]));
-                
-                state.scenes.push({ 
-                    name: files[0].name.split('.')[0], 
-                    images: images,
-                    currentImageIndex: 0,
-                    isCombat: false,
-                    showMinimap: false,
-                    minimapImg: "",
-                    minimapPos: { x: 0, y: 0 },
-                    audio: "",
-                    audioName: "",
-                    tokens: []
-                });
+                state.scenes.push({ name: files[0].name.split('.')[0], images, currentImageIndex: 0, isCombat: false, showMinimap: false, minimapImg: "", minimapPos: { x: 0, y: 0 }, audio: "", audioName: "", tokens: [] });
                 state.currentSceneIndex = state.scenes.length - 1;
-                saveState();
-                renderScenes();
-                renderTokens(); 
-                updateBoardBackground();
+                saveState(); renderScenes(); renderTokens(); updateBoardBackground();
             }
             this.value = '';
         });
@@ -2929,8 +2770,7 @@
                 const scene = state.scenes[state.currentSceneIndex];
                 if (!scene.images) scene.images = [];
                 for (let i = 0; i < files.length; i++) scene.images.push(await readFileAsync(files[i]));
-                saveState();
-                updateBoardBackground();
+                saveState(); updateBoardBackground();
             }
             e.target.value = '';
         }
@@ -2939,14 +2779,10 @@
             if (sessionMode !== 'master') return;
             const scene = state.scenes[state.currentSceneIndex];
             if (!scene.images || scene.images.length === 0) return alert("На этой сцене нет картинок!");
-            
             if (confirm("Удалить текущую картинку?")) {
                 scene.images.splice(scene.currentImageIndex, 1);
-                if (scene.currentImageIndex >= scene.images.length) {
-                    scene.currentImageIndex = Math.max(0, scene.images.length - 1);
-                }
-                saveState();
-                updateBoardBackground();
+                if (scene.currentImageIndex >= scene.images.length) scene.currentImageIndex = Math.max(0, scene.images.length - 1);
+                saveState(); updateBoardBackground();
             }
         }
 
@@ -2956,46 +2792,47 @@
             
             state.scenes.forEach((scene, index) => {
                 const li = document.createElement('li');
+                if (index === state.currentSceneIndex) li.classList.add('active');
+                if (sessionMode === 'master') li.draggable = true;
+                
+                const handle = document.createElement('span');
+                handle.className = 'scene-drag-handle';
+                handle.textContent = '⋮⋮';
+                handle.title = 'Перетащите для изменения порядка';
+                if (sessionMode === 'player') handle.style.display = 'none';
                 
                 const content = document.createElement('div');
                 content.className = 'list-item-content';
                 content.textContent = scene.name;
                 content.title = sessionMode === 'master' ? "Двойной клик для переименования" : "";
-                if (index === state.currentSceneIndex) li.classList.add('active');
                 
                 const controls = document.createElement('div');
                 controls.className = 'move-controls';
-                
-                const btnUp = document.createElement('button');
-                btnUp.className = 'move-btn';
-                btnUp.innerHTML = '▲';
-                btnUp.onclick = (e) => { e.stopPropagation(); moveScene(index, -1); };
-                
-                const btnDown = document.createElement('button');
-                btnDown.className = 'move-btn';
-                btnDown.innerHTML = '▼';
-                btnDown.onclick = (e) => { e.stopPropagation(); moveScene(index, 1); };
                 
                 const btnDelete = document.createElement('button');
                 btnDelete.className = 'btn-delete-scene';
                 btnDelete.innerHTML = '✕';
                 btnDelete.onclick = (e) => { e.stopPropagation(); deleteScene(index); };
                 
-                controls.appendChild(btnUp);
-                controls.appendChild(btnDown);
                 controls.appendChild(btnDelete);
                 
+                li.appendChild(handle);
                 li.appendChild(content);
                 li.appendChild(controls);
+                
+                if (sessionMode === 'master') {
+                    li.ondragstart = (e) => handleSceneDragStart(e, index);
+                    li.ondragover = (e) => handleSceneDragOver(e, index);
+                    li.ondragleave = handleSceneDragLeave;
+                    li.ondrop = (e) => handleSceneDrop(e, index);
+                    li.ondragend = handleSceneDragEnd;
+                }
                 
                 li.onclick = () => {
                     if (sessionMode === 'player') return;
                     state.currentSceneIndex = index;
-                    state.scenes[index].currentImageIndex = 0; 
-                    saveState();
-                    renderScenes();
-                    renderTokens();
-                    updateBoardBackground();
+                    state.scenes[index].currentImageIndex = 0;
+                    saveState(); renderScenes(); renderTokens(); updateBoardBackground();
                 };
 
                 li.ondblclick = (e) => {
@@ -3004,8 +2841,7 @@
                     const newName = prompt("Введите новое название сцены:", scene.name);
                     if (newName && newName.trim() !== "") {
                         state.scenes[index].name = newName.trim();
-                        saveState();
-                        renderScenes();
+                        saveState(); renderScenes();
                     }
                 };
 
@@ -3016,18 +2852,12 @@
         function moveScene(index, direction) {
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= state.scenes.length) return;
-            
             const temp = state.scenes[index];
             state.scenes[index] = state.scenes[targetIndex];
             state.scenes[targetIndex] = temp;
-            
             if (state.currentSceneIndex === index) state.currentSceneIndex = targetIndex;
             else if (state.currentSceneIndex === targetIndex) state.currentSceneIndex = index;
-            
-            saveState();
-            renderScenes();
-            renderTokens();
-            updateBoardBackground();
+            saveState(); renderScenes(); renderTokens(); updateBoardBackground();
         }
 
         function deleteScene(index) {
@@ -3035,10 +2865,7 @@
             if (confirm(`Удалить сцену "${state.scenes[index].name}"?`)) {
                 state.scenes.splice(index, 1);
                 if (state.currentSceneIndex >= state.scenes.length) state.currentSceneIndex = state.scenes.length - 1;
-                saveState();
-                renderScenes();
-                renderTokens();
-                updateBoardBackground();
+                saveState(); renderScenes(); renderTokens(); updateBoardBackground();
             }
         }
 
@@ -3048,7 +2875,6 @@
             const scene = state.scenes[state.currentSceneIndex];
             const gridCheckbox = document.getElementById('grid-toggle');
             const initTracker = document.getElementById('initiative-tracker');
-            
             const navPrev = document.getElementById('nav-prev');
             const navNext = document.getElementById('nav-next');
             const counter = document.getElementById('image-counter');
@@ -3056,45 +2882,32 @@
 
             board.style.backgroundImage = 'none';
             board.style.backgroundColor = '#ffffff';
-            
             const isPlayerMode = sessionMode === 'player';
             
             if (scene && scene.images && scene.images.length > 0) {
                 const idx = scene.currentImageIndex || 0;
                 board.style.backgroundImage = `url(${scene.images[idx]})`;
-                
                 if (scene.images.length > 1 && !isPlayerMode) {
-                    navPrev.style.display = 'flex';
-                    navNext.style.display = 'flex';
-                    counter.style.display = 'block';
-                    counter.textContent = `${idx + 1} / ${scene.images.length}`;
+                    navPrev.style.display = 'flex'; navNext.style.display = 'flex';
+                    counter.style.display = 'block'; counter.textContent = `${idx + 1} / ${scene.images.length}`;
                     btnDeleteImg.style.display = 'block';
                 } else {
-                    navPrev.style.display = 'none';
-                    navNext.style.display = 'none';
-                    counter.style.display = 'none';
-                    btnDeleteImg.style.display = 'none';
+                    navPrev.style.display = 'none'; navNext.style.display = 'none';
+                    counter.style.display = 'none'; btnDeleteImg.style.display = 'none';
                 }
             } else {
-                navPrev.style.display = 'none';
-                navNext.style.display = 'none';
-                counter.style.display = 'none';
-                btnDeleteImg.style.display = 'none';
+                navPrev.style.display = 'none'; navNext.style.display = 'none';
+                counter.style.display = 'none'; btnDeleteImg.style.display = 'none';
             }
             
             if (scene && scene.isCombat) {
-                grid.classList.add('active');
-                gridCheckbox.checked = true;
+                grid.classList.add('active'); gridCheckbox.checked = true;
                 initTracker.classList.add('active');
             } else {
-                grid.classList.remove('active');
-                gridCheckbox.checked = false;
+                grid.classList.remove('active'); gridCheckbox.checked = false;
                 initTracker.classList.remove('active');
             }
-
-            updateMinimapUI();
-            renderInitiative(); 
-            loadSceneAudio(scene);
+            updateMinimapUI(); renderInitiative(); loadSceneAudio(scene);
         }
 
         function loadSceneAudio(scene) {
@@ -3108,8 +2921,7 @@
                     audioEl.play().then(() => btnPlayPause.textContent = '⏸').catch(() => btnPlayPause.textContent = '▶');
                 }
             } else {
-                audioEl.pause();
-                audioEl.src = "";
+                audioEl.pause(); audioEl.src = "";
                 trackNameEl.textContent = "Нет трека";
                 btnPlayPause.textContent = '▶';
             }
@@ -3119,11 +2931,7 @@
             if (state.scenes.length > 1) {
                 state.currentSceneIndex = (state.currentSceneIndex + 1) % state.scenes.length;
                 state.scenes[state.currentSceneIndex].currentImageIndex = 0;
-                ensurePlayerTokenOnScene();
-                saveState();
-                renderScenes();
-                renderTokens();
-                updateBoardBackground();
+                ensurePlayerTokenOnScene(); saveState(); renderScenes(); renderTokens(); updateBoardBackground();
             }
         }
 
@@ -3131,11 +2939,7 @@
             if (state.scenes.length > 1) {
                 state.currentSceneIndex = (state.currentSceneIndex - 1 + state.scenes.length) % state.scenes.length;
                 state.scenes[state.currentSceneIndex].currentImageIndex = 0;
-                ensurePlayerTokenOnScene();
-                saveState();
-                renderScenes();
-                renderTokens();
-                updateBoardBackground();
+                ensurePlayerTokenOnScene(); saveState(); renderScenes(); renderTokens(); updateBoardBackground();
             }
         }
 
@@ -3143,8 +2947,7 @@
             const scene = state.scenes[state.currentSceneIndex];
             if (scene && scene.images && scene.images.length > 1) {
                 scene.currentImageIndex = (scene.currentImageIndex + 1) % scene.images.length;
-                saveState();
-                updateBoardBackground();
+                saveState(); updateBoardBackground();
             }
         }
 
@@ -3152,112 +2955,71 @@
             const scene = state.scenes[state.currentSceneIndex];
             if (scene && scene.images && scene.images.length > 1) {
                 scene.currentImageIndex = (scene.currentImageIndex - 1 + scene.images.length) % scene.images.length;
-                saveState();
-                updateBoardBackground();
+                saveState(); updateBoardBackground();
             }
         }
 
         function toggleGrid() {
-            const isChecked = document.getElementById('grid-toggle').checked;
-            state.scenes[state.currentSceneIndex].isCombat = isChecked;
-            saveState();
-            updateBoardBackground();
+            state.scenes[state.currentSceneIndex].isCombat = document.getElementById('grid-toggle').checked;
+            saveState(); updateBoardBackground();
         }
 
         function addSelectedToInitiative() {
-            if (!currentlySelectedId) return alert("Сначала выберите токен на столе!");
-            if (state.initiative.includes(currentlySelectedId)) return alert("Этот герой уже в очереди!");
+            if (!currentlySelectedId) return alert("Сначала выберите токен!");
+            if (state.initiative.includes(currentlySelectedId)) return alert("Уже в очереди!");
             state.initiative.push(currentlySelectedId);
-            saveState();
-            renderInitiative();
+            saveState(); renderInitiative();
         }
 
         function removeFromInitiative(id) {
             if (sessionMode !== 'master') return;
             state.initiative = state.initiative.filter(i => i !== id);
             if (state.currentTurnIndex >= state.initiative.length) state.currentTurnIndex = 0;
-            saveState();
-            renderInitiative();
+            saveState(); renderInitiative();
         }
 
         function nextTurn() {
             if (state.initiative.length === 0) return;
             state.currentTurnIndex = (state.currentTurnIndex + 1) % state.initiative.length;
-            saveState();
-            renderInitiative();
+            saveState(); renderInitiative();
         }
 
         function reorderInitiative(from, to) {
             if (from === to) return;
-            if (from < 0 || from >= state.initiative.length) return;
-            if (to < 0 || to >= state.initiative.length) return;
-
             const activeId = state.initiative[state.currentTurnIndex];
             const [moved] = state.initiative.splice(from, 1);
             state.initiative.splice(to, 0, moved);
-            
             const newActiveIndex = state.initiative.indexOf(activeId);
             if (newActiveIndex !== -1) state.currentTurnIndex = newActiveIndex;
-
-            saveState();
-            renderInitiative();
+            saveState(); renderInitiative();
         }
 
         function renderInitiative() {
             const list = document.getElementById('initiative-list');
             list.innerHTML = '';
             if (!state.initiative) state.initiative = [];
-            
             state.initiative.forEach((tokenId, index) => {
                 let token = state.players.find(t => t.id === tokenId);
-                if (!token) {
-                    const scene = state.scenes[state.currentSceneIndex];
-                    token = scene.tokens.find(t => t.id === tokenId);
-                }
+                if (!token) token = state.scenes[state.currentSceneIndex].tokens.find(t => t.id === tokenId);
                 if (!token) return;
-                
                 const div = document.createElement('div');
                 div.className = 'init-item';
                 if (index === state.currentTurnIndex) div.classList.add('active-turn');
-                
                 if (sessionMode === 'master') {
                     div.draggable = true;
-                    div.ondragstart = (e) => {
-                        initDragSrcIndex = index;
-                        div.classList.add('dragging');
-                        e.dataTransfer.effectAllowed = 'move';
-                        try { e.dataTransfer.setData('text/plain', String(index)); } catch(err) {}
-                    };
-                    div.ondragend = () => {
-                        div.classList.remove('dragging');
-                        document.querySelectorAll('.init-item').forEach(el => el.classList.remove('drag-over'));
-                    };
+                    div.ondragstart = (e) => { initDragSrcIndex = index; div.classList.add('dragging'); try { e.dataTransfer.setData('text/plain', String(index)); } catch(err) {} };
+                    div.ondragend = () => { div.classList.remove('dragging'); document.querySelectorAll('.init-item').forEach(el => el.classList.remove('drag-over')); };
                     div.ondragover = (e) => { e.preventDefault(); div.classList.add('drag-over'); };
                     div.ondragleave = () => div.classList.remove('drag-over');
-                    div.ondrop = (e) => {
-                        e.preventDefault();
-                        div.classList.remove('drag-over');
-                        if (initDragSrcIndex === null || initDragSrcIndex === index) return;
-                        const from = initDragSrcIndex;
-                        initDragSrcIndex = null;
-                        reorderInitiative(from, index);
-                    };
+                    div.ondrop = (e) => { e.preventDefault(); div.classList.remove('drag-over'); if (initDragSrcIndex === null || initDragSrcIndex === index) return; const from = initDragSrcIndex; initDragSrcIndex = null; reorderInitiative(from, index); };
                 }
-                
-                div.innerHTML = `
-                    <span>${token.name}</span>
-                    <div class="init-item-remove" onclick="event.stopPropagation(); removeFromInitiative(${tokenId})">×</div>
-                `;
-
+                div.innerHTML = `<span>${token.name}</span><div class="init-item-remove" onclick="event.stopPropagation(); removeFromInitiative(${tokenId})">×</div>`;
                 div.onclick = () => selectToken(tokenId);
                 list.appendChild(div);
             });
-            
             document.querySelectorAll('.token').forEach(el => el.classList.remove('active-turn-token'));
-            
             if (state.initiative.length > 0) {
-                const currentId = state.initiative[state.currentTurnIndex];
-                const el = document.getElementById(`token-${currentId}`);
+                const el = document.getElementById(`token-${state.initiative[state.currentTurnIndex]}`);
                 if (el) el.classList.add('active-turn-token');
             }
         }
@@ -3269,23 +3031,16 @@
                 trackNameEl.textContent = "Загрузка...";
                 const base64Audio = await readFileAsync(file);
                 const scene = state.scenes[state.currentSceneIndex];
-                scene.audio = base64Audio;
-                scene.audioName = file.name;
-                saveState();
-                updateBoardBackground();
+                scene.audio = base64Audio; scene.audioName = file.name;
+                saveState(); updateBoardBackground();
             }
             e.target.value = '';
         }
 
         function togglePlay() {
-            if (!audioEl.src) return alert("На эту сцену не загружена музыка!");
-            if (audioEl.paused) {
-                audioEl.play();
-                btnPlayPause.textContent = '⏸';
-            } else {
-                audioEl.pause();
-                btnPlayPause.textContent = '▶';
-            }
+            if (!audioEl.src) return alert("Нет музыки на этой сцене");
+            if (audioEl.paused) { audioEl.play(); btnPlayPause.textContent = '⏸'; }
+            else { audioEl.pause(); btnPlayPause.textContent = '▶'; }
         }
 
         function toggleLoop() {
@@ -3307,14 +3062,10 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `justilia_save_${new Date().toISOString().slice(0,10)}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                a.download = `justilia_room-${currentRoomCode}_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            } catch(e) {
-                alert("Ошибка при сохранении: " + e.message);
-            }
+            } catch(e) { alert("Ошибка: " + e.message); }
         }
 
         function importState(e) {
@@ -3327,7 +3078,6 @@
                     if (parsed && parsed.scenes) {
                         state = parsed;
                         if (!state.players) state.players = [];
-                        
                         state.players.forEach(p => {
                             if (p.inventory === undefined) p.inventory = "";
                             p.spells = normalizeSpells(p.spells);
@@ -3336,8 +3086,8 @@
                             if (p.initiative === undefined) p.initiative = DEFAULT_INITIATIVE;
                             if (p.speed === undefined) p.speed = DEFAULT_SPEED;
                             if (p.isPlayer === undefined) p.isPlayer = true;
+                            if (p.tempHp === undefined) p.tempHp = 0;
                         });
-
                         state.scenes.forEach(s => {
                             if (s.isCombat === undefined) s.isCombat = false;
                             if (s.showMinimap === undefined) s.showMinimap = false;
@@ -3347,8 +3097,7 @@
                             if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
                             if (s.audio === undefined) s.audio = "";
                             if (s.audioName === undefined) s.audioName = "";
-                            if (!s.tokens) s.tokens = []; 
-                            
+                            if (!s.tokens) s.tokens = [];
                             s.tokens.forEach(t => {
                                 if (t.isPlayer === undefined) t.isPlayer = false;
                                 if (t.inventory === undefined) t.inventory = "";
@@ -3357,26 +3106,17 @@
                                 if (t.ac === undefined) t.ac = DEFAULT_AC;
                                 if (t.initiative === undefined) t.initiative = DEFAULT_INITIATIVE;
                                 if (t.speed === undefined) t.speed = DEFAULT_SPEED;
+                                if (t.tempHp === undefined) t.tempHp = 0;
                                 if (!t.slots) t.slots = { max: [0,0,0,0,0], current: [0,0,0,0,0] };
                             });
                         });
-
                         if (!state.initiative) state.initiative = [];
                         if (state.currentTurnIndex === undefined) state.currentTurnIndex = 0;
-
                         state.currentSceneIndex = 0;
-                        saveState();
-                        renderScenes();
-                        renderPlayers();
-                        renderTokens();
-                        updateBoardBackground();
-                        alert("Мир успешно загружен!");
-                    } else {
-                        alert("Неверный формат файла!");
-                    }
-                } catch (err) {
-                    alert("Ошибка чтения файла: " + err.message);
-                }
+                        saveState(); renderScenes(); renderPlayers(); renderTokens(); updateBoardBackground();
+                        alert("Мир загружен!");
+                    } else alert("Неверный формат файла!");
+                } catch (err) { alert("Ошибка: " + err.message); }
             };
             reader.readAsText(file);
             e.target.value = '';
@@ -3385,14 +3125,9 @@
         function normalizeSpells(spells) {
             if (!spells) return { ...EMPTY_SPELLS };
             return {
-                combat: spells.combat || "",
-                special: spells.special || "",
-                cantrips: spells.cantrips || "",
-                circle1: spells.circle1 || "",
-                circle2: spells.circle2 || "",
-                circle3: spells.circle3 || "",
-                circle4: spells.circle4 || "",
-                circle5: spells.circle5 || ""
+                combat: spells.combat || "", special: spells.special || "", cantrips: spells.cantrips || "",
+                circle1: spells.circle1 || "", circle2: spells.circle2 || "", circle3: spells.circle3 || "",
+                circle4: spells.circle4 || "", circle5: spells.circle5 || ""
             };
         }
 
@@ -3400,37 +3135,28 @@
             const list = document.getElementById('player-list');
             list.innerHTML = '';
             if (!state.players) state.players = [];
-
             state.players.forEach(player => {
                 const li = document.createElement('li');
                 const content = document.createElement('div');
                 content.className = 'list-item-content';
                 content.innerHTML = `<strong>${player.name}</strong> <br><span style="font-size:11px; color:var(--ink-muted);">Ур. ${player.level || 1} · ${player.race || '?'} · ${player.class || '?'}</span>`;
-                
                 const controls = document.createElement('div');
                 controls.className = 'move-controls';
-                
                 const btnSummon = document.createElement('button');
                 btnSummon.className = 'btn-summon';
                 btnSummon.innerHTML = 'На сцену';
                 btnSummon.onclick = (e) => { e.stopPropagation(); summonPlayerToScene(player.id); };
-                
                 const btnEdit = document.createElement('button');
-                btnEdit.className = 'move-btn';
-                btnEdit.innerHTML = '✎';
+                btnEdit.className = 'move-btn'; btnEdit.innerHTML = '✎';
                 btnEdit.onclick = (e) => { e.stopPropagation(); openModal(player.id, 'player'); };
-                
-                controls.appendChild(btnSummon);
-                controls.appendChild(btnEdit);
-                li.appendChild(content);
-                li.appendChild(controls);
-                
+                controls.appendChild(btnSummon); controls.appendChild(btnEdit);
+                li.appendChild(content); li.appendChild(controls);
                 li.onclick = () => {
                     if (sessionMode === 'player' && player.id !== sessionPlayerTokenId) return;
                     const scene = state.scenes[state.currentSceneIndex];
                     const onScene = scene.tokens.find(t => t.id === player.id);
                     if (onScene) selectToken(player.id);
-                    else if (sessionMode === 'master' && confirm(`Игрок "${player.name}" не на этой сцене. Разместить его?`)) summonPlayerToScene(player.id);
+                    else if (sessionMode === 'master' && confirm(`Игрок "${player.name}" не на сцене. Разместить?`)) summonPlayerToScene(player.id);
                 };
                 list.appendChild(li);
             });
@@ -3438,14 +3164,12 @@
 
         function summonPlayerToScene(playerId) {
             const scene = state.scenes[state.currentSceneIndex];
-            if (scene.tokens.find(t => t.id === playerId)) return alert("Этот игрок уже на сцене!");
-            
+            if (scene.tokens.find(t => t.id === playerId)) return alert("Уже на сцене!");
             const player = state.players.find(p => p.id === playerId);
             if (!player) return;
-            
-            const newToken = {
+            scene.tokens.push({
                 id: player.id, name: player.name, race: player.race, class: player.class,
-                level: player.level, hp: player.hp, img: player.img,
+                level: player.level, hp: player.hp, tempHp: player.tempHp || 0, img: player.img,
                 slots: JSON.parse(JSON.stringify(player.slots)),
                 inventory: player.inventory || "",
                 spells: normalizeSpells(player.spells),
@@ -3454,30 +3178,24 @@
                 initiative: (player.initiative !== undefined) ? player.initiative : DEFAULT_INITIATIVE,
                 speed: (player.speed !== undefined) ? player.speed : DEFAULT_SPEED,
                 x: 50, y: 50, isPlayer: true
-            };
-            scene.tokens.push(newToken);
-            saveState();
-            renderTokens();
-            selectToken(newToken.id);
+            });
+            saveState(); renderTokens(); selectToken(playerId);
         }
 
         function renderTokens() {
             const board = document.getElementById('board');
             const list = document.getElementById('npc-list');
-            
             document.querySelectorAll('.token').forEach(el => el.remove());
             list.innerHTML = '';
 
             const scene = state.scenes[state.currentSceneIndex];
             if (!scene || !scene.tokens) return;
 
-            // Ограничиваем позиции токенов допустимым диапазоном
             const boardW = board.offsetWidth || 800;
             const boardH = board.offsetHeight || 450;
-            const tokenW = 60, tokenH = 60;
-            const minX = (tokenW / 2 / boardW) * 100;
+            const minX = (30 / boardW) * 100;
             const maxX = 100 - minX;
-            const minY = (tokenH / 2 / boardH) * 100;
+            const minY = (30 / boardH) * 100;
             const maxY = 100 - minY;
 
             scene.tokens.forEach((token, index) => {
@@ -3489,11 +3207,7 @@
                 const el = document.createElement('div');
                 el.className = 'token';
                 if (token.isPlayer) el.classList.add('is-player');
-                
-                if (sessionMode === 'player' && token.id !== sessionPlayerTokenId) {
-                    el.classList.add('token-not-owned');
-                }
-                
+                if (sessionMode === 'player' && token.id !== sessionPlayerTokenId) el.classList.add('token-not-owned');
                 el.id = `token-${token.id}`;
                 el.style.left = `${token.x}%`;
                 el.style.top = `${token.y}%`;
@@ -3504,11 +3218,22 @@
                     el.style.backgroundColor = token.isPlayer ? '#e8eef6' : '#f2f0eb';
                 }
 
+                if (token.tempHp && token.tempHp > 0) {
+                    const badge = document.createElement('div');
+                    badge.className = 'temp-hp-badge';
+                    badge.textContent = '+' + token.tempHp;
+                    badge.title = 'Временные хиты';
+                    el.appendChild(badge);
+                }
+
                 const tooltip = document.createElement('div');
                 tooltip.className = 'token-tooltip';
-                let info = `<strong>${token.name}</strong>`;
-                info += `<br>Ур. ${token.level || 1}`;
-                if (token.hp) info += `<br><span style="color:#8b3a3a; font-weight:600;">HP: ${token.hp}</span>`;
+                let info = `<strong>${token.name}</strong><br>Ур. ${token.level || 1}`;
+                if (token.hp) {
+                    const hp = parseHp(token.hp);
+                    info += `<br><span style="color:${hp.current <= hp.max * 0.25 ? '#8b3a3a' : '#2e7d32'}; font-weight:600;">HP: ${hp.current} / ${hp.max}</span>`;
+                    if (token.tempHp > 0) info += ` <span style="color:#4a7ebb; font-weight:600;">(+${token.tempHp})</span>`;
+                }
                 tooltip.innerHTML = info;
                 el.appendChild(tooltip);
 
@@ -3520,39 +3245,20 @@
                     const content = document.createElement('div');
                     content.className = 'list-item-content';
                     content.innerHTML = `<span>${token.name}</span>`;
-                    
                     const controls = document.createElement('div');
                     controls.className = 'move-controls';
                     
                     const btnCopy = document.createElement('button');
-                    btnCopy.className = 'move-btn';
-                    btnCopy.innerHTML = '⧉';
-                    btnCopy.title = "Копировать";
+                    btnCopy.className = 'move-btn'; btnCopy.innerHTML = '⧉';
                     btnCopy.onclick = (e) => { e.stopPropagation(); copyNpcFromList(token.id); };
-                    
-                    const btnUp = document.createElement('button');
-                    btnUp.className = 'move-btn'; btnUp.innerHTML = '▲';
-                    btnUp.onclick = (e) => { e.stopPropagation(); moveToken(index, -1); };
-                    
-                    const btnDown = document.createElement('button');
-                    btnDown.className = 'move-btn'; btnDown.innerHTML = '▼';
-                    btnDown.onclick = (e) => { e.stopPropagation(); moveToken(index, 1); };
                     
                     const btnDelete = document.createElement('button');
                     btnDelete.className = 'btn-delete-token'; btnDelete.innerHTML = '✕';
                     btnDelete.onclick = (e) => { e.stopPropagation(); deleteTokenFromScene(token.id); };
                     
-                    controls.appendChild(btnCopy);
-                    controls.appendChild(btnUp);
-                    controls.appendChild(btnDown);
-                    controls.appendChild(btnDelete);
-                    
-                    li.appendChild(content);
-                    li.appendChild(controls);
-                    li.onclick = (e) => { 
-                        e.stopPropagation(); 
-                        if (sessionMode === 'master') selectToken(token.id); 
-                    };
+                    controls.appendChild(btnCopy); controls.appendChild(btnDelete);
+                    li.appendChild(content); li.appendChild(controls);
+                    li.onclick = (e) => { e.stopPropagation(); if (sessionMode === 'master') selectToken(token.id); };
                     list.appendChild(li);
                 }
             });
@@ -3563,51 +3269,27 @@
             const scene = state.scenes[state.currentSceneIndex];
             const token = scene.tokens.find(t => t.id === id);
             if (!token) return;
-            
             const newToken = JSON.parse(JSON.stringify(token));
             newToken.id = state.nextTokenId++;
             newToken.x += 2; newToken.y += 2;
             if (newToken.x > 90) newToken.x = 50;
             if (newToken.y > 90) newToken.y = 50;
-            
             scene.tokens.push(newToken);
-            saveState();
-            renderTokens();
-            selectToken(newToken.id);
-        }
-
-        function moveToken(index, direction) {
-            const scene = state.scenes[state.currentSceneIndex];
-            if (!scene || !scene.tokens) return;
-            const targetIndex = index + direction;
-            if (targetIndex < 0 || targetIndex >= scene.tokens.length) return;
-            const temp = scene.tokens[index];
-            scene.tokens[index] = scene.tokens[targetIndex];
-            scene.tokens[targetIndex] = temp;
-            saveState();
-            renderTokens();
+            saveState(); renderTokens(); selectToken(newToken.id);
         }
 
         function deleteTokenFromScene(id) {
-            if (confirm("Убрать этого персонажа со сцены?")) {
+            if (confirm("Убрать персонажа со сцены?")) {
                 const scene = state.scenes[state.currentSceneIndex];
                 scene.tokens = scene.tokens.filter(t => t.id !== id);
                 state.initiative = state.initiative.filter(i => i !== id);
-                if (currentlySelectedId === id) {
-                    document.getElementById('token-menu').style.display = 'none';
-                    currentlySelectedId = null;
-                }
-                saveState();
-                renderTokens();
+                if (currentlySelectedId === id) { document.getElementById('token-menu').style.display = 'none'; currentlySelectedId = null; }
+                saveState(); renderTokens();
             }
         }
 
-        // === КЛЮЧЕВОЕ: ОГРАНИЧЕНИЕ ПЕРЕМЕЩЕНИЯ ТОКЕНА В ГРАНИЦАХ СЦЕНЫ ===
         function setupTokenInteraction(el, tokenData) {
-            if (sessionMode === 'player' && tokenData.id !== sessionPlayerTokenId) {
-                return;
-            }
-            
+            if (sessionMode === 'player' && tokenData.id !== sessionPlayerTokenId) return;
             let isDragging = false, startX, startY, initialX, initialY, hasMoved = false;
             el.addEventListener('mousedown', dragStart);
             
@@ -3624,60 +3306,33 @@
                 if (!isDragging) return;
                 const dx = e.clientX - startX, dy = e.clientY - startY;
                 if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-                    hasMoved = true;
-                    el.style.cursor = 'grabbing';
-                    el.style.zIndex = 1000;
+                    hasMoved = true; el.style.cursor = 'grabbing'; el.style.zIndex = 1000;
                 }
                 if (hasMoved) {
                     const board = document.getElementById('board');
-                    const halfW = el.offsetWidth / 2;
-                    const halfH = el.offsetHeight / 2;
-                    const maxLeft = board.offsetWidth - halfW;
-                    const maxTop = board.offsetHeight - halfH;
-                    
-                    let newLeft = initialX + dx;
-                    let newTop = initialY + dy;
-                    
-                    // Жёсткое ограничение — токен не может покинуть сцену
-                    if (newLeft < halfW) newLeft = halfW;
-                    if (newLeft > maxLeft) newLeft = maxLeft;
-                    if (newTop < halfH) newTop = halfH;
-                    if (newTop > maxTop) newTop = maxTop;
-                    
+                    const halfW = el.offsetWidth / 2, halfH = el.offsetHeight / 2;
+                    const maxLeft = board.offsetWidth - halfW, maxTop = board.offsetHeight - halfH;
+                    let newLeft = Math.max(halfW, Math.min(maxLeft, initialX + dx));
+                    let newTop = Math.max(halfH, Math.min(maxTop, initialY + dy));
                     el.style.left = `${newLeft}px`;
                     el.style.top = `${newTop}px`;
                 }
             }
 
-            function dragEnd(e) {
+            function dragEnd() {
                 if (!isDragging) return;
-                isDragging = false;
-                el.style.cursor = 'pointer'; el.style.zIndex = 10;
-                
+                isDragging = false; el.style.cursor = 'pointer'; el.style.zIndex = 10;
                 if (hasMoved) {
                     const board = document.getElementById('board');
-                    const halfW = el.offsetWidth / 2;
-                    const halfH = el.offsetHeight / 2;
-                    const maxLeft = board.offsetWidth - halfW;
-                    const maxTop = board.offsetHeight - halfH;
-                    
-                    let pxLeft = el.offsetLeft;
-                    let pxTop = el.offsetTop;
-                    
-                    // Дополнительная проверка при отпускании
-                    if (pxLeft < halfW) pxLeft = halfW;
-                    if (pxLeft > maxLeft) pxLeft = maxLeft;
-                    if (pxTop < halfH) pxTop = halfH;
-                    if (pxTop > maxTop) pxTop = maxTop;
-                    
+                    const halfW = el.offsetWidth / 2, halfH = el.offsetHeight / 2;
+                    const maxLeft = board.offsetWidth - halfW, maxTop = board.offsetHeight - halfH;
+                    let pxLeft = Math.max(halfW, Math.min(maxLeft, el.offsetLeft));
+                    let pxTop = Math.max(halfH, Math.min(maxTop, el.offsetTop));
                     tokenData.x = (pxLeft / board.offsetWidth) * 100;
                     tokenData.y = (pxTop / board.offsetHeight) * 100;
-                    el.style.left = `${tokenData.x}%`; 
-                    el.style.top = `${tokenData.y}%`;
+                    el.style.left = `${tokenData.x}%`; el.style.top = `${tokenData.y}%`;
                     saveState();
-                } else {
-                    selectToken(tokenData.id);
-                }
+                } else selectToken(tokenData.id);
                 document.removeEventListener('mousemove', drag);
                 document.removeEventListener('mouseup', dragEnd);
             }
@@ -3685,32 +3340,24 @@
 
         function selectToken(id) {
             if (sessionMode === 'player' && id !== sessionPlayerTokenId) return;
-            
             currentlySelectedId = id;
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
             if (!token) return;
 
-            const panel = document.getElementById('token-menu');
-            panel.style.display = 'block';
-            
+            document.getElementById('token-menu').style.display = 'block';
             document.getElementById('sel-name').textContent = token.name;
             document.getElementById('sel-race').textContent = token.race || '-';
             document.getElementById('sel-class').textContent = token.class || '-';
             document.getElementById('sel-level').textContent = token.level || 1;
-            document.getElementById('sel-hp-input').value = token.hp || "";
 
             const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
-
+            renderHpCalculator(token);
             renderCombatStats(token);
 
             const abilitiesContainer = document.getElementById('abilities-container');
-            if (isPlayerToken) {
-                abilitiesContainer.style.display = 'grid';
-                renderAbilities(token);
-            } else {
-                abilitiesContainer.style.display = 'none';
-            }
+            if (isPlayerToken) { abilitiesContainer.style.display = 'grid'; renderAbilities(token); }
+            else abilitiesContainer.style.display = 'none';
 
             document.getElementById('btn-inventory-panel').style.display = isPlayerToken ? 'block' : 'none';
             document.getElementById('btn-spells-panel').style.display = isPlayerToken ? 'block' : 'none';
@@ -3718,9 +3365,7 @@
             const slotsContainer = document.getElementById('spell-slots-container');
             const slotsInputs = document.getElementById('slots-inputs');
             slotsInputs.innerHTML = '';
-            
             let hasSlots = token.slots && token.slots.max && token.slots.max.some(m => m > 0);
-            
             if (isPlayerToken && hasSlots) {
                 slotsContainer.style.display = 'block';
                 token.slots.max.forEach((max, index) => {
@@ -3728,48 +3373,25 @@
                         const curr = token.slots.current[index] || 0;
                         const div = document.createElement('div');
                         div.className = 'slot-item';
-                        div.innerHTML = `
-                            <span style="color:var(--accent-dark); font-weight:600;">${index+1} ур:</span>
-                            <input type="number" value="${curr}" min="0" max="${max}" onchange="updateSlotDirectly(${index}, this.value)">
-                            <span>/ ${max}</span>
-                        `;
+                        div.innerHTML = `<span style="color:var(--accent-dark); font-weight:600;">${index+1} ур:</span><input type="number" value="${curr}" min="0" max="${max}" onchange="updateSlotDirectly(${index}, this.value)"><span>/ ${max}</span>`;
                         slotsInputs.appendChild(div);
                     }
                 });
-            } else {
-                slotsContainer.style.display = 'none';
-            }
-        }
-
-        function updateHpDirectly() {
-            if (!currentlySelectedId) return;
-            const hp = document.getElementById('sel-hp-input').value;
-            updateTokenEverywhere(currentlySelectedId, { hp });
-            saveState();
-            renderTokens();
-            renderPlayers();
+            } else slotsContainer.style.display = 'none';
         }
 
         function updateSlotDirectly(levelIndex, value) {
             if (!currentlySelectedId) return;
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === currentlySelectedId) || state.players.find(t => t.id === currentlySelectedId);
-            if (!token || !token.slots || !token.slots.max) return;
-            
+            if (!token || !token.slots) return;
             let val = parseInt(value) || 0;
             const max = token.slots.max[levelIndex] || 0;
-            if (val > max) val = max;
-            if (val < 0) val = 0;
-            
+            val = Math.max(0, Math.min(max, val));
             const slots = JSON.parse(JSON.stringify(token.slots));
             slots.current[levelIndex] = val;
             updateTokenEverywhere(currentlySelectedId, { slots });
-            
-            saveState();
-            renderTokens();
-            
-            const inputEl = document.querySelector(`#slots-inputs input[onchange="updateSlotDirectly(${levelIndex}, this.value)"]`);
-            if (inputEl) inputEl.value = val;
+            saveState(); renderTokens();
         }
 
         function updateCreateTypeUI() {
@@ -3783,47 +3405,36 @@
             document.getElementById('edit-race').value = "";
             document.getElementById('edit-class').value = "";
             document.getElementById('edit-level').value = 1;
-            document.getElementById('edit-hp').value = "";
+            document.getElementById('edit-hp-max').value = 10;
             document.getElementById('edit-image').value = '';
-            
             for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
-            
             document.getElementById('type-selector').style.display = 'flex';
             document.querySelector(`input[name="token-type"][value="${type}"]`).checked = true;
-            
             document.getElementById('modal-title').textContent = "Создать токен";
             document.getElementById('modal').style.display = 'flex';
-
             updateCreateTypeUI();
         }
 
-        function openModal(id, forceType = null) {
+        function openModal(id) {
             const scene = state.scenes[state.currentSceneIndex];
             let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
             if (!token) return;
-
             if (sessionMode === 'player' && id !== sessionPlayerTokenId) return;
-
             document.getElementById('edit-token-id').value = id;
             document.getElementById('edit-name').value = token.name || "";
             document.getElementById('edit-race').value = token.race || "";
             document.getElementById('edit-class').value = token.class || "";
             document.getElementById('edit-level').value = token.level || 1;
-            document.getElementById('edit-hp').value = token.hp || "";
+            const hp = parseHp(token.hp);
+            document.getElementById('edit-hp-max').value = hp.max || 10;
             document.getElementById('edit-image').value = '';
-            
             if (token.slots && token.slots.max) {
                 for (let i = 0; i < 5; i++) document.getElementById(`edit-slot-max-${i+1}`).value = token.slots.max[i] || 0;
-            } else {
-                for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
-            }
-            
+            } else for (let i = 1; i <= 5; i++) document.getElementById(`edit-slot-max-${i}`).value = 0;
             document.getElementById('type-selector').style.display = 'none';
             document.getElementById('modal-title').textContent = "Редактировать токен";
-
             const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === token.id);
             document.getElementById('edit-slots-section').style.display = isPlayerToken ? 'block' : 'none';
-
             document.getElementById('modal').style.display = 'flex';
         }
 
@@ -3834,89 +3445,74 @@
             const idStr = document.getElementById('edit-token-id').value;
             const isEdit = idStr !== '';
             const id = isEdit ? parseInt(idStr) : state.nextTokenId++;
-            
             const name = document.getElementById('edit-name').value || "Безымянный";
             const race = document.getElementById('edit-race').value;
             const cls = document.getElementById('edit-class').value;
             const level = parseInt(document.getElementById('edit-level').value) || 1;
-            const hp = document.getElementById('edit-hp').value;
-            
+            const hpMax = parseInt(document.getElementById('edit-hp-max').value) || 10;
             const fileInput = document.getElementById('edit-image');
-            
+
             if (!isEdit) {
                 let newMaxSlots = [];
                 for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
-
                 const type = document.querySelector('input[name="token-type"]:checked').value;
                 const isPlayer = (type === 'player');
                 const newToken = { 
-                    id: id, name: name, race: race, class: cls, level: level, hp: hp, 
+                    id, name, race, class: cls, level, hp: formatHp(hpMax, hpMax), tempHp: 0,
                     ac: DEFAULT_AC, initiative: DEFAULT_INITIATIVE, speed: DEFAULT_SPEED,
-                    x: 50, y: 50, img: "", isPlayer: isPlayer,
+                    x: 50, y: 50, img: "", isPlayer,
                     slots: { max: newMaxSlots, current: [...newMaxSlots] }
                 };
-
                 if (isPlayer) {
                     newToken.inventory = "";
                     newToken.spells = { ...EMPTY_SPELLS };
                     newToken.abilities = { ...EMPTY_ABILITIES };
                 }
-                
                 if (fileInput.files && fileInput.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) { newToken.img = e.target.result; finalizeCreate(newToken, isPlayer); };
                     reader.readAsDataURL(fileInput.files[0]);
-                } else {
-                    finalizeCreate(newToken, isPlayer);
-                }
+                } else finalizeCreate(newToken, isPlayer);
             } else {
                 const scene = state.scenes[state.currentSceneIndex];
                 let token = scene.tokens.find(t => t.id === id) || state.players.find(t => t.id === id);
                 if (!token) return;
-
                 const isPlayerToken = !!token.isPlayer || state.players.some(p => p.id === id);
                 
-                const patch = { name, race, class: cls, level, hp };
-
+                const oldHp = parseHp(token.hp);
+                let newHpCurrent = oldHp.current;
+                if (oldHp.max !== hpMax) {
+                    newHpCurrent = Math.min(oldHp.current, hpMax);
+                }
+                
+                const patch = { name, race, class: cls, level, hp: formatHp(newHpCurrent, hpMax) };
+                
                 if (isPlayerToken) {
                     let newMaxSlots = [];
                     for (let i = 1; i <= 5; i++) newMaxSlots.push(parseInt(document.getElementById(`edit-slot-max-${i}`).value) || 0);
-                    
                     const existingSlots = token.slots || { max: [0,0,0,0,0], current: [0,0,0,0,0] };
                     const newCurrent = [...existingSlots.current];
-                    for (let i = 0; i < 5; i++) {
-                        if (newCurrent[i] > newMaxSlots[i]) newCurrent[i] = newMaxSlots[i];
-                    }
+                    for (let i = 0; i < 5; i++) if (newCurrent[i] > newMaxSlots[i]) newCurrent[i] = newMaxSlots[i];
                     patch.slots = { max: newMaxSlots, current: newCurrent };
                 }
-
                 const applyEdit = (imgData) => {
                     if (imgData) patch.img = imgData;
                     updateTokenEverywhere(id, patch);
-                    saveState();
-                    renderPlayers();
-                    renderTokens();
-                    closeModal();
+                    saveState(); renderPlayers(); renderTokens(); closeModal();
                     if (currentlySelectedId === id) selectToken(id);
                 };
-
                 if (fileInput.files && fileInput.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) { applyEdit(e.target.result); };
                     reader.readAsDataURL(fileInput.files[0]);
-                } else {
-                    applyEdit(null);
-                }
+                } else applyEdit(null);
             }
         }
 
         function finalizeCreate(newToken, isPlayer) {
             if (isPlayer) state.players.push(newToken);
             else state.scenes[state.currentSceneIndex].tokens.push(newToken);
-            saveState();
-            renderPlayers();
-            renderTokens();
-            closeModal();
+            saveState(); renderPlayers(); renderTokens(); closeModal();
             if (!isPlayer) selectToken(newToken.id);
         }
 
@@ -3924,43 +3520,33 @@
             if (sessionMode === 'player') return;
             const id = parseInt(document.getElementById('edit-token-id').value);
             if (!id) { closeModal(); return; }
-            
-            if (confirm("Удалить этого героя навсегда?")) {
+            if (confirm("Удалить навсегда?")) {
                 state.players = state.players.filter(t => t.id !== id);
                 state.scenes.forEach(s => { s.tokens = s.tokens.filter(t => t.id !== id); });
                 state.initiative = state.initiative.filter(i => i !== id);
-                if (currentlySelectedId === id) {
-                    document.getElementById('token-menu').style.display = 'none';
-                    currentlySelectedId = null;
-                }
-                saveState();
-                renderPlayers();
-                renderTokens();
-                closeModal();
+                if (currentlySelectedId === id) { document.getElementById('token-menu').style.display = 'none'; currentlySelectedId = null; }
+                saveState(); renderPlayers(); renderTokens(); closeModal();
             }
         }
 
         function saveState() {
             try {
-                localStorage.setItem('justilia_vtt_state', JSON.stringify(state));
-            } catch (e) {
-                console.warn("Память браузера переполнена.");
-            }
+                if (currentRoomCode) localStorage.setItem('justilia_vtt_state_' + currentRoomCode, JSON.stringify(state));
+            } catch (e) { console.warn("Память переполнена"); }
             if (!isApplyingRemote && socket && socket.connected) {
                 socket.emit('state:update', state);
             }
         }
 
-        function loadState() {
-            const saved = localStorage.getItem('justilia_vtt_state');
+        function loadStateForRoom() {
+            if (!currentRoomCode) return;
+            const saved = localStorage.getItem('justilia_vtt_state_' + currentRoomCode);
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     if (parsed && parsed.scenes) {
                         state = parsed;
-                        
                         if (!state.players) state.players = [];
-
                         state.players.forEach(p => {
                             if (p.inventory === undefined) p.inventory = "";
                             p.spells = normalizeSpells(p.spells);
@@ -3969,8 +3555,8 @@
                             if (p.initiative === undefined) p.initiative = DEFAULT_INITIATIVE;
                             if (p.speed === undefined) p.speed = DEFAULT_SPEED;
                             if (p.isPlayer === undefined) p.isPlayer = true;
+                            if (p.tempHp === undefined) p.tempHp = 0;
                         });
-                        
                         state.scenes.forEach(s => {
                             if (s.isCombat === undefined) s.isCombat = false;
                             if (s.showMinimap === undefined) s.showMinimap = false;
@@ -3981,8 +3567,7 @@
                             if (s.currentImageIndex === undefined) s.currentImageIndex = 0;
                             if (s.audio === undefined) s.audio = "";
                             if (s.audioName === undefined) s.audioName = "";
-                            if (!s.tokens) s.tokens = []; 
-                            
+                            if (!s.tokens) s.tokens = [];
                             s.tokens.forEach(t => {
                                 if (t.isPlayer === undefined) t.isPlayer = false;
                                 if (t.inventory === undefined) t.inventory = "";
@@ -3991,19 +3576,13 @@
                                 if (t.ac === undefined) t.ac = DEFAULT_AC;
                                 if (t.initiative === undefined) t.initiative = DEFAULT_INITIATIVE;
                                 if (t.speed === undefined) t.speed = DEFAULT_SPEED;
+                                if (t.tempHp === undefined) t.tempHp = 0;
                                 if (!t.slots || Array.isArray(t.slots)) {
                                     const oldCurrent = Array.isArray(t.slots) ? t.slots : [0,0,0,0,0];
-                                    t.slots = { 
-                                        max: [oldCurrent[0]||0, oldCurrent[1]||0, oldCurrent[2]||0, oldCurrent[3]||0, oldCurrent[4]||0], 
-                                        current: [oldCurrent[0]||0, oldCurrent[1]||0, oldCurrent[2]||0, oldCurrent[3]||0, oldCurrent[4]||0] 
-                                    };
-                                } else {
-                                    if (!t.slots.max) t.slots.max = [0,0,0,0,0];
-                                    if (!t.slots.current) t.slots.current = [0,0,0,0,0];
+                                    t.slots = { max: oldCurrent.slice(), current: oldCurrent.slice() };
                                 }
                             });
                         });
-
                         if (!state.initiative) state.initiative = [];
                         if (state.currentTurnIndex === undefined) state.currentTurnIndex = 0;
                     }
@@ -4011,7 +3590,22 @@
             }
         }
 
-        init();
+        // === START ===
+        function startApp() {
+            connectSocket();
+            const url = new URL(window.location.href);
+            const roomParam = url.searchParams.get('room');
+            
+            if (roomParam) {
+                document.getElementById('room-code-input').value = roomParam.toUpperCase();
+                socket.on('connect', () => {
+                    proceedToRoom(roomParam);
+                });
+                if (socket.connected) proceedToRoom(roomParam);
+            }
+        }
+
+        startApp();
     </script>
 </body>
 </html>

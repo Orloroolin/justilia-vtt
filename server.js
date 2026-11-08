@@ -7,24 +7,33 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    maxHttpBufferSize: 100 * 1024 * 1024, // 100 MB — для крупных карт
+    maxHttpBufferSize: 100 * 1024 * 1024,
     cors: { origin: '*' },
     pingTimeout: 60000
 });
 
-// Раздаём статику из public/
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ==== ХРАНИЛИЩЕ СОСТОЯНИЯ ====
-let globalState = null;  // null = первый клиент задаст начальное состояние
-
+// ==== ХРАНИЛИЩЕ КОМНАТ ====
+// rooms: { roomCode: { state, lastActivity } }
+const rooms = new Map();
 const SAVE_FILE = path.join(__dirname, 'world-state.json');
 
 function loadPersisted() {
     try {
         if (fs.existsSync(SAVE_FILE)) {
-            globalState = JSON.parse(fs.readFileSync(SAVE_FILE, 'utf-8'));
-            console.log('✅ Состояние загружено с диска');
+            const data = JSON.parse(fs.readFileSync(SAVE_FILE, 'utf-8'));
+            // Поддержка как старого формата (один мир), так и нового (комнаты)
+            if (data && data.rooms) {
+                Object.entries(data.rooms).forEach(([code, roomData]) => {
+                    rooms.set(code, roomData);
+                });
+                console.log(`✅ Загружено комнат: ${rooms.size}`);
+            } else if (data && data.scenes) {
+                // старый формат — превращаем в комнату MAIN
+                rooms.set('MAIN', { state: data, lastActivity: Date.now() });
+                console.log('✅ Загружен старый формат мира в комнату MAIN');
+            }
         }
     } catch (e) {
         console.warn('⚠️ Не удалось загрузить state:', e.message);
@@ -33,13 +42,14 @@ function loadPersisted() {
 
 let saveTimeout = null;
 function persistSoon() {
-    // Дебаунс, чтобы не писать файл 100 раз в секунду
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
         try {
-            if (globalState) {
-                fs.writeFileSync(SAVE_FILE, JSON.stringify(globalState), 'utf-8');
-            }
+            const obj = { rooms: {} };
+            rooms.forEach((roomData, code) => {
+                obj.rooms[code] = roomData;
+            });
+            fs.writeFileSync(SAVE_FILE, JSON.stringify(obj), 'utf-8');
         } catch (e) {
             console.warn('⚠️ Не удалось сохранить state:', e.message);
         }
@@ -48,67 +58,133 @@ function persistSoon() {
 
 loadPersisted();
 
-// ==== КТО КАКИМ ПЕРСОНАЖЕМ УПРАВЛЯЕТ ====
-const claimedTokens = new Map(); // tokenId -> socket.id
-const playerClaims = new Map();  // socket.id -> tokenId
+// Автоочистка пустых комнат старше 24 часов
+setInterval(() => {
+    const now = Date.now();
+    const emptyRooms = new Set();
+    rooms.forEach((roomData, code) => {
+        const room = io.sockets.adapter.rooms.get('room-' + code);
+        const isEmpty = !room || room.size === 0;
+        if (isEmpty && (now - roomData.lastActivity) > 24 * 60 * 60 * 1000) {
+            emptyRooms.add(code);
+        }
+    });
+    emptyRooms.forEach(code => {
+        rooms.delete(code);
+        console.log(`🗑 Удалена неактивная комната: ${code}`);
+    });
+    if (emptyRooms.size > 0) persistSoon();
+}, 60 * 60 * 1000);
 
 // ==== SOCKET.IO ====
+// В каждой комнате: claimedTokens: Map<tokenId, socketId>, playerClaims: Map<socketId, tokenId>
+const roomClaims = new Map(); // roomCode -> { claimedTokens, playerClaims }
+
+function getRoomClaims(code) {
+    if (!roomClaims.has(code)) {
+        roomClaims.set(code, { claimedTokens: new Map(), playerClaims: new Map() });
+    }
+    return roomClaims.get(code);
+}
+
 io.on('connection', (socket) => {
-    console.log('🔌 Подключён:', socket.id);
+    let currentRoom = null;
 
-    // Отправляем состояние новому клиенту
-    socket.emit('state:init', globalState);
+    socket.on('room:create', (ack) => {
+        let code;
+        do {
+            code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        } while (rooms.has(code));
+        rooms.set(code, { state: null, lastActivity: Date.now() });
+        if (typeof ack === 'function') ack({ ok: true, code });
+        console.log(`🏠 Создана комната: ${code}`);
+    });
 
-    // Клиент присылает полный state (сохранение)
+    socket.on('room:join', (code, ack) => {
+        if (!code || typeof code !== 'string') {
+            if (typeof ack === 'function') ack({ ok: false, reason: 'Неверный код' });
+            return;
+        }
+        const roomCode = code.toUpperCase().trim();
+        if (!rooms.has(roomCode)) {
+            if (typeof ack === 'function') ack({ ok: false, reason: 'Комната не найдена' });
+            return;
+        }
+        if (currentRoom) {
+            socket.leave('room-' + currentRoom);
+            releaseClaims(currentRoom, socket.id);
+        }
+        currentRoom = roomCode;
+        socket.join('room-' + currentRoom);
+        rooms.get(currentRoom).lastActivity = Date.now();
+        socket.emit('state:init', rooms.get(currentRoom).state);
+        if (typeof ack === 'function') ack({ ok: true, code: currentRoom });
+        console.log(`🚪 ${socket.id} → комната ${currentRoom}`);
+    });
+
     socket.on('state:update', (newState) => {
-        if (!newState || !newState.scenes) return;
-        globalState = newState;
+        if (!currentRoom || !newState || !newState.scenes) return;
+        const roomData = rooms.get(currentRoom);
+        if (!roomData) return;
+        roomData.state = newState;
+        roomData.lastActivity = Date.now();
         persistSoon();
-        // Разослать всем КРОМЕ отправителя
-        socket.broadcast.emit('state:apply', newState);
+        socket.to('room-' + currentRoom).emit('state:apply', newState);
     });
 
-    // Клиент просит актуальное состояние (например, при переподключении)
     socket.on('state:request', () => {
-        socket.emit('state:init', globalState);
+        if (!currentRoom) return;
+        socket.emit('state:init', rooms.get(currentRoom)?.state || null);
     });
 
-    // Клиент хочет управлять персонажем
     socket.on('player:claim', (tokenId, ack) => {
-        const existing = claimedTokens.get(tokenId);
+        if (!currentRoom) {
+            if (typeof ack === 'function') ack({ ok: false, reason: 'Нет комнаты' });
+            return;
+        }
+        const claims = getRoomClaims(currentRoom);
+        const existing = claims.claimedTokens.get(tokenId);
         if (existing && existing !== socket.id) {
             if (typeof ack === 'function') ack({ ok: false, reason: 'Этот персонаж уже занят' });
             return;
         }
-        // Освободить предыдущий токен этого сокета
-        const prev = playerClaims.get(socket.id);
-        if (prev && prev !== tokenId && claimedTokens.get(prev) === socket.id) {
-            claimedTokens.delete(prev);
+        const prev = claims.playerClaims.get(socket.id);
+        if (prev && prev !== tokenId && claims.claimedTokens.get(prev) === socket.id) {
+            claims.claimedTokens.delete(prev);
         }
-        claimedTokens.set(tokenId, socket.id);
-        playerClaims.set(socket.id, tokenId);
+        claims.claimedTokens.set(tokenId, socket.id);
+        claims.playerClaims.set(socket.id, tokenId);
         if (typeof ack === 'function') ack({ ok: true });
-        console.log(`🎭 ${socket.id} → персонаж ${tokenId}`);
     });
 
     socket.on('player:release', () => {
-        const prev = playerClaims.get(socket.id);
-        if (prev && claimedTokens.get(prev) === socket.id) claimedTokens.delete(prev);
-        playerClaims.delete(socket.id);
+        if (!currentRoom) return;
+        const claims = getRoomClaims(currentRoom);
+        const prev = claims.playerClaims.get(socket.id);
+        if (prev && claims.claimedTokens.get(prev) === socket.id) claims.claimedTokens.delete(prev);
+        claims.playerClaims.delete(socket.id);
     });
 
     socket.on('disconnect', () => {
-        console.log('❌ Отключён:', socket.id);
-        const prev = playerClaims.get(socket.id);
-        if (prev && claimedTokens.get(prev) === socket.id) claimedTokens.delete(prev);
-        playerClaims.delete(socket.id);
+        if (currentRoom) {
+            releaseClaims(currentRoom, socket.id);
+            const room = rooms.get(currentRoom);
+            if (room) room.lastActivity = Date.now();
+        }
     });
 });
 
-// Health check (для хостингов)
-app.get('/api/health', (req, res) => res.json({ ok: true, hasState: !!globalState }));
+function releaseClaims(roomCode, socketId) {
+    const claims = roomClaims.get(roomCode);
+    if (!claims) return;
+    const prev = claims.playerClaims.get(socketId);
+    if (prev && claims.claimedTokens.get(prev) === socketId) claims.claimedTokens.delete(prev);
+    claims.playerClaims.delete(socketId);
+}
 
-const PORT = process.env.PORT || 8080;
+app.get('/api/health', (req, res) => res.json({ ok: true, rooms: rooms.size }));
+
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен: http://localhost:${PORT}`);
 });
